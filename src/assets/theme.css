@@ -1,0 +1,71 @@
+
+:root {
+  --color-background: #f0eae8;
+  --color-text: #2b201c;
+  --color-dark-bg: #040303;
+  --color-dark-bg-text: #f0eae8;
+  --color-red: #a30000;
+  --color-blue: #0000a3;
+  --color-green: #00a300;
+  --color-crimson: #4f0006;
+  --color-dark-blue: #00054f;
+  --color-dark-green: #054f00;  
+  --color-button-text: #e8dfdc;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {    
+  }
+}
+
+body {
+  background-color: var(--color-background);
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  letter-spacing: -0.03em;
+}
+b, strong, h4, h5 {
+  font-weight: 600;
+  letter-spacing: -2px;
+}
+h1, h2, h3 {
+  font-weight: 800;
+}
+
+button {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.9em;
+  box-shadow: none;
+  border: none;
+  outline: none;
+  background-color: var(--color-crimson);
+  color: var(--color-button-text);
+  cursor: pointer;
+  height: 40px;
+  line-height: 30px;
+  padding: 5px 10px;  
+  border-radius: 4px;
+  transition: background 50ms ease-in;
+  position: relative;  
+  &:hover {
+    background-color: var(--color-red);
+  }
+  &:focus-visible {
+    background-color: var(--color-red);
+  }
+  &:focus {
+    outline: none;
+  }
+  &.icon {
+    width: 40px;
+    padding: 5px;  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+}
