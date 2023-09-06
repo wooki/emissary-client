@@ -1,5 +1,5 @@
 <template>
-  <polygon :stroke="stroke" :strokeWidt="strokeWidth" :fill="fill" :points="points" />  
+  <polygon :stroke="stroke" :strokeWidt="strokeWidth" :fill="fill" :points="drawPoints" />  
 </template>
 
 <script>
@@ -17,11 +17,14 @@ export default {
       type: String,
       default: '#fff'
     },
-    
+    points: {
+      type: Array,
+      required: true
+    }
   },
   computed: {
-    points() {
-      return "100,100 150,25 150,75 200,0";
+    drawPoints() {
+      return this.points.slice(0, 6).map(p => `${p.x},${p.y}`).join(" ");
     }
   },
   methods: {
