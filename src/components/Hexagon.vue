@@ -1,5 +1,5 @@
 <template>
-  <polygon :stroke="stroke" :strokeWidt="strokeWidth" :fill="fill" :points="drawPoints" />  
+  <polygon @click="click" :stroke="stroke" :strokeWidth="strokeWidth" :fill="fill" :points="drawPoints" />  
 </template>
 
 <script>
@@ -22,12 +22,17 @@ export default {
       required: true
     }
   },
+  emits: ["click"],
   computed: {
     drawPoints() {
       return this.points.slice(0, 6).map(p => `${p.x},${p.y}`).join(" ");
     }
   },
   methods: {
+    click() {
+      console.log("click");
+      this.$emit("click");
+    }
   }
 }
 </script>

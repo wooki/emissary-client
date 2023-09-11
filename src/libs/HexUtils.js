@@ -25,6 +25,10 @@ export function Corners(x, y, size) {
 }
 
 export function Center(x, y, size, xOffset, yOffset) {
+  
+  if (xOffset === undefined) xOffset = 0;
+  if (yOffset === undefined) yOffset = 0;
+
   const hs = Sizes(size);
   const position = {
     x: xOffset + hs.x * x + (y - 1) * hs.xodd,

@@ -1,6 +1,6 @@
 <template>
   <div class="report">
-    <Map :map="map" />
+    <Map :map="map" @select="SelectHexagon" />
   </div>
 </template>
 
@@ -23,6 +23,9 @@ export default {
     }
   },
   methods: {
+    SelectHexagon(hex) {
+      console.log("SelectHexagon", hex);
+    }
   }
 }
 </script>
