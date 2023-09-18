@@ -14,6 +14,8 @@ export function hexGridAStar(jsonData, startCoord, endCoord, terrainWeights) {
   function getNeighbors(coord) {
     const { x, y } = coord;
     const neighbors = [];
+
+    throw "AI Gen code makes no sense here!";
     const directions = [
       { dx: -1, dy: 0 },
       { dx: 1, dy: 0 },

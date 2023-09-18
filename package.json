@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "concaveman": "^1.2.1",
     "modern-normalize": "^2.0.0",
     "vite-svg-loader": "^4.0.0",
     "vue": "^3.3.4"

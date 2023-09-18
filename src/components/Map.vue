@@ -1,7 +1,9 @@
 <template>
   <div class="map" @mousemove="mousemove" @mousedown="mousedown" @mouseup="mouseup" @wheel="wheel" style="background-color: #f0eae8;">
     <svg v-if="mounted" xmlns="http://www.w3.org/2000/svg" :viewBox="viewBox">    
-      <Hexagon @click="SelectHexagon(hex)" v-for="hex in mapHexagons" :key="hex.key" :points="hex.points" :fill="hex.fill" strokeWidth="1" :stroke="hex.stroke" />      
+      <Hexagon :terrain="hex.terrain" :coord="`${hex.x},${hex.y}`" @click="SelectHexagon(hex)" v-for="hex in mapHexagons" :key="hex.key" :points="hex.points" :fill="hex.fill" strokeWidth="1" :stroke="hex.stroke" />
+      <text v-for="label in mapLabels" :key="label.key" :x="label.x" :y="label.y" :class="label.class">{{ label.text }}</text>
+      <path v-for="border in mapBorders" :key="border.key" :d="border.path" :stroke-width="6" :stroke="border.stroke" fill="none" stroke-dasharray="10,15" stroke-linecap="round" />
     </svg>
     <!-- {{ JSON.stringify(map) }} -->    
   </div>
@@ -9,7 +11,8 @@
 
 <script>
 import Hexagon from './Hexagon.vue'
-import {Corners, Center} from '../libs/HexUtils'
+import {Corners, Center, AdjacentCoords} from '../libs/HexUtils'
+import concaveman from 'concaveman';
 
 export default {
   props: {
@@ -30,8 +33,8 @@ export default {
         lowland: "limegreen",
         forest: "forestgreen",
         desert: "goldenrod",
-        town: "black",
-        city: "red",
+        town: "Sienna",
+        city: "Sienna",
         unknown: "#f0eae8",      
       }
     },    
@@ -93,20 +96,115 @@ export default {
       return DisplayBox;      
     },
     mapHexagons() {
-      var test = {
-        "0,0": {
-          "x": 0,
-          "y": 0,
-          "terrain": "city"
-        },
-      };
-      // return Object.values(test).map((hex) => {
-      return Object.values(this.map).map((hex) => {
+      return Object.values(this.map).map((hex) => {        
+          return this.GetMapHexFromArea(hex);
+      });
+    },
+    mapLabels() {
+      return this.mapSettlements.map((hex) => {
         const center = Center(hex.x, hex.y, this.hexagonSize, 0, 0);
         const points = Corners(center.x, center.y, this.hexagonSize)
-        
+      
         return {
-          x: hex.y,
+          x: points[0].x,
+          y: points[0].y,
+          key: `${hex.x},${hex.y}`,
+          text: hex.name,
+          class: "label label-" + hex.terrain
+        }
+      });
+    },
+    mapSettlements() {
+      return Object.values(this.map).
+        filter(hex => ["city", "town"].includes(hex.terrain))
+    },
+    mapBorders() {
+      return this.mapSettlements.map((settlement) => {
+        
+        let stroke = '#000';
+
+        // find all edges of this province
+        let edgePointPairs = [];
+        Object.values(this.mapHexagons).forEach(hex => {
+
+          // process only if this hex belongs to this settlement
+          if (this.IsSameCoord(hex.area.closest_settlement, settlement)) {
+
+            stroke = '#000';
+
+            // check adjacent in each direction and add points for that
+            // edge of it is not                     
+            let adjacent = AdjacentCoords(hex.area);
+
+            adjacent.forEach((neighbour, index) => {
+              let neighbourHex = this.GetMapHexFromCoord(neighbour);
+              
+              console.log("points", index);    
+
+              if (neighbourHex &&
+                  !this.IsSameCoord(neighbourHex, settlement) &&
+                  !this.IsSameCoord(neighbourHex.area.closest_settlement, settlement)) {
+                    
+                    console.log("neighbourHex", neighbourHex.points);                    
+                    let p1 = neighbourHex.points[(index + 3) % 6];
+                    let p2 = neighbourHex.points[((index) + 4) % 6];
+                    edgePointPairs.push([p1, p2])
+              }
+            });            
+          }
+        });
+        let path = "";
+        edgePointPairs.forEach((edgePointPair) => {
+          // console.log("edgePointPair", edgePointPair);
+          path += ` M ${edgePointPair[0].x},${edgePointPair[0].y} L ${edgePointPair[1].x},${edgePointPair[1].y}`
+        }); 
+        console.log("path", path);       
+        return {
+          key: `border-${settlement.name}`,
+          // points: concaveman(edgePoints).map(p => `${p[0]} ${p[1]}`).join(" "),
+          // points: this.SortByClockwiseOrder(edgePoints).map(p => `${p.x} ${p.y}`).join(" ")
+          path: path,
+          stroke: stroke
+        }
+
+      });
+    }
+  },
+  methods: {
+    // SortByClockwiseOrder(points) {
+    //   // Calculate the centroid of all points
+    //   const centroid = points.reduce(
+    //     (acc, point) => {
+    //       acc.x += point.x;
+    //       acc.y += point.y;
+    //       return acc;
+    //     },
+    //     { x: 0, y: 0 }
+    //   );
+    //   centroid.x /= points.length;
+    //   centroid.y /= points.length;
+
+    //   // Calculate the angle between each point and the centroid
+    //   points.forEach(point => {
+    //     point.angle = Math.atan2(point.y - centroid.y, point.x - centroid.x);
+    //   });
+
+    //   // Sort the points by angle in ascending order
+    //   points.sort((a, b) => a.angle - b.angle);
+
+    //   // Remove the temporary angle property
+    //   points.forEach(point => {
+    //     delete point.angle;
+    //   });
+
+    //   return points;
+    // },
+    GetMapHexFromArea(hex) {
+      const center = Center(hex.x, hex.y, this.hexagonSize, 0, 0);
+      const points = Corners(center.x, center.y, this.hexagonSize)
+      
+      return {
+          x: hex.x,
           y: hex.y,
           key: `${hex.x},${hex.y}`,
           terrain: hex.terrain,
@@ -114,12 +212,19 @@ export default {
           min: {x: points[5].x, y: points[0].y},
           max: {x: points[1].x, y: points[3].y},
           fill: this.terrainColours[hex.terrain],
-          stroke: '#00000099'
+          stroke: '#00000099',
+          area: hex
         }
-      });
-    }
-  },
-  methods: {
+    },
+    IsSameCoord(c1, c2) {
+      return (c1 && c2 && c1.x == c2.x && c1.y == c2.y);
+    },
+    GetMapHexFromCoord(coord) {
+      if (this.map[`${coord.x},${coord.y}`]) {
+        return this.GetMapHexFromArea(this.map[`${coord.x},${coord.y}`]);
+      }
+      return null;
+    },
     SelectHexagon(hex) {
       console.log("SelectHexagon", hex);
       this.$emit("select", this.map[`${hex.x},${hex.y}`]);
@@ -192,6 +297,12 @@ export default {
     left: 0;
     right: 0;
     bottom: 0;
+  }
+  text.label {
+    font-size: 38px;
+    font-weight: bold;
+    text-shadow: 0 0 2px rgba(255, 255, 255, 0.6);
+    user-select: none;    
   }
   
 </style>

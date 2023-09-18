@@ -36,3 +36,15 @@ export function Center(x, y, size, xOffset, yOffset) {
   };
   return position;
 }
+
+export function AdjacentCoords(coord) {
+  const coords = [
+    { x: coord.x, y: coord.y - 1 },
+    { x: coord.x + 1, y: coord.y },
+    { x: coord.x + 1, y: coord.y + 1 },
+    { x: coord.x, y: coord.y + 1 },    
+    { x: coord.x - 1, y: coord.y },
+    { x: coord.x - 1, y: coord.y - 1 }
+  ];
+  return coords;
+}
