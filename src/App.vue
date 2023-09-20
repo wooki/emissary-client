@@ -1,7 +1,7 @@
 <template>
   <header>
     <Logo class="logo" />
-    <button class="icon" @click="upload" title="Upload report file"><UploadIcon /></button>        
+    <button class="icon" @click="upload" title="Upload report file"><UploadIcon /></button>
   </header>
   <main :class="{noreport: !report}">
     <Report v-if="report" :report="report" />
@@ -37,14 +37,18 @@ export default {
       this.$refs.uploadReportDialogOpen.close();
       if (data.map && data.my_kingdom && data.kingdoms) {
         this.report = data;
-        console.log("loaded", data);
+        localStorage.setItem("report", JSON.stringify(data));
       }
     }
+  },
+  mounted() {
+    let report = localStorage.getItem("report");
+    if (report) this.report = JSON.parse(report);
   }
 }
 </script>
 
-<style scoped>
+<style>
 header {
   height: 50px;
   display: flex;
@@ -61,26 +65,27 @@ header {
     fill: currentColor;
     margin-right: auto;
     height: 40px;
-    width: auto;    
-  }  
+    width: auto;
+  }
 
-  button {    
-    flex: 0 1 auto;    
+  button {
+    flex: 0 1 auto;
   }
 }
 
-main {    
+main {
   background-size: cover;
-  min-height: calc(100vh - 50px);    
+  min-height: calc(100vh - 50px);
 
   &.noreport {
     &:before {
       opacity: 0.66;
       content: "";
       background-image: url('./assets/bg.webp');
+      background-size: cover;
       display: block;
       min-height: calc(100vh - 50px);
-    }  
+    }
   }
 }
 </style>

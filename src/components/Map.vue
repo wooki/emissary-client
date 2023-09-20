@@ -1,11 +1,11 @@
 <template>
   <div class="map" @mousemove="mousemove" @mousedown="mousedown" @mouseup="mouseup" @wheel="wheel" style="background-color: #f0eae8;">
-    <svg v-if="mounted" xmlns="http://www.w3.org/2000/svg" :viewBox="viewBox">    
+    <svg v-if="mounted" xmlns="http://www.w3.org/2000/svg" :viewBox="viewBox">
       <Hexagon :terrain="hex.terrain" :coord="`${hex.x},${hex.y}`" @click="SelectHexagon(hex)" v-for="hex in mapHexagons" :key="hex.key" :points="hex.points" :fill="hex.fill" strokeWidth="1" :stroke="hex.stroke" />
       <text v-for="label in mapLabels" :key="label.key" :x="label.x" :y="label.y" :class="label.class">{{ label.text }}</text>
       <path v-for="border in mapBorders" :key="border.key" :d="border.path" :stroke-width="6" :stroke="border.stroke" fill="none" stroke-dasharray="10,15" stroke-linecap="round" />
     </svg>
-    <!-- {{ JSON.stringify(map) }} -->    
+    <!-- {{ JSON.stringify(map) }} -->
   </div>
 </template>
 
@@ -35,11 +35,11 @@ export default {
         desert: "goldenrod",
         town: "Sienna",
         city: "Sienna",
-        unknown: "#f0eae8",      
+        unknown: "#f0eae8",
       }
-    },    
+    },
   },
-  emits: ["selected"],  
+  emits: ["selected"],
   components: {
     Hexagon
   },
@@ -55,7 +55,7 @@ export default {
       mouseDown: false,
       scrollSpeed: 5
     };
-  },  
+  },
   computed: {
     clientWidth() {
       if (this.mounted) return this.$el.clientWidth;
@@ -79,8 +79,8 @@ export default {
     viewBox() {
       if (!this.mounted) return "0 0 0 0";
 
-      let bounds = this.mapBounds;      
-      
+      let bounds = this.mapBounds;
+
       let scale = this.scales[this.scaleIndex];
 
       let centerX = this.mapBounds.min.x + Math.round((this.mapBounds.max.x - this.mapBounds.min.x) / 2);
@@ -93,10 +93,10 @@ export default {
       displayY = displayY + this.focusY;
 
       let DisplayBox = `${displayX} ${displayY} ${displayWidth} ${displayHeight}`;
-      return DisplayBox;      
+      return DisplayBox;
     },
     mapHexagons() {
-      return Object.values(this.map).map((hex) => {        
+      return Object.values(this.map).map((hex) => {
           return this.GetMapHexFromArea(hex);
       });
     },
@@ -104,7 +104,7 @@ export default {
       return this.mapSettlements.map((hex) => {
         const center = Center(hex.x, hex.y, this.hexagonSize, 0, 0);
         const points = Corners(center.x, center.y, this.hexagonSize)
-      
+
         return {
           x: points[0].x,
           y: points[0].y,
@@ -120,7 +120,7 @@ export default {
     },
     mapBorders() {
       return this.mapSettlements.map((settlement) => {
-        
+
         let stroke = '#000';
 
         // find all edges of this province
@@ -133,32 +133,32 @@ export default {
             stroke = '#000';
 
             // check adjacent in each direction and add points for that
-            // edge of it is not                     
+            // edge of it is not
             let adjacent = AdjacentCoords(hex.area);
 
             adjacent.forEach((neighbour, index) => {
               let neighbourHex = this.GetMapHexFromCoord(neighbour);
-              
-              console.log("points", index);    
+
+              console.log("points", index);
 
               if (neighbourHex &&
                   !this.IsSameCoord(neighbourHex, settlement) &&
                   !this.IsSameCoord(neighbourHex.area.closest_settlement, settlement)) {
-                    
-                    console.log("neighbourHex", neighbourHex.points);                    
+
+                    console.log("neighbourHex", neighbourHex.points);
                     let p1 = neighbourHex.points[(index + 3) % 6];
                     let p2 = neighbourHex.points[((index) + 4) % 6];
                     edgePointPairs.push([p1, p2])
               }
-            });            
+            });
           }
         });
         let path = "";
         edgePointPairs.forEach((edgePointPair) => {
           // console.log("edgePointPair", edgePointPair);
           path += ` M ${edgePointPair[0].x},${edgePointPair[0].y} L ${edgePointPair[1].x},${edgePointPair[1].y}`
-        }); 
-        console.log("path", path);       
+        });
+        console.log("path", path);
         return {
           key: `border-${settlement.name}`,
           // points: concaveman(edgePoints).map(p => `${p[0]} ${p[1]}`).join(" "),
@@ -202,7 +202,7 @@ export default {
     GetMapHexFromArea(hex) {
       const center = Center(hex.x, hex.y, this.hexagonSize, 0, 0);
       const points = Corners(center.x, center.y, this.hexagonSize)
-      
+
       return {
           x: hex.x,
           y: hex.y,
@@ -234,30 +234,30 @@ export default {
         this.scaleIndex = this.scaleIndex - 1;
       } else if (e.deltaY < 0 && this.scaleIndex < (this.scales.length - 1)) {
         this.scaleIndex = this.scaleIndex + 1;
-      }      
+      }
     },
     mousedown(e) {
-      this.mouseDown = true; 
+      this.mouseDown = true;
       this.clientX = e.clientX;
       this.clientY = e.clientY;
-    },  
+    },
     mouseup() {
-      this.mouseDown = false; 
+      this.mouseDown = false;
       this.clientX = null;
       this.clientY = null;
-    },  
+    },
     mousemove(e) {
       if (this.mouseDown && this.clientX && this.clientY) {
 
         let scale = this.scales[this.scaleIndex];
 
-        this.focusX = this.focusX + Math.round((this.clientX - e.clientX) * this.scrollSpeed / scale); 
-        this.focusY = this.focusY + Math.round((this.clientY - e.clientY) * this.scrollSpeed / scale); 
+        this.focusX = this.focusX + Math.round((this.clientX - e.clientX) * this.scrollSpeed / scale);
+        this.focusY = this.focusY + Math.round((this.clientY - e.clientY) * this.scrollSpeed / scale);
 
         this.clientX = e.clientX;
         this.clientY = e.clientY;
       }
-    },  
+    },
     getMapBounds() {
       let min = {x: Infinity, y: Infinity};
       let max = {x: 0, y: 0};
@@ -265,9 +265,9 @@ export default {
         if (hex.min.x < min.x) min.x = Math.floor(hex.min.x);
         if (hex.min.y < min.y) min.y = Math.floor(hex.min.y);
         if (hex.max.x > max.x) max.x = Math.ceil(hex.max.x);
-        if (hex.max.y > max.y) max.y = Math.ceil(hex.max.y);        
+        if (hex.max.y > max.y) max.y = Math.ceil(hex.max.y);
       });
-      
+
       return {
         min,
         max
@@ -297,12 +297,13 @@ export default {
     left: 0;
     right: 0;
     bottom: 0;
+    height: inherit;
   }
   text.label {
     font-size: 38px;
     font-weight: bold;
     text-shadow: 0 0 2px rgba(255, 255, 255, 0.6);
-    user-select: none;    
+    user-select: none;
   }
-  
+
 </style>
