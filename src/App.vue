@@ -50,7 +50,7 @@ export default {
 
 <style>
 header {
-  height: 50px;
+  height: var(--header-height);
   display: flex;
   flex-wrap: nowrap;
   justify-content: flex-start;
@@ -75,7 +75,7 @@ header {
 
 main {
   background-size: cover;
-  min-height: calc(100vh - 50px);
+  min-height: calc(100vh - var(--header-height));
 
   &.noreport {
     &:before {
@@ -84,7 +84,7 @@ main {
       background-image: url('./assets/bg.webp');
       background-size: cover;
       display: block;
-      min-height: calc(100vh - 50px);
+      min-height: calc(100vh - var(--header-height));
     }
   }
 }

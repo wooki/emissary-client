@@ -11,6 +11,7 @@
   --color-dark-blue: #00054f;
   --color-dark-green: #054f00;  
   --color-button-text: #e8dfdc;
+  --header-height: 50px;
 }
 
 @media (prefers-color-scheme: dark) {

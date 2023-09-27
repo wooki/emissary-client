@@ -285,11 +285,13 @@ export default {
 
 <style scoped>
   .map {
-    width: calc(100vh - 60px);
-    height: calc(100vh - 60px);
+    /* width: calc(100vh - 60px);
+    height: calc(100vh - 60px); */
     position: relative;
     overflow: hidden;
     border: 4px solid black;
+    max-width: 100%;
+    max-height: 100%;
   }
   svg {
     position: absolute;
@@ -298,6 +300,9 @@ export default {
     right: 0;
     bottom: 0;
     height: inherit;
+    width: inherit;
+    max-width: 100%;
+    max-height: 100%;
   }
   text.label {
     font-size: 38px;
