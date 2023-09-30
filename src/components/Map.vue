@@ -125,44 +125,36 @@ export default {
 
         // find all edges of this province
         let edgePointPairs = [];
-        Object.values(this.mapHexagons).forEach(hex => {
-
-          // process only if this hex belongs to this settlement
-          if (this.IsSameCoord(hex.area.closest_settlement, settlement)) {
-
+        console.log("border", settlement.borders);
+        settlement.borders.forEach(border => {
+        
             stroke = '#000';
 
             // check adjacent in each direction and add points for that
             // edge of it is not
-            let adjacent = AdjacentCoords(hex.area);
+            let adjacent = AdjacentCoords(border);
 
             adjacent.forEach((neighbour, index) => {
               let neighbourHex = this.GetMapHexFromCoord(neighbour);
 
-              console.log("points", index);
-
               if (neighbourHex &&
                   !this.IsSameCoord(neighbourHex, settlement) &&
-                  !this.IsSameCoord(neighbourHex.area.closest_settlement, settlement)) {
+                  !this.IsSameCoord(neighbourHex.area.province, settlement)) {
 
-                    console.log("neighbourHex", neighbourHex.points);
+                    // console.log("neighbourHex", neighbourHex.points);
                     let p1 = neighbourHex.points[(index + 3) % 6];
                     let p2 = neighbourHex.points[((index) + 4) % 6];
                     edgePointPairs.push([p1, p2])
               }
             });
-          }
         });
         let path = "";
         edgePointPairs.forEach((edgePointPair) => {
-          // console.log("edgePointPair", edgePointPair);
           path += ` M ${edgePointPair[0].x},${edgePointPair[0].y} L ${edgePointPair[1].x},${edgePointPair[1].y}`
         });
-        console.log("path", path);
+        
         return {
           key: `border-${settlement.name}`,
-          // points: concaveman(edgePoints).map(p => `${p[0]} ${p[1]}`).join(" "),
-          // points: this.SortByClockwiseOrder(edgePoints).map(p => `${p.x} ${p.y}`).join(" ")
           path: path,
           stroke: stroke
         }
