@@ -1,9 +1,13 @@
 <template>
-  <div class="map" @mousemove="mousemove" @mousedown="mousedown" @mouseup="mouseup" @wheel="wheel" style="background-color: #f0eae8;">
+  <div class="map" @mousemove="mousemove" @mousedown="mousedown" @mouseup="mouseup" @wheel="wheel">
     <svg v-if="mounted" xmlns="http://www.w3.org/2000/svg" :viewBox="viewBox">
-      <Hexagon :terrain="hex.terrain" :coord="`${hex.x},${hex.y}`" @click="SelectHexagon(hex)" v-for="hex in mapHexagons" :key="hex.key" :points="hex.points" :fill="hex.fill" strokeWidth="1" :stroke="hex.stroke" />
-      <text v-for="label in mapLabels" :key="label.key" :x="label.x" :y="label.y" :class="label.class">{{ label.text }}</text>
+      <Hexagon @mouseenter="hexHighlight" @mouseleave="hexUnhighlight" :data="hex" :terrain="hex.terrain" :coord="`${hex.x},${hex.y}`" @click="SelectHexagon(hex)" v-for="hex in mapHexagons" :key="hex.key" :points="hex.points" :fill="hex.fill" strokeWidth="1" :stroke="hex.stroke" />
       <path v-for="border in mapBorders" :key="border.key" :d="border.path" :stroke-width="6" :stroke="border.stroke" fill="none" stroke-dasharray="10,15" stroke-linecap="round" />
+      <text v-for="label in mapLabels" :key="label.key" :x="label.x" :y="label.y" :class="label.class">{{ label.text }}</text>      
+
+      <Hexagon v-if="hoveredHex" terrain="hovered" :coord="`${hoveredHex.x},${hoveredHex.y}`" :points="hoveredHex.points" fill="none" strokeWidth="2" stroke="red" />
+      <Hexagon v-if="selectedHex" terrain="selected" :coord="`${selectedHex.x},${selectedHex.y}`" :points="selectedHex.points" fill="none" strokeWidth="6" stroke="red" />
+
     </svg>
     <!-- {{ JSON.stringify(map) }} -->
   </div>
@@ -11,7 +15,7 @@
 
 <script>
 import Hexagon from './Hexagon.vue'
-import {Corners, Center, AdjacentCoords} from '../libs/HexUtils'
+import {Corners, Center, AdjacentCoords, SameCoord, ExtractPaths} from '../libs/HexUtils'
 import concaveman from 'concaveman';
 
 export default {
@@ -53,7 +57,9 @@ export default {
       scales: [0.3, 0.5, 0.75, 1, 1.2, 1.4, 1.8, 2, 3, 4, 6, 10],
       scaleIndex: 2,
       mouseDown: false,
-      scrollSpeed: 5
+      scrollSpeed: 5,
+      hoveredHex: null,
+      selectedHex: null
     };
   },
   computed: {
@@ -82,10 +88,11 @@ export default {
       let bounds = this.mapBounds;
 
       let scale = this.scales[this.scaleIndex];
+      let ratio = this.clientWidth / this.clientHeight      
 
       let centerX = this.mapBounds.min.x + Math.round((this.mapBounds.max.x - this.mapBounds.min.x) / 2);
       let centerY = this.mapBounds.min.y + Math.round((this.mapBounds.max.y - this.mapBounds.min.y) / 2);
-      let displayWidth = Math.round((this.mapBounds.max.x - this.mapBounds.min.x) / scale);
+      let displayWidth = Math.round((this.mapBounds.max.x - this.mapBounds.min.x) / scale * ratio);
       let displayHeight = Math.round((this.mapBounds.max.y - this.mapBounds.min.y) / scale);
       let displayX = centerX - Math.round(displayWidth / 2);
       let displayY = centerY - Math.round(displayHeight / 2);
@@ -125,7 +132,6 @@ export default {
 
         // find all edges of this province
         let edgePointPairs = [];
-        console.log("border", settlement.borders);
         settlement.borders.forEach(border => {
         
             stroke = '#000';
@@ -138,8 +144,8 @@ export default {
               let neighbourHex = this.GetMapHexFromCoord(neighbour);
 
               if (neighbourHex &&
-                  !this.IsSameCoord(neighbourHex, settlement) &&
-                  !this.IsSameCoord(neighbourHex.area.province, settlement)) {
+                  !SameCoord(neighbourHex, settlement) &&
+                  !SameCoord(neighbourHex.area.province, settlement)) {
 
                     // console.log("neighbourHex", neighbourHex.points);
                     let p1 = neighbourHex.points[(index + 3) % 6];
@@ -151,7 +157,23 @@ export default {
         let path = "";
         edgePointPairs.forEach((edgePointPair) => {
           path += ` M ${edgePointPair[0].x},${edgePointPair[0].y} L ${edgePointPair[1].x},${edgePointPair[1].y}`
-        });
+        });          
+
+        // this sorts out the borders into longer lines but due to way
+        // we add a dashed line this actually doesn't look as good on 
+        // the screen - so remain with old solution for now
+        // let borderPaths = ExtractPaths(edgePointPairs);
+        // borderPaths.forEach((borderPath) => {
+        //   if (borderPath.length > 0) {
+        //     let operator = "M";
+        //     borderPath.forEach((point) => {
+        //       path += ` ${operator} ${point[0].x},${point[0].y}`
+        //       operator = "L";
+        //     });          
+        //     let point = borderPath.toReversed()[0];
+        //     path += ` ${operator} ${point[1].x},${point[1].y}`            
+        //   }
+        // });        
         
         return {
           key: `border-${settlement.name}`,
@@ -163,34 +185,12 @@ export default {
     }
   },
   methods: {
-    // SortByClockwiseOrder(points) {
-    //   // Calculate the centroid of all points
-    //   const centroid = points.reduce(
-    //     (acc, point) => {
-    //       acc.x += point.x;
-    //       acc.y += point.y;
-    //       return acc;
-    //     },
-    //     { x: 0, y: 0 }
-    //   );
-    //   centroid.x /= points.length;
-    //   centroid.y /= points.length;
-
-    //   // Calculate the angle between each point and the centroid
-    //   points.forEach(point => {
-    //     point.angle = Math.atan2(point.y - centroid.y, point.x - centroid.x);
-    //   });
-
-    //   // Sort the points by angle in ascending order
-    //   points.sort((a, b) => a.angle - b.angle);
-
-    //   // Remove the temporary angle property
-    //   points.forEach(point => {
-    //     delete point.angle;
-    //   });
-
-    //   return points;
-    // },
+    hexHighlight(hex) {
+      this.hoveredHex = hex;
+    },
+    hexUnhighlight(hex) {
+      this.hoveredHex = null;
+    },
     GetMapHexFromArea(hex) {
       const center = Center(hex.x, hex.y, this.hexagonSize, 0, 0);
       const points = Corners(center.x, center.y, this.hexagonSize)
@@ -208,9 +208,6 @@ export default {
           area: hex
         }
     },
-    IsSameCoord(c1, c2) {
-      return (c1 && c2 && c1.x == c2.x && c1.y == c2.y);
-    },
     GetMapHexFromCoord(coord) {
       if (this.map[`${coord.x},${coord.y}`]) {
         return this.GetMapHexFromArea(this.map[`${coord.x},${coord.y}`]);
@@ -218,7 +215,7 @@ export default {
       return null;
     },
     SelectHexagon(hex) {
-      console.log("SelectHexagon", hex);
+      this.selectedHex = hex;
       this.$emit("select", this.map[`${hex.x},${hex.y}`]);
     },
     wheel(e) {
@@ -228,10 +225,10 @@ export default {
         this.scaleIndex = this.scaleIndex + 1;
       }
     },
-    mousedown(e) {
-      this.mouseDown = true;
-      this.clientX = e.clientX;
-      this.clientY = e.clientY;
+    mousedown(e) {      
+        this.mouseDown = true;
+        this.clientX = e.clientX;
+        this.clientY = e.clientY;      
     },
     mouseup() {
       this.mouseDown = false;
@@ -281,9 +278,9 @@ export default {
     height: calc(100vh - 60px); */
     position: relative;
     overflow: hidden;
-    border: 4px solid black;
     max-width: 100%;
-    max-height: 100%;
+    max-height: 100%;   
+    background-color: black; 
   }
   svg {
     position: absolute;
@@ -295,11 +292,13 @@ export default {
     width: inherit;
     max-width: 100%;
     max-height: 100%;
+    border: 4px solid black;
+    background-color: #f0eae8;    
   }
   text.label {
     font-size: 38px;
     font-weight: bold;
-    text-shadow: 0 0 2px rgba(255, 255, 255, 0.6);
+    text-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
     user-select: none;
   }
 

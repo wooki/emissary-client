@@ -1,6 +1,8 @@
 <template>
   <div class="report">
-    <Map :map="map" @select="SelectHexagon" />
+    <div class="map-container">
+      <Map :map="map" @select="SelectHexagon" />
+    </div>
     <div class="info">Info panel</div>
   </div>
 </template>
@@ -33,32 +35,46 @@ export default {
 
 <style scoped>
   .report {
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    flex-direction: column;    
+    display: grid;
+    grid-template-columns: 1fr;    
+    grid-template-rows: 2fr minmax(300px, 1fr);
+    height: calc(100vh - var(--header-height));
+    max-height: calc(100vh - var(--header-height));
   }
 
+  .map-container {
+    grid-row: 1;
+    grid-column: 1;
+    position: relative;
+  }
   .map {
-    flex: 0 0 100vw;
-    width: 100vw;
-    height: 100vw;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
   }
 
   .info {
     display: block;
     background: green;
-    flex: 1 0 auto;
-    width: 100%;
-    height: calc(100vh - calc(100vw + var(--header-height)));
+    grid-row: 2;
+    grid-column: 1;
   }
 
-  @media (min-aspect-ratio: 1/1) {
+  @media (min-aspect-ratio: 1.2/1) {
     .report {
-      flex-direction: row;    
+      grid-template-columns: 2fr minmax(300px, 1fr);    
+      grid-template-rows: 1fr;
     }
+
+    .map-container {      
+    }
+
     .info {
-      background: red;
+      background: gold;
+      grid-row: 1;
+      grid-column: 2;
     }
   }
   
