@@ -59,18 +59,12 @@ export default {
       mouseDown: false,
       scrollSpeed: 5,
       hoveredHex: null,
-      selectedHex: null
+      selectedHex: null,
+      clientHeight: 0,
+      clientWidth: 0
     };
   },
   computed: {
-    clientWidth() {
-      if (this.mounted) return this.$el.clientWidth;
-      return 0;
-    },
-    clientHeight() {
-      if (this.mounted) return this.$el.clientHeight;
-      return 0;
-    },
     mapBoundsPoints() {
       if (!this.mounted) return "0 0 0 0";
 
@@ -265,9 +259,18 @@ export default {
   },
   mounted() {
     this.mounted = true;
+    this.clientWidth = this.$el.clientWidth;
+    this.clientHeight = this.$el.clientHeight;
+    this.resizeObserver = new ResizeObserver((entries) => {
+      this.clientWidth = this.$el.clientWidth;
+      this.clientHeight = this.$el.clientHeight;
+      this.$forceUpdate();
+    });
+    this.resizeObserver.observe(this.$el);
   },
   beforeUnmount() {
     this.mounted = false;
+    this.resizeObserver.unobserve(this.$el);
   }
 }
 </script>

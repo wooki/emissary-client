@@ -3,12 +3,15 @@
     <div class="map-container">
       <Map :map="map" @select="SelectHexagon" />
     </div>
-    <div class="info">Info panel</div>
+    <div class="info">
+      <AreaPanel v-if="selectedHex" :area="selectedHex" />
+    </div>    
   </div>
 </template>
 
 <script>
 import Map from './Map.vue'
+import AreaPanel from './AreaPanel.vue'
 
 export default {
   props: {
@@ -18,7 +21,13 @@ export default {
     }
   },
   components: {
-    Map
+    Map,
+    AreaPanel
+  },
+  data() {
+    return {
+      selectedHex: null,
+    }
   },
   computed: {
     map() {
@@ -28,6 +37,7 @@ export default {
   methods: {
     SelectHexagon(hex) {
       console.log("SelectHexagon", hex);
+      this.selectedHex = hex;
     }
   }
 }
@@ -60,6 +70,7 @@ export default {
     background: green;
     grid-row: 2;
     grid-column: 1;
+    overflow: auto;
   }
 
   @media (min-aspect-ratio: 1.2/1) {
