@@ -1,16 +1,16 @@
 <template>
   <div class="area-panel">
-    <div class="terrain">{{  area.terrain }}</div>
-    <div v-if="area.owner" class="owner">Owner: {{  area.owner }}</div>
-    <div class="location">
-      <div class="coord">{{  area.x }}, {{  area.y }}</div>
-      <div class="province">{{ area.province ? area.province.name : area.name}}</div>
+    <AreaPanelSummary :area="area" />
+
+    <div class="area-panel-info">
+
     </div>
-    <div v-if="area.trade" class="trade">
-      <div class="coord">{{  area.trade.x }}, {{  area.trade.y }}</div>
-      <div class="province">{{ area.trade.name}}</div>
+
+    <div class="area-panel-features">
+
     </div>
-    <div v-if="area.store" class="store">
+
+    <!-- <div v-if="area.store" class="store">
       <div class="food">food: {{  area.store.food }}</div>
       <div class="goods">goods: {{  area.store.goods }}</div>
       <div class="gold">gold: {{  area.store.gold }}</div>      
@@ -24,7 +24,7 @@
         <div class="info-message">{{  item.message }}</div>
         <div class="info-data">{{  JSON.stringify(item.data) }}</div>
       </div>
-    </div>
+    </div> -->
     <!-- {{ JSON.stringify(area) }} -->
     
      
@@ -33,6 +33,8 @@
 </template>
 
 <script>
+import AreaPanelSummary from './AreaPanelSummary.vue'
+
 export default {
   props: {
     area: {
@@ -41,7 +43,7 @@ export default {
     }
   },
   components: {    
-    
+    AreaPanelSummary
   },
   methods: {
     
@@ -50,5 +52,44 @@ export default {
 </script>
 
 <style scoped>
-  
+  .area-panel {
+    display: grid;
+    grid-template-columns: 1fr 3fr 3fr;       
+    grid-template-rows: 1fr; 
+    gap: 12px;
+    height: 100%;    
+  }
+
+  .area-panel-summary {
+    min-width: 200px;
+    background-color: aqua;
+  }
+
+  .area-panel-info {
+    background-color: bisque;
+  }
+
+  .area-panel-features {
+    background-color: cornflowerblue;
+  }
+
+  @media (min-aspect-ratio: 1.2/1) {
+    .area-panel {
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr 3fr 3fr;      
+      gap: 24px;
+    }
+    .area-panel-summary {
+      min-width: unset;    
+      min-height: 100px;
+    }
+
+    .area-panel-info {
+      min-height: 150px;
+    }
+
+    .area-panel-features {           
+      min-height: 150px;          
+    }
+  }
 </style>
