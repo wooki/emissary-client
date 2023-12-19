@@ -19,14 +19,15 @@
       </form>
     </sl-tab-panel>
 
-  </sl-tab-group>
-  
+  </sl-tab-group>  
+
 </template>
 
 <script>
 import '@shoelace-style/shoelace/dist/components/tab/tab.js';
 import '@shoelace-style/shoelace/dist/components/tab-group/tab-group.js';
 import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js';
+import '@shoelace-style/shoelace/dist/components/alert/alert.js';
 
 export default {
   emits: ["loaded"],
@@ -47,7 +48,17 @@ export default {
       }
     },
     loadUrl() {
-      console.log("loadUrl", this.url);
+      fetch(this.url, {
+        headers: {
+          'Accept': 'application/json'
+        }
+      }).then((response) => {
+        response.json().then((data) => {
+          this.$emit("loaded", data);
+        });
+      }).catch((error) => {
+        console.error(error);
+      });
     }
   }
 }
@@ -70,6 +81,5 @@ export default {
   }
   button {
     align-self: flex-end;
-  }
-  
+  }    
 </style>

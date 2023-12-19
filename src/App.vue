@@ -6,15 +6,17 @@
   <main :class="{noreport: !report}">
     <Report v-if="report" :report="report" />
   </main>
-  <Dialog ref="uploadReportDialogOpen"><OpenReport @loaded="loaded"/></Dialog>
+  <sl-dialog ref="uploadReportDialogOpen" label="Load Report">
+    <OpenReport @loaded="loaded"/>
+  </sl-dialog>  
 </template>
 
 <script>
 import Report from './components/Report.vue'
-import Dialog from './components/Dialog.vue'
 import OpenReport from './components/OpenReport.vue'
 import Logo from './assets/emissary.svg'
 import UploadIcon from './assets/icons/upload.svg'
+import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 
 export default {
   data() {
@@ -26,15 +28,14 @@ export default {
     Logo,
     UploadIcon,
     Report,
-    Dialog,
     OpenReport
   },
   methods: {
     upload() {
-      this.$refs.uploadReportDialogOpen.open();
+      this.$refs.uploadReportDialogOpen.show();
     },
     loaded(data) {
-      this.$refs.uploadReportDialogOpen.close();
+      this.$refs.uploadReportDialogOpen.hide();
       if (data.map && data.my_kingdom && data.kingdoms) {
         this.report = data;
         localStorage.setItem("report", JSON.stringify(data));

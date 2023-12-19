@@ -2,11 +2,16 @@
   <div class="area-panel">
     <AreaPanelSummary :area="area" />
 
-    <div class="area-panel-info">
-
+    <div class="area-panel-reports">
+      <div v-for="report in aggregateReports" :key="report.source">
+        {{ report.type }}<br />
+        {{ JSON.stringify(report.info) }}<br />
+        {{ JSON.stringify(Array.from(report.values.entries())) }}<br />
+        <hr />
+      </div>
     </div>
 
-    <div class="area-panel-features">
+    <div class="area-panel-units">
 
     </div>
 
@@ -34,6 +39,7 @@
 
 <script>
 import AreaPanelSummary from './AreaPanelSummary.vue'
+import { AddFloats } from '@/libs/SafeMath.js'
 
 export default {
   props: {
@@ -45,8 +51,47 @@ export default {
   components: {    
     AreaPanelSummary
   },
+  computed: {
+    aggregateReports() {
+      
+      const reports = new Map();
+
+      if (!this.area.info) return [];
+
+      // one per type and one per store item, iterate and create or update
+      this.area.info.forEach((info) => {
+        reports.set(info.type, this.CreateOrAddToReport(reports, info));
+      });      
+
+      return Array.from(reports.values());
+    }
+  },
   methods: {
-    
+    CreateOrAddToReport: (reports, info) => {
+      let report = {};
+      if (reports.has(info.type)) {
+        report = reports.get(info.type);        
+      } else {
+        report = {
+          type: info.type,
+          info: [],
+          values: new Map()
+        }                
+      }
+
+      // add info and values
+      report.info.push(info);
+
+      Object.keys(info.data).forEach((key) => {
+        if (report.values.has(key)) {
+          report.values.set(key, AddFloats(report.values.get(key), info.data[key], 4));
+        } else {
+          report.values.set(key, info.data[key]);
+        }        
+      });
+
+      return report;
+    }
   }
 }
 </script>
@@ -65,11 +110,11 @@ export default {
     background-color: aqua;
   }
 
-  .area-panel-info {
+  .area-panel-reports {
     background-color: bisque;
   }
 
-  .area-panel-features {
+  .area-panel-units {
     background-color: cornflowerblue;
   }
 

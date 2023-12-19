@@ -303,6 +303,7 @@ export default {
     font-weight: bold;
     text-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
     user-select: none;
+    pointer-events: none;
   }
 
 </style>
