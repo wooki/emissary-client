@@ -3,9 +3,10 @@
     <AreaPanelSummary :area="area" />
 
     <div class="area-panel-reports">
-      
+      <div class="parchment"></div>
+
       <div class="area-panel-reports-container">
-        <div @click="SelectReport(reportIndex)" v-for="(report, reportIndex) in aggregateReports" :key="reportIndex" class="area-panel-report">
+        <div tabindex="0" @click="SelectReport(reportIndex)" @keypress.enter="SelectReport(reportIndex)" v-for="(report, reportIndex) in aggregateReports" :key="reportIndex" class="area-panel-report">
 
           <div v-if="report.base != null" class="area-panel-report-base">
             <div class="area-panel-report-title">{{ report.type }}</div>
@@ -36,6 +37,7 @@
     </div>
 
     <div class="area-panel-units">
+      <div class="parchment"></div>
 
     </div>    
      
@@ -97,7 +99,11 @@ export default {
   },
   methods: {
     SelectReport(index) {
-      this.selectedReportIndex = index;
+      if (this.selectedReportIndex == index) {
+        this.selectedReportIndex = null;
+      } else {
+        this.selectedReportIndex = index;
+      }
     },
     CreateOrAddToReport(reports, info) {
       let report = {};
@@ -136,33 +142,50 @@ export default {
     grid-template-columns: 1fr 3fr 3fr;       
     grid-template-rows: 1fr; 
     gap: 12px;
-    height: 100%;    
+    height: 100%;        
   }
 
   .area-panel-summary {
+    position: relative;
     min-width: 200px;
-    background-color: aqua;
+    background-color: transparent;    
+    color: var(--color-text);
   }
 
   .area-panel-reports {
-    background-color: bisque;
+    position: relative;
+    z-index: 1;
+    background-color: transparent;    
+    color: var(--color-text);
   }
 
   .area-panel-units {
-    background-color: cornflowerblue;
+    position: relative;
+    z-index: 1;
+    background-color: transparent;    
+    color: var(--color-text);
   }
 
   .area-panel-reports-container {
     display: flex;
     flex-wrap: wrap;
     gap: 12px 24px;
-    padding: 0 12px;
+    padding: 7px 7px;
   }
 
   .area-panel-report {
     flex: 1 1 80px;
     max-width: 120px;
     font-size: 12px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 2px;
+    border: 1px solid transparent;    
+    transition: all 100ms ease;
+  }
+  .area-panel-report:hover, .area-panel-report:focus-visible {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--color-text);
   }
 
   .area-panel-report-title {
@@ -172,8 +195,7 @@ export default {
   .area-panel-report-base {
     display: flex;
     flex-wrap: wrap;
-    gap: 2px 5px;
-    /* align-items: center; */
+    gap: 2px 5px;    
 
     .area-panel-report-title {
       width: 100%;
@@ -185,7 +207,7 @@ export default {
     }
     .area-panel-report-adjustment {
       font-family: 'Courier New', Courier, monospace;
-      line-height: 1.3;
+      line-height: 1.4;
       color: var(--color-green);
       &::before {
         content: "+"
@@ -226,7 +248,7 @@ export default {
     .area-panel {
       grid-template-columns: 1fr;
       grid-template-rows: 1fr 3fr 3fr;      
-      gap: 24px;
+      gap: 12px;
     }
     .area-panel-summary {
       min-width: unset;    

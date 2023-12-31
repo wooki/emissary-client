@@ -1,6 +1,8 @@
 <template>
   <div class="map" @mousemove="mousemove" @mousedown="mousedown" @mouseup="mouseup" @wheel="wheel">
+    <div class="parchment"></div>
     <svg v-if="mounted" xmlns="http://www.w3.org/2000/svg" :viewBox="viewBox">
+      
       <Hexagon @mouseenter="hexHighlight" @mouseleave="hexUnhighlight" :data="hex" :terrain="hex.terrain" :coord="`${hex.x},${hex.y}`" @click="SelectHexagon(hex)" v-for="hex in mapHexagons" :key="hex.key" :points="hex.points" :fill="hex.fill" strokeWidth="1" :stroke="hex.stroke" />
       <path v-for="border in mapBorders" :key="border.key" :d="border.path" :stroke-width="6" :stroke="border.stroke" fill="none" stroke-dasharray="10,15" stroke-linecap="round" />
       <text v-for="label in mapLabels" :key="label.key" :x="label.x" :y="label.y" :class="label.class">{{ label.text }}</text>      
@@ -93,7 +95,11 @@ export default {
       displayX = displayX + this.focusX;
       displayY = displayY + this.focusY;
 
-      let DisplayBox = `${displayX} ${displayY} ${displayWidth} ${displayHeight}`;
+      // set height and width to be whichever is larger
+      if (displayWidth > displayHeight) displayHeight = displayWidth;
+      if (displayHeight > displayWidth) displayWidth = displayHeight;
+
+      let DisplayBox = `${displayX} ${displayY} ${displayWidth * ratio} ${displayHeight}`;
       return DisplayBox;
     },
     mapHexagons() {
@@ -282,8 +288,7 @@ export default {
     position: relative;
     overflow: hidden;
     max-width: 100%;
-    max-height: 100%;   
-    background-color: black; 
+    max-height: 100%;       
   }
   svg {
     position: absolute;
@@ -295,8 +300,8 @@ export default {
     width: inherit;
     max-width: 100%;
     max-height: 100%;
-    border: 4px solid black;
-    background-color: #f0eae8;    
+    /* border: 4px solid black; */
+    /* background-color: var(--color-background);         */
   }
   text.label {
     font-size: 38px;
@@ -304,6 +309,10 @@ export default {
     text-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
     user-select: none;
     pointer-events: none;
+  }
+
+  .parchment {
+    z-index: unset;
   }
 
 </style>

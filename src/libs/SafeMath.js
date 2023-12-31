@@ -7,3 +7,9 @@ export function AddFloats(a, b, precision) {
     const z = Math.round(x + y) / multiplier;
     return z;
 }
+
+export function Rounded(x, precision) {
+    const multiplier = Math.pow(10, precision);    
+    const z = Math.round(x / multiplier) * multiplier;
+    return z;
+}

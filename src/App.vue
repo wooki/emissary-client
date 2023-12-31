@@ -9,6 +9,12 @@
   <sl-dialog ref="uploadReportDialogOpen" label="Load Report">
     <OpenReport @loaded="loaded"/>
   </sl-dialog>  
+  <svg style="position: absolute; height: 0; width: 0; opacity: 0;">
+    <filter id="wavy">
+    <feTurbulence x="0" y="0" baseFrequency="0.02" numOctaves="5" seed="1" />
+    <feDisplacementMap in="SourceGraphic" scale="6" />    
+  </filter>  
+</svg>
 </template>
 
 <script>
@@ -65,7 +71,7 @@ header {
     flex: 0 1 auto;
     fill: currentColor;
     margin-right: auto;
-    height: 40px;
+    height: 36px;
     width: auto;
   }
 
@@ -77,6 +83,8 @@ header {
 main {
   background-size: cover;
   min-height: calc(100vh - var(--header-height));
+  background-color: var(--color-dark-bg);  
+  color: var(--color-dark-bg-text);    
 
   &.noreport {
     &:before {
@@ -87,6 +95,12 @@ main {
       display: block;
       min-height: calc(100vh - var(--header-height));
     }
+  }
+}
+
+@media (min-aspect-ratio: 1.2/1) {
+  header {
+    padding: 5px 12px;
   }
 }
 </style>

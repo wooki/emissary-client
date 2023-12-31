@@ -48,14 +48,16 @@ export default {
     display: grid;
     grid-template-columns: 1fr;    
     grid-template-rows: 2fr minmax(300px, 1fr);
-    height: calc(100vh - var(--header-height));
-    max-height: calc(100vh - var(--header-height));
+    height: calc(calc(100vh - 12px) - var(--header-height));
+    max-height: calc(calc(100vh - 12px) - var(--header-height));
+    gap: 12px;
+    padding: 0 6px 12px 0;    
   }
 
   .map-container {
     grid-row: 1;
     grid-column: 1;
-    position: relative;
+    position: relative;        
   }
   .map {
     position: absolute;
@@ -67,7 +69,6 @@ export default {
 
   .info {
     display: block;
-    background: green;
     grid-row: 2;
     grid-column: 1;
     overflow: auto;
@@ -77,13 +78,13 @@ export default {
     .report {
       grid-template-columns: 2fr minmax(300px, 1fr);    
       grid-template-rows: 1fr;
+      padding: 0 12px;
     }
 
     .map-container {      
     }
 
     .info {
-      background: gold;
       grid-row: 1;
       grid-column: 2;
     }
