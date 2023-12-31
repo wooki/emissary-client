@@ -5,7 +5,20 @@
     <div class="area-panel-reports">
       <div class="parchment"></div>
 
-      <div class="area-panel-reports-container">
+      <div v-if="selectedReport" class="area-panel-details">
+        <button class="icon" @click="SelectReport(null)"><BackIcon /></button>
+        <div class="area-panel-report-title">{{ selectedReport.type }}</div>
+        <div class="area-panel-report-details-row" v-for="(item, itemIndex) in selectedReport.info" :key="itemIndex">
+            <!-- <div class="area-panel-report-details-type">{{ item.type }}</div> -->
+            <div class="area-panel-report-details-message">{{ item.message }}</div>
+            <div class="area-panel-report-details-data" v-for="(dataKey, dataKeyIndex) in Object.keys(item.data)" :key="dataKeyIndex">
+              <div class="area-panel-report-entry-title">{{ dataKey }}</div>
+              <div class="area-panel-report-entry-value" :class="{negative: item.data[dataKey] < 0, positive: item.data[dataKey] > 0}">{{ item.data[dataKey] }}</div>
+            </div> 
+          </div>  
+      </div>
+
+      <div v-else class="area-panel-reports-container">
         <div tabindex="0" @click="SelectReport(reportIndex)" @keypress.enter="SelectReport(reportIndex)" v-for="(report, reportIndex) in aggregateReports" :key="reportIndex" class="area-panel-report">
 
           <div v-if="report.base != null" class="area-panel-report-base">
@@ -22,18 +35,6 @@
           </div>                    
         </div>
       </div>
-
-      <div v-if="selectedReport" class="area-panel-details">
-        <div class="area-panel-report-title">{{ selectedReport.type }}</div>
-        <div class="area-panel-report-details-row" v-for="(item, itemIndex) in selectedReport.info" :key="itemIndex">
-            <div class="area-panel-report-details-type">{{ item.type }}</div>
-            <div class="area-panel-report-details-message">{{ item.message }}</div>
-            <div class="area-panel-report-details-data" v-for="(dataKey, dataKeyIndex) in Object.keys(item.data)" :key="dataKeyIndex">
-              <div class="area-panel-report-entry-title">{{ dataKey }}</div>
-              <div class="area-panel-report-entry-value">{{ item.data[dataKey] }}</div>
-            </div> 
-          </div>  
-      </div>
     </div>
 
     <div class="area-panel-units">
@@ -48,6 +49,8 @@
 <script>
 import AreaPanelSummary from './AreaPanelSummary.vue'
 import { AddFloats } from '@/libs/SafeMath.js'
+import BackIcon from '@/assets/icons/back.svg'
+
 
 export default {
   props: {
@@ -62,7 +65,8 @@ export default {
     };
   },  
   components: {    
-    AreaPanelSummary
+    AreaPanelSummary,
+    BackIcon
   },
   computed: {
     selectedReport() {
@@ -242,6 +246,71 @@ export default {
       }
       }
     }
+  }
+
+  .area-panel-details {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 12px;
+    font-size: 12px;
+
+    button {
+      position: absolute;
+      top: 0px;
+      right: 6px;
+      background-color: transparent;
+      color: var(--color-text);
+    }
+
+    .area-panel-report-title {
+      margin: 0 0 1em 0;
+    }
+
+    .area-panel-report-details-row {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      margin-bottom: 0.25em;      
+      padding-bottom: 0.25em;
+      font-size: 14px;
+      gap: 6px;
+      align-items: center;
+      border-bottom: 1px solid var(--color-text);
+    }
+
+    .area-panel-report-details-row:has(.area-panel-report-details-data) {
+      .area-panel-report-details-message {
+        padding-top: 13px;
+      }
+    }
+
+    .area-panel-report-details-message {
+      margin-right: auto;
+    }
+
+    .area-panel-report-entry-title {
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .area-panel-report-entry-value {
+      text-align: right;
+
+      &.positive {
+        color: var(--color-green);
+        &::before {
+          content: "+"
+        }
+      }
+      &.negative {
+        color: var(--color-red);  
+        &::before {
+          content: ""
+        }
+      }  
+    }  
   }
 
   @media (min-aspect-ratio: 1.2/1) {
