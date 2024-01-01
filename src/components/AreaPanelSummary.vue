@@ -2,17 +2,22 @@
   <div class="area-panel-summary">
     <div class="parchment"></div>
 
-    <div v-if="area.name" class="name"><label>Name</label><div class="field">{{ area.name }}</div></div>
+    <div class="name" v-if="!area.province && area.name">
+      <label>Capital</label>
+      <div class="field">
+        <Link @click="SelectArea" :x="area.x" :y="area.y" :name="area.name" />
+      </div>
+    </div>
+    <div v-else-if="area.name" class="name"><label>Name</label><div class="field">{{ area.name }}</div></div>
     <div class="terrain"><label>Terrain</label><div class="field">{{ area.terrain }}</div></div>
     <div v-if="area.owner" class="owner">
       <label>Owner</label>
       <div class="field">{{  area.owner }}</div>
     </div>
-    <div class="location">
+    <div class="location" v-if="area.province">
       <label>Province</label>
       <div class="field">
-        <div class="coord">{{  area.x }}, {{  area.y }}</div>
-        <div class="province">{{ area.province ? area.province.name : area.name}}</div>
+        <Link @click="SelectArea" :x="area.province.x" :y="area.province.y" :name="area.province.name" />
       </div>
     </div>
     <div v-if="area.trade" class="trade">
@@ -32,6 +37,7 @@
 
 <script>
 import { Rounded } from '@/libs/SafeMath.js'
+import Link from './Link.vue'
 
 export default {
   props: {
@@ -41,8 +47,9 @@ export default {
     }
   },
   components: {    
-    
+    Link
   },
+  emits: ["select"],
   computed: {
     population() {      
       if (this.area?.population) {
@@ -52,7 +59,9 @@ export default {
     }
   },
   methods: {
-    
+    SelectArea(area) {
+      this.$emit("select", area);
+    }
   }
 }
 </script>

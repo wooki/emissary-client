@@ -1,10 +1,10 @@
 <template>
   <div class="report">
     <div class="map-container">
-      <Map :map="map" @select="SelectHexagon" />
+      <Map :map="map" :area="selectedHex" @select="SelectHexagon" />
     </div>
     <div class="info">
-      <AreaPanel v-if="selectedHex" :area="selectedHex" />
+      <AreaPanel v-if="selectedHex" :area="selectedHex" @select="SelectArea"/>
     </div>    
   </div>
 </template>
@@ -37,6 +37,11 @@ export default {
   methods: {
     SelectHexagon(hex) {
       console.log("SelectHexagon", hex);
+      this.selectedHex = hex;
+    },
+    SelectArea(area) {
+      const hex = this.map[`${area.x},${area.y}`];
+      console.log("SelectArea", hex);
       this.selectedHex = hex;
     }
   }

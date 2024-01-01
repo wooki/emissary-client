@@ -22,6 +22,10 @@ import concaveman from 'concaveman';
 
 export default {
   props: {
+    area: {
+      type: Object,
+      default: null
+    },
     map: {
       type: Object,
       required: true
@@ -61,12 +65,17 @@ export default {
       mouseDown: false,
       scrollSpeed: 5,
       hoveredHex: null,
-      selectedHex: null,
       clientHeight: 0,
       clientWidth: 0
     };
   },
   computed: {
+    selectedHex() {
+      if (this.area) {
+        return this.GetMapHexFromArea(this.area);
+      }
+      return null;
+    },
     mapBoundsPoints() {
       if (!this.mounted) return "0 0 0 0";
 
@@ -215,7 +224,6 @@ export default {
       return null;
     },
     SelectHexagon(hex) {
-      this.selectedHex = hex;
       this.$emit("select", this.map[`${hex.x},${hex.y}`]);
     },
     wheel(e) {
