@@ -1,6 +1,5 @@
-
 :root {
-  --color-background: #E0C9A6;
+  --color-background: #e0c9a6;
   --color-text: #2b201c;
   --color-dark-bg: #371d10;
   --color-dark-bg-text: #ecdfca;
@@ -9,13 +8,14 @@
   --color-green: #00a300;
   --color-crimson: #660008;
   --color-dark-blue: #000766;
-  --color-dark-green: #076600;  
-  --color-button-text: #e8dfdc;  
+  --color-dark-green: #076600;
+  --color-button-text: #e8dfdc;
+  --color-link: var(--color-blue);
   --header-height: 50px;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {    
+  :root {
   }
 }
 
@@ -26,15 +26,20 @@
 body {
   background-color: var(--color-background);
   color: var(--color-text);
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-weight: 300;
   letter-spacing: -0.03em;
 }
-b, strong, h4, h5 {
+b,
+strong,
+h4,
+h5 {
   font-weight: 600;
   letter-spacing: -2px;
 }
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-weight: 800;
 }
 
@@ -50,10 +55,10 @@ button {
   cursor: pointer;
   height: 36px;
   line-height: 24px;
-  padding: 5px 10px;  
+  padding: 5px 10px;
   border-radius: 4px;
   transition: background 50ms ease-in;
-  position: relative;  
+  position: relative;
   &:hover {
     background-color: var(--color-red);
   }
@@ -65,7 +70,7 @@ button {
   }
   &.icon {
     width: 36px;
-    padding: 5px;  
+    padding: 5px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -79,12 +84,14 @@ button {
 .parchment {
   z-index: -1;
   position: absolute;
-  top: 0; 
+  top: 0;
   left: 0;
   bottom: 0;
   right: 0;
-  box-shadow: 2px 3px 10px black, 0 0 125px #8f5922 inset;
-	background-color: var(--color-background);
+  box-shadow:
+    2px 3px 10px black,
+    0 0 125px #8f5922 inset;
+  background-color: var(--color-background);
   color: var(--color-text);
   /* v2.1 : borders effect with SVG : try to play with scale to change them */
   filter: url(#wavy);
