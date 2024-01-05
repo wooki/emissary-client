@@ -67,12 +67,11 @@ button.link {
   transform: translateX(-3px) translateY(-1px);
   .name {
     font-weight: bold;
-  }
+  }  
+}
 
-  &:hover,
-  &:focus-visible {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid var(--color-text);
-  }
+button.link:hover, button.link:focus-visible {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--color-text);
 }
 </style>

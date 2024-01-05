@@ -15,7 +15,7 @@
         >
           <!-- <div class="area-panel-report-details-type">{{ item.type }}</div> -->
           <div class="area-panel-report-details-message">
-            {{ item.message }}
+            <TextEndingWithLink :text="item.message" @click="SelectArea" />            
           </div>
           <div
             class="area-panel-report-details-data"
@@ -53,7 +53,7 @@
               class="area-panel-report-adjustment"
               :class="{ negative: report.adjustment[0] < 0 }"
             >
-              {{ report.adjustment[0].toFixed(2) }}
+              {{ report.adjustment[0].toFixed(report.digits) }}
             </div>
           </div>
           <div v-else class="area-panel-report-entries">
@@ -86,6 +86,7 @@
 import AreaPanelSummary from "./AreaPanelSummary.vue";
 import { AddFloats } from "@/libs/SafeMath.js";
 import BackIcon from "@/assets/icons/back.svg";
+import TextEndingWithLink from "./TextEndingWithLink.vue";
 
 export default {
   props: {
@@ -103,6 +104,7 @@ export default {
   components: {
     AreaPanelSummary,
     BackIcon,
+    TextEndingWithLink
   },
   computed: {
     selectedReport() {
@@ -117,12 +119,70 @@ export default {
       if (!this.area.info) return [];
 
       // one per type and one per store item, iterate and create or update
+      let foodReport = null;
+      let goodsReport = null;
+      let goldReport = null;
+
+      if (this.area.store) {
+        foodReport = {
+          type: "FOOD",
+          info: [],
+          values: new Map(),
+          base: this.area.store.food,
+          adjustment: [0],
+          digits: 0
+        }
+        goodsReport = {
+          type: "GOODS",
+          info: [],
+          values: new Map(),
+          base: this.area.store.goods,
+          adjustment: [0],
+          digits: 0
+        }
+        goldReport = {
+          type: "GOLD",
+          info: [],
+          values: new Map(),
+          base: this.area.store.gold,
+          adjustment: [0],
+          digits: 0
+        }
+      }
+
+
       this.area.info.forEach((info) => {
+        
         reports.set(
           info.type,
           this.CreateOrAddToReport(reports, info, this.area),
         );
+        
+        if (foodReport && info.data.food) {
+          foodReport.info.push(info);
+          foodReport.adjustment[0] = foodReport.adjustment[0] + info.data.food;
+        }
+
+        if (goodsReport && info.data.goods) {
+          goodsReport.info.push(info);
+          goodsReport.adjustment[0] = goodsReport.adjustment[0] + info.data.goods;
+        }
+
+        if (goldReport && info.data.gold) {
+          goldReport.info.push(info);
+          goldReport.adjustment[0] = goldReport.adjustment[0] + info.data.gold;
+        }
+
+        if (goldReport && info.data.cost) {
+          goldReport.info.push(info);
+          goldReport.adjustment[0] = goldReport.adjustment[0] + info.data.cost;
+        }
+        
       });
+
+      if (foodReport) reports.set("FOOD", foodReport);
+      if (goodsReport) reports.set("GOODS", goodsReport);
+      if (goldReport) reports.set("GOLD", goldReport);
 
       reports.forEach((report, reportKey, rpts) => {
         const valueKeys = Array.from(report.values.keys());
@@ -133,13 +193,16 @@ export default {
             report.adjustment = Array.from(report.values.values());
           }
         }
-      });
+      });      
 
-      return Array.from(reports.values());
+      return Array.from(reports.values()).toSorted((a, b) => {
+        return a.type.localeCompare(b.type);
+      });
     },
   },
   methods: {
     SelectArea(area) {
+      this.SelectReport(null);
       this.$emit("select", area);
     },
     SelectReport(index) {
@@ -160,6 +223,7 @@ export default {
           values: new Map(),
           base: null,
           adjustment: null,
+          digits: 2
         };
       }
 
