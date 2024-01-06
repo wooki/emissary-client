@@ -22,13 +22,13 @@ import concaveman from 'concaveman';
 
 export default {
   props: {
+    report: {
+      type: Object,
+      required: true
+    },
     area: {
       type: Object,
       default: null
-    },
-    map: {
-      type: Object,
-      required: true
     },
     hexagonSize: {
       type: Number,
@@ -48,6 +48,10 @@ export default {
         unknown: "#f0eae8",
       }
     },
+    ownedColor: {
+      type: String,
+      default: "#a865c9"
+    }
   },
   emits: ["selected"],
   components: {
@@ -70,6 +74,9 @@ export default {
     };
   },
   computed: {
+    map() {
+      return this.report.map;
+    },
     selectedHex() {
       if (this.area) {
         return this.GetMapHexFromArea(this.area);
@@ -121,13 +128,19 @@ export default {
         const center = Center(hex.x, hex.y, this.hexagonSize, 0, 0);
         const points = Corners(center.x, center.y, this.hexagonSize)
 
-        return {
+        const labelData = {
           x: points[0].x,
           y: points[0].y,
           key: `${hex.x},${hex.y}`,
           text: hex.name,
-          class: "label label-" + hex.terrain
+          class: `label label-${hex.terrain}`
+        }        
+      
+        if (hex.owner == this.report.Me()) {
+          labelData.class = `label label-${hex.terrain} label-me`;
         }
+        
+        return labelData;
       });
     },
     mapSettlements() {
@@ -204,18 +217,24 @@ export default {
       const center = Center(hex.x, hex.y, this.hexagonSize, 0, 0);
       const points = Corners(center.x, center.y, this.hexagonSize)
 
-      return {
-          x: hex.x,
-          y: hex.y,
-          key: `${hex.x},${hex.y}`,
-          terrain: hex.terrain,
-          points: points,
-          min: {x: points[5].x, y: points[0].y},
-          max: {x: points[1].x, y: points[3].y},
-          fill: this.terrainColours[hex.terrain],
-          stroke: '#00000099',
-          area: hex
-        }
+      const hexData = {
+        x: hex.x,
+        y: hex.y,
+        key: `${hex.x},${hex.y}`,
+        terrain: hex.terrain,
+        points: points,
+        min: {x: points[5].x, y: points[0].y},
+        max: {x: points[1].x, y: points[3].y},
+        fill: this.terrainColours[hex.terrain],
+        stroke: '#00000099',
+        area: hex
+      }
+      
+      if (hex.owner == this.report.Me()) {
+        hexData.fill = this.ownedColor;
+      }
+      
+      return hexData;
     },
     GetMapHexFromCoord(coord) {
       if (this.map[`${coord.x},${coord.y}`]) {
@@ -316,7 +335,11 @@ export default {
     font-weight: bold;
     text-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
     user-select: none;
-    pointer-events: none;
+    pointer-events: none;    
+  }
+
+  text.label-me {
+    fill: #a865c9;
   }
 
   .parchment {

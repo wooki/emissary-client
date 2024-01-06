@@ -1,6 +1,6 @@
 <template>
   <div class="area-panel">
-    <AreaPanelSummary @select="SelectArea" :area="area" />
+    <AreaPanelSummary :report="report" @select="SelectArea" :area="area" />
 
     <div class="area-panel-reports">
       <div class="parchment"></div>
@@ -90,6 +90,10 @@ import TextEndingWithLink from "./TextEndingWithLink.vue";
 
 export default {
   props: {
+    report: {
+      type: Object,
+      required: true
+    },
     area: {
       type: Object,
       required: true,

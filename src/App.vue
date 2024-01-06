@@ -23,6 +23,7 @@ import OpenReport from './components/OpenReport.vue'
 import Logo from './assets/emissary.svg'
 import UploadIcon from './assets/icons/upload.svg'
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
+import ReportClass from '@/libs/Report.js';
 
 export default {
   data() {
@@ -43,14 +44,17 @@ export default {
     loaded(data) {
       this.$refs.uploadReportDialogOpen.hide();
       if (data.map && data.my_kingdom && data.kingdoms) {
-        this.report = data;
+        this.CreateReport(data);
         localStorage.setItem("report", JSON.stringify(data));
       }
+    },
+    CreateReport(rpt) {
+      this.report = new ReportClass(rpt);
     }
   },
   mounted() {
     let report = localStorage.getItem("report");
-    if (report) this.report = JSON.parse(report);
+    if (report) this.CreateReport(JSON.parse(report));
   }
 }
 </script>

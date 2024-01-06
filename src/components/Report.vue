@@ -1,10 +1,10 @@
 <template>
   <div class="report">
     <div class="map-container">
-      <Map :map="map" :area="selectedHex" @select="SelectHexagon" />
+      <Map :report="report" :area="selectedHex" @select="SelectHexagon" />
     </div>
     <div class="info">
-      <AreaPanel v-if="selectedHex" :area="selectedHex" @select="SelectArea"/>
+      <AreaPanel :report="report" v-if="selectedHex" :area="selectedHex" @select="SelectArea"/>
     </div>    
   </div>
 </template>

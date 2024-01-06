@@ -12,7 +12,7 @@
     <div class="terrain"><label>Terrain</label><div class="field">{{ area.terrain }}</div></div>
     <div v-if="area.owner" class="owner">
       <label>Owner</label>
-      <div class="field">{{  area.owner }}</div>
+      <div class="field">{{  empireName }}</div>
     </div>
     <div class="location" v-if="area.province">
       <label>Province</label>
@@ -41,6 +41,10 @@ import Link from './Link.vue'
 
 export default {
   props: {
+    report: {
+      type: Object,
+      required: true
+    },
     area: {
       type: Object,
       required: true
@@ -51,6 +55,11 @@ export default {
   },
   emits: ["select"],
   computed: {
+    empireName() {
+      if (!this.area.owner) return "Unowned";
+      if (this.area.owner == this.report.Me()) return `Me (${this.report.MyKingdom()})`;
+      return this.report.kingdoms[this.area.owner].name;
+    },
     population() {      
       if (this.area?.population) {
         return Rounded(this.area.population, 2).toLocaleString();
