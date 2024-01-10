@@ -7,8 +7,8 @@
       <path v-for="border in mapBorders" :key="border.key" :d="border.path" :stroke-width="6" :stroke="border.stroke" fill="none" stroke-dasharray="10,15" stroke-linecap="round" />
       <text v-for="label in mapLabels" :key="label.key" :x="label.x" :y="label.y" :class="label.class">{{ label.text }}</text>      
 
-      <Hexagon v-if="hoveredHex" terrain="hovered" :coord="`${hoveredHex.x},${hoveredHex.y}`" :points="hoveredHex.points" fill="none" strokeWidth="2" stroke="red" />
-      <Hexagon v-if="selectedHex" terrain="selected" :coord="`${selectedHex.x},${selectedHex.y}`" :points="selectedHex.points" fill="none" strokeWidth="6" stroke="red" />
+      <Hexagon v-if="hoveredHex" terrain="hovered" :coord="`${hoveredHex.x},${hoveredHex.y}`" :points="hoveredHex.points" fill="none" strokeWidth="4" stroke="white" />
+      <Hexagon v-if="selectedHex" terrain="selected" :coord="`${selectedHex.x},${selectedHex.y}`" :center="selectedHex.center" :points="selectedHex.points" fill="none" strokeWidth="6" stroke="white" strokeDashArray="12,4" />
 
     </svg>
     <!-- {{ JSON.stringify(map) }} -->
@@ -18,7 +18,6 @@
 <script>
 import Hexagon from './Hexagon.vue'
 import {Corners, Center, AdjacentCoords, SameCoord, ExtractPaths} from '../libs/HexUtils'
-import concaveman from 'concaveman';
 
 export default {
   props: {
@@ -40,17 +39,17 @@ export default {
         peak: 'dimgray',
         ocean: "#3D59AB",
         mountain: "slategray",
-        lowland: "limegreen",
-        forest: "forestgreen",
+        lowland: "#65b240",
+        forest: "#316e44",
         desert: "goldenrod",
         town: "Sienna",
         city: "Sienna",
-        unknown: "#f0eae8",
+        unknown: "#4c84d7",        
       }
     },
     ownedColor: {
       type: String,
-      default: "#a865c9"
+      default: "#ee3a5f"
     }
   },
   emits: ["selected"],
@@ -223,6 +222,7 @@ export default {
         key: `${hex.x},${hex.y}`,
         terrain: hex.terrain,
         points: points,
+        center: center,
         min: {x: points[5].x, y: points[0].y},
         max: {x: points[1].x, y: points[3].y},
         fill: this.terrainColours[hex.terrain],
@@ -328,7 +328,7 @@ export default {
     max-width: 100%;
     max-height: 100%;
     /* border: 4px solid black; */
-    /* background-color: var(--color-background);         */
+    /* background-color: var(--color-background);         */    
   }
   text.label {
     font-size: 38px;
@@ -339,7 +339,7 @@ export default {
   }
 
   text.label-me {
-    fill: #a865c9;
+    fill: #ee3a5f;
   }
 
   .parchment {

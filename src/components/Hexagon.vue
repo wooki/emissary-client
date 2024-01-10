@@ -1,5 +1,5 @@
 <template>
-  <polygon :class="getClass" @click="click" @mouseenter="mouseenter" @mouseleave="mouseleave" :stroke="stroke" :stroke-width="strokeWidth" :fill="fill" :points="drawPoints" />
+  <polygon :transform-origin="transformOrigin" :class="getClass" @click="click" @mouseenter="mouseenter" @mouseleave="mouseleave" :stroke="stroke" :stroke-width="strokeWidth" :fill="fill" :points="drawPoints" :stroke-dasharray="strokeDashArray" />
   <!-- <text :x="points[0].x" :y="points[0].y">{{ coord }}</text> -->
   <image v-if="terrain == 'town'" :x="points[5].x" :y="points[0].y" href="../assets/icons/town.png" :width="(points[1].x - points[5].x)"/>
   <image v-if="terrain == 'city'" :x="points[5].x" :y="points[0].y" href="../assets/icons/city.png" :width="(points[1].x - points[5].x)"/>
@@ -24,6 +24,10 @@ export default {
       type: String,
       default: '1'
     },
+    strokeDashArray: {
+      type: String,
+      default: '0'
+    },    
     fill: {
       type: String,
       default: '#fff'
@@ -34,6 +38,9 @@ export default {
     },
     data: {
       type: Object
+    },
+    center: {
+      type: Object
     }
   },
   emits: ["click", "mouseenter", "mouseleave"],
@@ -43,6 +50,10 @@ export default {
     },
     getClass() {      
       return `hexagon area ${this.terrain}`;
+    },
+    transformOrigin() {
+      if (!this.center) return '50% 50%';
+      return `${Math.round(this.center.x)}px ${Math.round(this.center.y)}px`;
     }
   },
   methods: {
@@ -66,6 +77,11 @@ polygon {
     pointer-events: none;  
   }
 }
+.hexagon.area.selected {
+  /* transform: scale(2); */
+  animation: 800ms ease-in-out 0ms infinite running pulse;
+}
+
 image {
   pointer-events: none;
 }
