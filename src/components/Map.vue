@@ -3,6 +3,179 @@
     <div class="parchment"></div>
     <svg v-if="mounted" xmlns="http://www.w3.org/2000/svg" :viewBox="viewBox">
       
+      <defs>
+        <!-- color 2 masks -->
+        <mask id="banner_mask_base_0">
+          <path
+            fill="#ffffff"
+            d="m 0,6 L 16,20 V 32 H 0 Z" />  
+        </mask>
+        <mask id="banner_mask_base_1">
+          <rect
+            fill="#ffffff"
+            width="0"
+            height="0"
+            x="0"
+            y="0" />           
+        </mask>      
+        <mask id="banner_mask_base_2">
+          <rect
+            fill="#ffffff"
+            width="16"
+            height="32"
+            x="0"
+            y="0" />           
+        </mask>      
+        <mask id="banner_mask_base_3">
+          <path
+            fill="#ffffff"
+            d="M 0,2 V 32 H 5 V 2 Z m 11,0 v 30 h 5 V 2 Z" />
+        </mask>
+        <mask id="banner_mask_base_4">
+          <rect
+            fill="#ffffff"
+            width="2"
+            height="30"
+            x="0"
+            y="2" />
+          <rect
+            fill="#ffffff"
+            width="4"
+            height="30"
+            x="6"
+            y="2" />
+          <rect
+            fill="#ffffff"
+            width="2"
+            height="30"
+            x="14"
+            y="2" />        
+        </mask>      
+        <mask id="banner_mask_base_5">
+          <rect
+            fill="#ffffff"
+            width="16"
+            height="8"
+            x="0"
+            y="2" />
+          <rect
+            fill="#ffffff"
+            width="16"
+            height="14"
+            x="0"
+            y="18" />       
+        </mask>          
+        <mask id="banner_mask_base_5x">
+          <rect
+            fill="#ffffff"
+            width="16"
+            height="6"
+            x="0"
+            y="2" />
+          <rect
+            fill="#ffffff"
+            width="16"
+            height="16"
+            x="0"
+            y="16" />       
+        </mask> 
+        <mask id="banner_mask_base_5xx">
+          <rect
+            fill="#ffffff"
+            width="16"
+            height="8"
+            x="0"
+            y="2" />
+          <rect
+            fill="#ffffff"
+            width="16"
+            height="13"
+            x="0"
+            y="19" />         
+        </mask>          
+        <mask id="banner_mask_base_6">
+          <path
+            fill="#ffffff"
+            d="M 8,9 0,15 v 4 l 8,-6 8,6 V 15 L 8,9" />  
+        </mask>
+        <mask id="banner_mask_base_7">
+          <path
+            fill="#ffffff"
+            d="m 6,2 v 8 H 0 v 4 h 6 v 18 h 4 V 14 h 6 V 10 H 10 V 2 Z" />  
+        </mask>
+        <mask id="banner_mask_base_8_a">
+          <rect
+            fill="#ffffff"
+            width="5"
+            height="30"
+            x="0"
+            y="2" />
+        </mask>     
+        <mask id="banner_mask_base_8_b">
+          <rect
+            fill="#ffffff"
+            width="5"
+            height="30"
+            x="11"
+            y="2" />
+        </mask>
+        <mask id="banner_mask_base_9_a">
+          <rect
+            fill="#ffffff"
+            width="16"
+            height="8"
+            x="0"
+            y="2" />
+        </mask>     
+        <mask id="banner_mask_base_9_b">
+          <rect
+            fill="#ffffff"
+            width="16"
+            height="12"
+            x="0"
+            y="20" />
+        </mask>
+        <!-- color 3 masks -->
+        <mask id="banner_mask_shape_0">
+          <circle
+            fill="#ffffff"
+            r="6"
+            cx="8"
+            cy="12" />
+        </mask>   
+        <mask id="banner_mask_shape_1">
+          <rect
+            fill="#ffffff"
+            width="12"
+            height="4"
+            x="2"
+            y="10" /> 
+          <rect
+            fill="#ffffff"
+            width="4"
+            height="12"
+            x="6"
+            y="6" /> 
+        </mask>     
+        <mask id="banner_mask_shape_2">
+          <path
+            fill="#ffffff"
+            d="M 8 16 L 11.471 19.208 L 11.127 14.494 L 15.799 13.78 L 11.9 11.11 L 14.255 7.012 L 9.736 8.396 L 8 4 L 6.264 8.396 L 1.745 7.012 L 4.1 11.11 L 0.201 13.78 L 4.873 14.494 L 4.529 19.208 L 8 16" />  
+        </mask>     
+        <mask id="banner_mask_shape_3">
+          <path
+            fill="#ffffff"
+            d="m 7,2 V 11 H 0 v 2 h 7 V 32 h 2 V 13 h 8 V 11 H 9 V 2 Z" />  
+        </mask>
+        <mask id="banner_mask_shape_4">
+          <path
+            fill="#ffffff"
+            d="m 0,6 v 4 l 16,13 v -4" />  
+        </mask>
+        
+        
+      </defs>
+      
       <Hexagon @mouseenter="hexHighlight" @mouseleave="hexUnhighlight" :data="hex" :terrain="hex.terrain" :coord="`${hex.x},${hex.y}`" @click="SelectHexagon(hex)" v-for="hex in mapHexagons" :key="hex.key" :points="hex.points" :fill="hex.fill" strokeWidth="1" :stroke="hex.stroke" />
       <path v-for="border in mapBorders" :key="border.key" :d="border.path" :stroke-width="6" :stroke="border.stroke" fill="none" stroke-dasharray="10,15" stroke-linecap="round" />
       <text v-for="label in mapLabels" :key="label.key" :x="label.x" :y="label.y" :class="label.class">{{ label.text }}</text>      
@@ -10,6 +183,36 @@
       <Hexagon v-if="hoveredHex" terrain="hovered" :coord="`${hoveredHex.x},${hoveredHex.y}`" :points="hoveredHex.points" fill="none" strokeWidth="4" stroke="white" />
       <Hexagon v-if="selectedHex" terrain="selected" :coord="`${selectedHex.x},${selectedHex.y}`" :center="selectedHex.center" :points="selectedHex.points" fill="none" strokeWidth="6" stroke="white" strokeDashArray="12,4" />
 
+      <Banner :x="1050" :y="1000" :flag="RandomFlag()" />     
+      <Banner :x="1100" :y="1000" :flag="RandomFlag()" />
+      <Banner :x="1150" :y="1000" :flag="RandomFlag()" />  
+      <Banner :x="1200" :y="1000" :flag="RandomFlag()" />
+      <Banner :x="1250" :y="1000" :flag="RandomFlag()" />
+      <Banner :x="1300" :y="1000" :flag="RandomFlag()" />      
+      <Banner :x="1350" :y="1000" :flag="RandomFlag()" />
+      <Banner :x="1400" :y="1000" :flag="RandomFlag()" />
+      <Banner :x="1450" :y="1000" :flag="RandomFlag()" />
+
+      <Banner :x="1050" :y="1100" :flag="RandomFlag()" />
+      <Banner :x="1100" :y="1100" :flag="RandomFlag()" />
+      <Banner :x="1150" :y="1100" :flag="RandomFlag()" />      
+      <Banner :x="1200" :y="1100" :flag="RandomFlag()" />
+      <Banner :x="1250" :y="1100" :flag="RandomFlag()" />
+      <Banner :x="1300" :y="1100" :flag="RandomFlag()" />      
+      <Banner :x="1350" :y="1100" :flag="RandomFlag()" />
+      <Banner :x="1400" :y="1100" :flag="RandomFlag()" />
+      <Banner :x="1450" :y="1100" :flag="RandomFlag()" />
+
+      <Banner :x="1050" :y="1200" :flag="RandomFlag()" />
+      <Banner :x="1100" :y="1200" :flag="RandomFlag()" />
+      <Banner :x="1150" :y="1200" :flag="RandomFlag()" />      
+      <Banner :x="1200" :y="1200" :flag="RandomFlag()" />
+      <Banner :x="1250" :y="1200" :flag="RandomFlag()" />
+      <Banner :x="1300" :y="1200" :flag="RandomFlag()" />      
+      <Banner :x="1350" :y="1200" :flag="RandomFlag()" />
+      <Banner :x="1400" :y="1200" :flag="RandomFlag()" />
+      <Banner :x="1450" :y="1200" :flag="RandomFlag()" />
+      
     </svg>
     <!-- {{ JSON.stringify(map) }} -->
   </div>
@@ -17,6 +220,7 @@
 
 <script>
 import Hexagon from './Hexagon.vue'
+import Banner from './Banner.vue'
 import {Corners, Center, AdjacentCoords, SameCoord, ExtractPaths} from '../libs/HexUtils'
 
 export default {
@@ -54,7 +258,8 @@ export default {
   },
   emits: ["selected"],
   components: {
-    Hexagon
+    Hexagon,
+    Banner
   },
   data() {
     return {
@@ -206,6 +411,37 @@ export default {
     }
   },
   methods: {
+    RandomFlag() {
+      let shuffle = function(array) {
+        let currentIndex = array.length,  randomIndex;
+
+        // While there remain elements to shuffle.
+        while (currentIndex > 0) {
+
+          // Pick a remaining element.
+          randomIndex = Math.floor(Math.random() * currentIndex);
+          currentIndex--;
+
+          // And swap it with the current element.
+          [array[currentIndex], array[randomIndex]] = [
+            array[randomIndex], array[currentIndex]];
+        }
+
+        return array;
+      }
+
+      let getRandomInt = function(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+      let x = shuffle([0,1,2,3,4,5,6,7,8,9]);
+      
+      let flag = [getRandomInt(0, 9),getRandomInt(0, 9),x.pop(),x.pop(),x.pop()].join('');
+      console.log("f", flag);
+      return flag;
+    },
     hexHighlight(hex) {
       this.hoveredHex = hex;
     },
