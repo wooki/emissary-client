@@ -183,7 +183,7 @@
       <Hexagon v-if="hoveredHex" terrain="hovered" :coord="`${hoveredHex.x},${hoveredHex.y}`" :points="hoveredHex.points" fill="none" strokeWidth="4" stroke="white" />
       <Hexagon v-if="selectedHex" terrain="selected" :coord="`${selectedHex.x},${selectedHex.y}`" :center="selectedHex.center" :points="selectedHex.points" fill="none" strokeWidth="6" stroke="white" strokeDashArray="12,4" />
 
-      <Banner :x="1050" :y="1000" :flag="RandomFlag()" />     
+      <Banner :x="1050" :y="1000" flag="03876" />     
       <Banner :x="1100" :y="1000" :flag="RandomFlag()" />
       <Banner :x="1150" :y="1000" :flag="RandomFlag()" />  
       <Banner :x="1200" :y="1000" :flag="RandomFlag()" />

@@ -41,9 +41,9 @@ export default {
   },
   data() {
     return {
-      Colors1: ["#090909","#6f0033","#004200","#000066","#4d123f","#75003f","#00a3dd","#ffffff","#f8d80e","#b82300"],
-      Colors2: ["#a7a7dd","#AA0033","#006627","#00247d","#b036b0","#db61a2","#064860","#ffffff","#FABD16","#cf2300"],
-      Colors3: ["#090909","#AA0033","#10B110","#2b2be9","#FABD16","#75003f","#00a3dd","#ffffff","#f8d80e","#ed4107"]      
+      Colors1: ["#090909","#730020","#002910","#000066","#4d123f","#75003f","#00a3dd","#ffffff","#fabd16","#c93c00"],
+      Colors2: ["#a7a7dd","#AA0033","#006627","#00247d","#b036b0","#db61a2","#064860","#ffffff","#fca017","#e35f26"],
+      Colors3: ["#090909","#BB1144","#10B110","#9181da","#b036b0","#75003f","#00a3dd","#ffffff","#fabd16","#f55814"]      
     }
   },
   emits: ["click", "mouseenter", "mouseleave"],
@@ -68,9 +68,9 @@ export default {
     mask1() {
       if (this.flagfields[0] >= 8) {
         return `banner_mask_base_${this.flagfields[0]}_a`;
-      } else if (this.flagfields[0] >= 5 && this.flagfields[1] == 4) {
+      } else if (this.flagfields[0] >= 5 && this.flagfields[0] <= 6 && this.flagfields[1] == 4) {
         return `banner_mask_base_${this.flagfields[0]}xx`;
-      } else if (this.flagfields[0] >= 5 && this.flagfields[1] < 4) {
+      } else if (this.flagfields[0] >= 5 && this.flagfields[0] <= 6 && this.flagfields[1] < 4) {
         return `banner_mask_base_${this.flagfields[0]}x`;
       } else {
         return `banner_mask_base_${this.flagfields[0]}`;
@@ -79,7 +79,9 @@ export default {
     mask2() {
       if (this.flagfields[0] == 6) {
         return null;
-      } else if (this.flagfields[0] == 7 && this.flagfields[4]) {
+      } else if (this.flagfields[0] == 7 && this.flagfields[1] == 4) {
+        return null;
+      } else if (this.flagfields[0] == 0 && this.flagfields[1] == 3) {
         return null;
       } else if (this.flagfields[0] >= 8) {
         return `banner_mask_base_${this.flagfields[0]}_b`;
