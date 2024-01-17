@@ -439,7 +439,6 @@ export default {
       let x = shuffle([0,1,2,3,4,5,6,7,8,9]);
       
       let flag = [getRandomInt(0, 9),getRandomInt(0, 9),x.pop(),x.pop(),x.pop()].join('');
-      console.log("f", flag);
       return flag;
     },
     hexHighlight(hex) {
