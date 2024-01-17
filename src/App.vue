@@ -1,41 +1,52 @@
 <template>
   <header>
     <Logo class="logo" />
-    <button class="icon" @click="upload" title="Upload report file"><UploadIcon /></button>
+    <div class="report-info" v-if="report">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 32">
+        <!-- <Banner x="0" y="0" :flag="report.MyBanner" :scale="1" /> -->
+      </svg>
+      <div class="report-info-empire">{{ report.MyKingdom() }},</div>
+      <div class="report-info-turn">turn {{ report.turn }}</div>
+    </div>
+    <button class="icon" @click="upload" title="Upload report file">
+      <UploadIcon />
+    </button>
   </header>
-  <main :class="{noreport: !report}">
+  <main :class="{ noreport: !report }">
     <Report v-if="report" :report="report" />
   </main>
   <sl-dialog ref="uploadReportDialogOpen" label="Load Report">
-    <OpenReport @loaded="loaded"/>
-  </sl-dialog>  
-  <svg style="position: absolute; height: 0; width: 0; opacity: 0;">
+    <OpenReport @loaded="loaded" />
+  </sl-dialog>
+  <svg style="position: absolute; height: 0; width: 0; opacity: 0">
     <filter id="wavy">
-    <feTurbulence x="0" y="0" baseFrequency="0.02" numOctaves="5" seed="1" />
-    <feDisplacementMap in="SourceGraphic" scale="6" />    
-  </filter>  
-</svg>
+      <feTurbulence x="0" y="0" baseFrequency="0.02" numOctaves="5" seed="1" />
+      <feDisplacementMap in="SourceGraphic" scale="6" />
+    </filter>
+  </svg>
 </template>
 
 <script>
-import Report from './components/Report.vue'
-import OpenReport from './components/OpenReport.vue'
-import Logo from './assets/emissary.svg'
-import UploadIcon from './assets/icons/upload.svg'
-import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
-import ReportClass from '@/libs/Report.js';
+import Report from "./components/Report.vue";
+import OpenReport from "./components/OpenReport.vue";
+import Logo from "./assets/emissary.svg";
+import UploadIcon from "./assets/icons/upload.svg";
+import "@shoelace-style/shoelace/dist/components/dialog/dialog.js";
+import ReportClass from "@/libs/Report.js";
+import Banner from "./components/Banner.vue";
 
 export default {
   data() {
     return {
-      report: null
-    }
+      report: null,
+    };
   },
   components: {
     Logo,
     UploadIcon,
     Report,
-    OpenReport
+    OpenReport,
+    Banner,
   },
   methods: {
     upload() {
@@ -50,13 +61,13 @@ export default {
     },
     CreateReport(rpt) {
       this.report = new ReportClass(rpt);
-    }
+    },
   },
   mounted() {
     let report = localStorage.getItem("report");
     if (report) this.CreateReport(JSON.parse(report));
-  }
-}
+  },
+};
 </script>
 
 <style>
@@ -79,6 +90,32 @@ header {
     width: auto;
   }
 
+  .report-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 36px;
+    margin-right: auto;
+    gap: 0.3em;
+    font-size: 16px;
+    color: var(--color-dark-bg-text);
+
+    svg {
+      height: 32px;
+      width: 16px;
+      margin: 0 5px 0 0;
+    }
+
+    .report-info-empire {
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+    .report-info-turn {
+      font-size: 14px;
+    }
+  }
+
   button {
     flex: 0 1 auto;
   }
@@ -87,14 +124,14 @@ header {
 main {
   background-size: cover;
   min-height: calc(100vh - var(--header-height));
-  background-color: var(--color-dark-bg);  
-  color: var(--color-dark-bg-text);    
+  background-color: var(--color-dark-bg);
+  color: var(--color-dark-bg-text);
 
   &.noreport {
     &:before {
       opacity: 0.66;
       content: "";
-      background-image: url('./assets/bg.webp');
+      background-image: url("./assets/bg.webp");
       background-size: cover;
       display: block;
       min-height: calc(100vh - var(--header-height));
