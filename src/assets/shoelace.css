@@ -1,0 +1,27 @@
+:root {
+  --sl-color-crimson-50: hsl(355 55% 65%);
+  --sl-color-crimson-100: hsl(355 60% 60%);
+  --sl-color-crimson-200: hsl(355 65% 55%);
+  --sl-color-crimson-300: hsl(355 70% 50%);
+  --sl-color-crimson-400: hsl(355 75% 45%);
+  --sl-color-crimson-500: hsl(355 80% 40%);
+  --sl-color-crimson-600: hsl(355 85% 35%);
+  --sl-color-crimson-700: hsl(355 90% 30%);
+  --sl-color-crimson-800: hsl(355 95% 25%);
+  --sl-color-crimson-900: hsl(355 100% 20%);
+  --sl-color-crimson-950: hsl(355 100% 15%);
+
+  .sl-theme-dark {
+    --sl-color-primary-50: var(--sl-color-crimson-50);
+    --sl-color-primary-100: var(--sl-color-crimson-100);
+    --sl-color-primary-200: var(--sl-color-crimson-200);
+    --sl-color-primary-300: var(--sl-color-crimson-300);
+    --sl-color-primary-400: var(--sl-color-crimson-400);
+    --sl-color-primary-500: var(--sl-color-crimson-500);
+    --sl-color-primary-600: var(--sl-color-crimson-600);
+    --sl-color-primary-700: var(--sl-color-crimson-700);
+    --sl-color-primary-800: var(--sl-color-crimson-800);
+    --sl-color-primary-900: var(--sl-color-crimson-900);
+    --sl-color-primary-950: var(--sl-color-crimson-950);
+  }
+}
