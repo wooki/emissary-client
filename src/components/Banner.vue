@@ -18,7 +18,6 @@
     />
     <path
       v-if="mask2"
-      :transform="iconTransform"
       :fill="color3"
       d="M 0,2 H 16 V 32 L 8,25 0,32 Z"
       :mask="`url(#${mask2})`"

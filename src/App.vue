@@ -3,7 +3,7 @@
     <Logo class="logo" />
     <div class="report-info" v-if="report">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 32">
-        <Banner x="0" y="0" :flag="report.MyBanner()" :scale="1" />
+        <Banner :x="0" :y="0" :flag="report.MyBanner()" :scale="1" />
       </svg>
       <div class="report-info-empire">{{ report.MyKingdom() }},</div>
       <div class="report-info-turn">turn {{ report.turn }}</div>

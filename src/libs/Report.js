@@ -14,4 +14,15 @@ export default function Report(data) {
   this.MyBanner = () => {
     return this.my_kingdom.flag;
   };
+  this.Color1 = () => {
+    let flag = this.my_kingdom.flag.split("");
+    console.log("flag", flag);
+    if (flag[0] == 2) return flag[3];
+    return flag[2];
+  };
+  this.Color2 = () => {
+    let flag = this.my_kingdom.flag.split("");
+    if (flag[0] == 2) return flag[4];
+    return flag[3];
+  };
 }
