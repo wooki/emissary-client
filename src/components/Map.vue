@@ -82,7 +82,17 @@
         <mask id="banner_mask_shape_4">
           <path fill="#ffffff" d="m 0,6 v 4 l 16,13 v -4" />
         </mask>
+        <symbol
+          v-for="kingdom in report.kingdoms"
+          :id="'banner-' + kingdom.player"
+          viewbox="0 -1 16 35"
+        >
+          <Banner :x="0" :y="0" :flag="kingdom.flag" />
+        </symbol>
       </defs>
+
+      <use transform="translate(1000, 1000)" href="#banner-jim" />
+      <use transform="translate(1050, 1000)" href="#banner-ji1m" />
 
       <Hexagon
         @mouseenter="hexHighlight"
@@ -139,8 +149,6 @@
         stroke="white"
         strokeDashArray="12,4"
       />
-
-      <Banner :x="1050" :y="1000" flag="13976" />
     </svg>
     <!-- {{ JSON.stringify(map) }} -->
   </div>
