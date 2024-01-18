@@ -9,7 +9,6 @@
     <div class="parchment"></div>
     <svg v-if="mounted" xmlns="http://www.w3.org/2000/svg" :viewBox="viewBox">
       <defs>
-        <!-- color 2 masks -->
         <mask id="banner_mask_base_0">
           <path fill="#ffffff" d="m 0,6 L 16,20 V 32 H 0 Z" />
         </mask>
@@ -142,34 +141,6 @@
       />
 
       <Banner :x="1050" :y="1000" flag="13976" />
-      <Banner :x="1100" :y="1000" flag="23893" />
-      <Banner :x="1150" :y="1000" :flag="RandomFlag()" />
-      <Banner :x="1200" :y="1000" :flag="RandomFlag()" />
-      <Banner :x="1250" :y="1000" :flag="RandomFlag()" />
-      <Banner :x="1300" :y="1000" :flag="RandomFlag()" />
-      <Banner :x="1350" :y="1000" :flag="RandomFlag()" />
-      <Banner :x="1400" :y="1000" :flag="RandomFlag()" />
-      <Banner :x="1450" :y="1000" :flag="RandomFlag()" />
-
-      <Banner :x="1050" :y="1100" :flag="RandomFlag()" />
-      <Banner :x="1100" :y="1100" :flag="RandomFlag()" />
-      <Banner :x="1150" :y="1100" :flag="RandomFlag()" />
-      <Banner :x="1200" :y="1100" :flag="RandomFlag()" />
-      <Banner :x="1250" :y="1100" :flag="RandomFlag()" />
-      <Banner :x="1300" :y="1100" :flag="RandomFlag()" />
-      <Banner :x="1350" :y="1100" :flag="RandomFlag()" />
-      <Banner :x="1400" :y="1100" :flag="RandomFlag()" />
-      <Banner :x="1450" :y="1100" :flag="RandomFlag()" />
-
-      <Banner :x="1050" :y="1200" :flag="RandomFlag()" />
-      <Banner :x="1100" :y="1200" :flag="RandomFlag()" />
-      <Banner :x="1150" :y="1200" :flag="RandomFlag()" />
-      <Banner :x="1200" :y="1200" :flag="RandomFlag()" />
-      <Banner :x="1250" :y="1200" :flag="RandomFlag()" />
-      <Banner :x="1300" :y="1200" :flag="RandomFlag()" />
-      <Banner :x="1350" :y="1200" :flag="RandomFlag()" />
-      <Banner :x="1400" :y="1200" :flag="RandomFlag()" />
-      <Banner :x="1450" :y="1200" :flag="RandomFlag()" />
     </svg>
     <!-- {{ JSON.stringify(map) }} -->
   </div>
@@ -213,10 +184,6 @@ export default {
         city: "Sienna",
         unknown: "#4c84d7",
       },
-    },
-    ownedColor: {
-      type: String,
-      required: true,
     },
   },
   emits: ["select"],
@@ -317,10 +284,6 @@ export default {
           fill: "#000000",
           class: `label label-${hex.terrain}`,
         };
-
-        // if (hex.owner == this.report.Me()) {
-        //   labelData.fill = this.ownedColor;
-        // }
 
         if (hex.owner == this.report.Me()) {
           labelData.class = `label label-${hex.terrain} label-me`;
@@ -453,10 +416,6 @@ export default {
         stroke: "#00000099",
         area: hex,
       };
-
-      if (hex.owner == this.report.Me()) {
-        hexData.fill = this.ownedColor;
-      }
 
       return hexData;
     },

@@ -1,12 +1,7 @@
 <template>
   <div class="report">
     <div class="map-container">
-      <Map
-        :ownedColor="report.Color1()"
-        :report="report"
-        :area="selectedHex"
-        @select="SelectHexagon"
-      />
+      <Map :report="report" :area="selectedHex" @select="SelectHexagon" />
     </div>
     <div class="info">
       <AreaPanel
