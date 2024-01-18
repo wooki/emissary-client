@@ -1,3 +1,5 @@
+import { Colors1, Colors2, Colors3 } from "@/libs/BannerColors";
+
 export default function Report(data) {
   this.data = data;
   this.turn = data.turn;
@@ -16,13 +18,12 @@ export default function Report(data) {
   };
   this.Color1 = () => {
     let flag = this.my_kingdom.flag.split("");
-    console.log("flag", flag);
-    if (flag[0] == 2) return flag[3];
-    return flag[2];
+    if (flag[0] == 1) return Colors1[parseInt(flag[2])];
+    return Colors1[parseInt(flag[3])];
   };
   this.Color2 = () => {
     let flag = this.my_kingdom.flag.split("");
-    if (flag[0] == 2) return flag[4];
-    return flag[3];
+    if (flag[0] == 1) return Colors1[parseInt(flag[3])];
+    return Colors1[parseInt(flag[4])];
   };
 }

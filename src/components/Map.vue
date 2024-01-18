@@ -318,9 +318,9 @@ export default {
           class: `label label-${hex.terrain}`,
         };
 
-        if (hex.owner == this.report.Me()) {
-          labelData.fill = this.ownedColor;
-        }
+        // if (hex.owner == this.report.Me()) {
+        //   labelData.fill = this.ownedColor;
+        // }
 
         if (hex.owner == this.report.Me()) {
           labelData.class = `label label-${hex.terrain} label-me`;

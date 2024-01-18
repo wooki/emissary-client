@@ -1,30 +1,36 @@
-import { Colors1, Colors2 } from "./BannerColors.js";
-
-export default function Report(data) {
-  this.data = data;
-  this.turn = data.turn;
-  this.map = data.map;
-  this.my_kingdom = data.my_kingdom;
-  this.kingdoms = data.kingdoms;
-
-  this.MyKingdom = () => {
-    return this.my_kingdom.name;
-  };
-  this.Me = () => {
-    return this.my_kingdom.player;
-  };
-  this.MyBanner = () => {
-    return this.my_kingdom.flag;
-  };
-  this.Color1 = () => {
-    let flag = this.my_kingdom.flag.split("");
-    console.log("flag", flag);
-    if (flag[0] == 2) return Colors1[parseInt(flag[3])];
-    return Colors2[parseInt(flag[2])];
-  };
-  this.Color2 = () => {
-    let flag = this.my_kingdom.flag.split("");
-    if (flag[0] == 2) return Colors1[parseInt(flag[4])];
-    return Colors2[parseInt(flag[3])];
-  };
-}
+export let Colors1 = [
+  "#a7a7dd",
+  "#AA0033",
+  "#008833",
+  "#00247d",
+  "#b036b0",
+  "#eb61c2",
+  "#064890",
+  "#ffffff",
+  "#fca017",
+  "#e35f26",
+];
+export let Colors2 = [
+  "#090909",
+  "#730020",
+  "#002910",
+  "#000066",
+  "#4d123f",
+  "#75003f",
+  "#00a3dd",
+  "#ffffff",
+  "#fabd16",
+  "#c93c00",
+];
+export let Colors3 = [
+  "#090909",
+  "#BB1144",
+  "#10B110",
+  "#9181da",
+  "#b036b0",
+  "#75003f",
+  "#00a3dd",
+  "#ffffff",
+  "#fabd16",
+  "#f55814",
+];
