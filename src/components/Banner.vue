@@ -26,6 +26,8 @@
 </template>
 
 <script>
+import { Colors1, Colors2, Colors3 } from "@/libs/BannerColors.js";
+
 export default {
   props: {
     x: {
@@ -48,42 +50,9 @@ export default {
   },
   data() {
     return {
-      Colors1: [
-        "#090909",
-        "#730020",
-        "#002910",
-        "#000066",
-        "#4d123f",
-        "#75003f",
-        "#00a3dd",
-        "#ffffff",
-        "#fabd16",
-        "#c93c00",
-      ],
-      Colors2: [
-        "#a7a7dd",
-        "#AA0033",
-        "#008833",
-        "#00247d",
-        "#b036b0",
-        "#eb61c2",
-        "#064890",
-        "#ffffff",
-        "#fca017",
-        "#e35f26",
-      ],
-      Colors3: [
-        "#090909",
-        "#BB1144",
-        "#10B110",
-        "#9181da",
-        "#b036b0",
-        "#75003f",
-        "#00a3dd",
-        "#ffffff",
-        "#fabd16",
-        "#f55814",
-      ],
+      Colors1: Colors1,
+      Colors2: Colors2,
+      Colors3: Colors3,
     };
   },
   emits: ["click", "mouseenter", "mouseleave"],
