@@ -41,12 +41,10 @@ export default {
   },
   methods: {
     SelectHexagon(hex) {
-      console.log("SelectHexagon", hex);
       this.selectedHex = hex;
     },
     SelectArea(area) {
       const hex = this.map[`${area.x},${area.y}`];
-      console.log("SelectArea", hex);
       this.selectedHex = hex;
     },
   },

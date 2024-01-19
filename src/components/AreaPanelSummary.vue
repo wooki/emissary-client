@@ -1,43 +1,65 @@
 <template>
-  <div class="area-panel-summary">
+  <div class="area-panel-reports">
+    
     <div class="parchment"></div>
 
-    <div class="name" v-if="!area.province && area.name">
+    <div v-if="showTradePolicy" class="area-panel-details">
+        <button class="icon" @click="this.showTradePolicy = false"><BackIcon /></button>
+        <div class="area-panel-report-title">Trade Policy</div>
+        <div class="area-panel-report-details-form">
+          
+          <p>testing</p>
+        </div>
+      </div>
+  <div v-else class="area-panel-reports-container">
+
+
+    <div class="area-panel-report" v-if="!area.province && area.name">
       <label>Capital</label>
       <div class="field">
         <Link @click="SelectArea" :x="area.x" :y="area.y" :name="area.name" />
       </div>
     </div>
-    <div v-else-if="area.name" class="name"><label>Name</label><div class="field">{{ area.name }}</div></div>
-    <div class="terrain"><label>Terrain</label><div class="field">{{ area.terrain }}</div></div>
-    <div v-if="area.owner" class="owner">
+    <div v-else-if="area.name" class="area-panel-report"><label>Name</label><div class="field">{{ area.name }}</div></div>
+    <div class="area-panel-report"><label>Terrain</label><div class="field">{{ area.terrain }}</div></div>
+    <div v-if="area.owner" class="area-panel-report">
       <label>Owner</label>
       <div class="field">{{  empireName }}</div>
     </div>
-    <div class="location" v-if="area.province">
+    <div class="area-panel-report" v-if="area.province">
       <label>Province</label>
       <div class="field">
         <Link @click="SelectArea" :x="area.province.x" :y="area.province.y" :name="area.province.name" />
       </div>
     </div>
-    <div v-if="area.trade" class="trade">
-      <label>Trade Region</label>
+    <div v-if="area.trade" class="area-panel-report">
+      <label>Region</label>
       <div class="field">
-        <div class="coord">{{  area.trade.x }}, {{  area.trade.y }}</div>
-        <div class="province">{{ area.trade.name}}</div>
+        <Link @click="SelectArea" :x="area.trade.x" :y="area.trade.y" :name="area.trade.name" />
       </div>
-    </div>
-    <div v-if="area.population">
-      <label>Population</label>
-      <div class="field">{{ population }}</div>
-    </div>
+    </div>  
     
+    <div v-if="area?.trade_policy" @click="ShowTradePolicy" class="area-panel-report" :class="ownedByMe ? 'has-details' : ''">
+      <div class="area-panel-report-entries">
+        <div class="area-panel-report-title">Trade Policy</div>
+        <div class="area-panel-report-entry policy-food" v-if="area.trade_policy.food">
+          <div class="area-panel-report-entry-title">Food</div>
+          <div class="area-panel-report-entry-value">{{ area.trade_policy.food }}</div>
+        </div>
+        <div class="area-panel-report-entry policy-goods" v-if="area.trade_policy.goods">
+          <div class="area-panel-report-entry-title">Goods</div>
+          <div class="area-panel-report-entry-value">{{ area.trade_policy.goods }}</div>
+        </div>
+      </div>
+    </div>    
+    
+  </div>
   </div>
 </template>
 
 <script>
-import { Rounded } from '@/libs/SafeMath.js'
 import Link from './Link.vue'
+import BackIcon from "@/assets/icons/back.svg";
 
 export default {
   props: {
@@ -51,58 +73,35 @@ export default {
     }
   },
   components: {    
-    Link
+    Link,
+    BackIcon
   },
   emits: ["select"],
+  data() {
+    return {
+      showTradePolicy: false
+    }
+  },
   computed: {
     empireName() {
       if (!this.area.owner) return "Unowned";
-      if (this.area.owner == this.report.Me()) return `Me (${this.report.MyKingdom()})`;
+      if (this.ownedByMe) return `Me (${this.report.MyKingdom()})`;
       return this.report.kingdoms[this.area.owner].name;
     },
-    population() {      
-      if (this.area?.population) {
-        return Rounded(this.area.population, 2).toLocaleString();
-      }
-      return null;
+    ownedByMe() {
+      return (this.area?.owner == this.report.Me());
     }
   },
   methods: {
     SelectArea(area) {
       this.$emit("select", area);
+    },
+    ShowTradePolicy() {
+      this.showTradePolicy = true;
     }
   }
 }
 </script>
 
-<style scoped>
-  .area-panel-summary {
-    position: relative;
-    z-index: 1;    
-    padding: 10px 12px;
-    font-size: 12px; 
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px 24px;
-
-    label {      
-      font-weight: bold;
-      text-transform: uppercase;
-      display: block;
-      width: 100%;
-    }
-
-    .name {
-      .field {
-        font-size: 16px;
-        font-weight: bold;
-      }
-    }
-  }
-
-  @media (min-aspect-ratio: 1.2/1) {
-    .area-panel-summary {
-    }
-
-  }
+<style scoped>  
 </style>

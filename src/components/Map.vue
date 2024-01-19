@@ -276,7 +276,6 @@ export default {
               !SameCoord(neighbourHex, settlement) &&
               !SameCoord(neighbourHex.area.province, settlement)
             ) {
-              // console.log("neighbourHex", neighbourHex.points);
               let p1 = neighbourHex.points[(index + 3) % 6];
               let p2 = neighbourHex.points[(index + 4) % 6];
               edgePointPairs.push([p1, p2]);

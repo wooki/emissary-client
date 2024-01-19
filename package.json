@@ -14,5 +14,8 @@
     "vite": "^4.4.9",
     "vite-svg-loader": "^4.0.0",
     "vue": "^3.3.4"
+  },
+  "devDependencies": {
+    "sass": "^1.70.0"
   }
 }
