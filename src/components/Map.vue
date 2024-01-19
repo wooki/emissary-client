@@ -9,90 +9,16 @@
     <div class="parchment"></div>
     <svg v-if="mounted" xmlns="http://www.w3.org/2000/svg" :viewBox="viewBox">
       <defs>
-        <mask id="banner_mask_base_0">
-          <path fill="#ffffff" d="m 0,6 L 16,20 V 32 H 0 Z" />
-        </mask>
-        <mask id="banner_mask_base_1">
-          <rect fill="#ffffff" width="0" height="0" x="0" y="0" />
-        </mask>
-        <mask id="banner_mask_base_2">
-          <rect fill="#ffffff" width="16" height="32" x="0" y="0" />
-        </mask>
-        <mask id="banner_mask_base_3">
-          <path fill="#ffffff" d="M 0,2 V 32 H 5 V 2 Z m 11,0 v 30 h 5 V 2 Z" />
-        </mask>
-        <mask id="banner_mask_base_4">
-          <rect fill="#ffffff" width="2" height="30" x="0" y="2" />
-          <rect fill="#ffffff" width="4" height="30" x="6" y="2" />
-          <rect fill="#ffffff" width="2" height="30" x="14" y="2" />
-        </mask>
-        <mask id="banner_mask_base_5">
-          <rect fill="#ffffff" width="16" height="8" x="0" y="2" />
-          <rect fill="#ffffff" width="16" height="14" x="0" y="18" />
-        </mask>
-        <mask id="banner_mask_base_5x">
-          <rect fill="#ffffff" width="16" height="6" x="0" y="2" />
-          <rect fill="#ffffff" width="16" height="16" x="0" y="16" />
-        </mask>
-        <mask id="banner_mask_base_5xx">
-          <rect fill="#ffffff" width="16" height="8" x="0" y="2" />
-          <rect fill="#ffffff" width="16" height="13" x="0" y="19" />
-        </mask>
-        <mask id="banner_mask_base_6">
-          <path fill="#ffffff" d="M 8,9 0,15 v 4 l 8,-6 8,6 V 15 L 8,9" />
-        </mask>
-        <mask id="banner_mask_base_7">
-          <path
-            fill="#ffffff"
-            d="m 6,2 v 8 H 0 v 4 h 6 v 18 h 4 V 14 h 6 V 10 H 10 V 2 Z"
-          />
-        </mask>
-        <mask id="banner_mask_base_8_a">
-          <rect fill="#ffffff" width="5" height="30" x="0" y="2" />
-        </mask>
-        <mask id="banner_mask_base_8_b">
-          <rect fill="#ffffff" width="5" height="30" x="11" y="2" />
-        </mask>
-        <mask id="banner_mask_base_9_a">
-          <rect fill="#ffffff" width="16" height="8" x="0" y="2" />
-        </mask>
-        <mask id="banner_mask_base_9_b">
-          <rect fill="#ffffff" width="16" height="12" x="0" y="20" />
-        </mask>
-        <!-- color 3 masks -->
-        <mask id="banner_mask_shape_0">
-          <circle fill="#ffffff" r="6" cx="8" cy="12" />
-        </mask>
-        <mask id="banner_mask_shape_1">
-          <rect fill="#ffffff" width="12" height="4" x="2" y="10" />
-          <rect fill="#ffffff" width="4" height="12" x="6" y="6" />
-        </mask>
-        <mask id="banner_mask_shape_2">
-          <path
-            fill="#ffffff"
-            d="M 8 16 L 11.471 19.208 L 11.127 14.494 L 15.799 13.78 L 11.9 11.11 L 14.255 7.012 L 9.736 8.396 L 8 4 L 6.264 8.396 L 1.745 7.012 L 4.1 11.11 L 0.201 13.78 L 4.873 14.494 L 4.529 19.208 L 8 16"
-          />
-        </mask>
-        <mask id="banner_mask_shape_3">
-          <path
-            fill="#ffffff"
-            d="m 7,2 V 11 H 0 v 2 h 7 V 32 h 2 V 13 h 8 V 11 H 9 V 2 Z"
-          />
-        </mask>
-        <mask id="banner_mask_shape_4">
-          <path fill="#ffffff" d="m 0,6 v 4 l 16,13 v -4" />
-        </mask>
+        <BannerMasks />
         <symbol
           v-for="kingdom in report.kingdoms"
-          :id="'banner-' + kingdom.player"
-          viewbox="0 -1 16 35"
+          :id="'banner-' + kingdom.player"      
+          viewBox="0 -1 16 34"  
+          height="35"  width="16"
         >
           <Banner :x="0" :y="0" :flag="kingdom.flag" />
         </symbol>
-      </defs>
-
-      <use transform="translate(1000, 1000)" href="#banner-jim" />
-      <use transform="translate(1050, 1000)" href="#banner-ji1m" />
+      </defs>      
 
       <Hexagon
         @mouseenter="hexHighlight"
@@ -117,17 +43,7 @@
         fill="none"
         stroke-dasharray="10,15"
         stroke-linecap="round"
-      />
-      <text
-        v-for="label in mapLabels"
-        :key="label.key"
-        :x="label.x"
-        :y="label.y"
-        :fill="label.fill"
-        :class="label.class"
-      >
-        {{ label.text }}
-      </text>
+      />     
 
       <Hexagon
         v-if="hoveredHex"
@@ -149,12 +65,30 @@
         stroke="white"
         strokeDashArray="12,4"
       />
+
+      <g v-for="banner in ownedHexBanners" :key="'banner-'+banner.key" :transform="`translate(${banner.x}, ${banner.y}) scale(${ownedHexBannerScale})`" @click="SelectHexagon(banner.hex)" @mouseenter="bannerHighlight(banner)" @mouseleave="bannerUnhighlight(banner)">        
+          <g :class="OwnedBannerClass(banner)">
+          <use :href="banner.href" />      
+        </g>
+      </g>
+
+      <text
+        v-for="label in mapLabels"
+        :key="label.key"
+        :x="label.x"
+        :y="label.y"
+        :fill="label.fill"
+        :class="label.class"
+      >
+        {{ label.text }}
+      </text>
     </svg>
     <!-- {{ JSON.stringify(map) }} -->
   </div>
 </template>
 
 <script>
+import BannerMasks from "./BannerMasks.vue";
 import Hexagon from "./Hexagon.vue";
 import Banner from "./Banner.vue";
 import {
@@ -198,9 +132,11 @@ export default {
   components: {
     Hexagon,
     Banner,
+    BannerMasks
   },
   data() {
     return {
+      ownedHexBannerScale: 1.6,
       mounted: false,
       focusX: 0,
       focusY: 0,
@@ -214,6 +150,7 @@ export default {
       mouseDown: false,
       scrollSpeed: 5,
       hoveredHex: null,
+      hoveredBanner: null,
       clientHeight: 0,
       clientWidth: 0,
     };
@@ -279,14 +216,27 @@ export default {
         return this.GetMapHexFromArea(hex);
       });
     },
+    ownedHexBanners() {
+      return Object.values(this.map).filter(area => area.owner).map((area) => {
+        let banner = this.GetMapBannerFromArea(area);
+        return banner;
+      });      
+    },
     mapLabels() {
       return this.mapSettlements.map((hex) => {
         const center = Center(hex.x, hex.y, this.hexagonSize, 0, 0);
         const points = Corners(center.x, center.y, this.hexagonSize);
 
+        let xOffset = 0;
+        let yOffset = 0;
+        if (hex.owner) {
+          xOffset = this.hexagonSize / 2;
+          yOffset = this.hexagonSize / 10;
+        }
+
         const labelData = {
-          x: points[0].x,
-          y: points[0].y,
+          x: points[0].x + xOffset,
+          y: points[0].y + yOffset,
           key: `${hex.x},${hex.y}`,
           text: hex.name,
           fill: "#000000",
@@ -362,50 +312,49 @@ export default {
       });
     },
   },
-  methods: {
-    RandomFlag() {
-      let shuffle = function (array) {
-        let currentIndex = array.length,
-          randomIndex;
-
-        // While there remain elements to shuffle.
-        while (currentIndex > 0) {
-          // Pick a remaining element.
-          randomIndex = Math.floor(Math.random() * currentIndex);
-          currentIndex--;
-
-          // And swap it with the current element.
-          [array[currentIndex], array[randomIndex]] = [
-            array[randomIndex],
-            array[currentIndex],
-          ];
-        }
-
-        return array;
-      };
-
-      let getRandomInt = function (min, max) {
-        min = Math.ceil(min);
-        max = Math.floor(max);
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-      };
-
-      let x = shuffle([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
-
-      let flag = [
-        getRandomInt(0, 9),
-        getRandomInt(0, 9),
-        x.pop(),
-        x.pop(),
-        x.pop(),
-      ].join("");
-      return flag;
+  methods: {        
+    OwnedBannerClass(banner) {
+      let classes = ['owned-banner'];     
+      if (this.selectedHex && this.selectedHex.x == banner.hex.x && this.selectedHex.y == banner.hex.y) {
+        classes.push('owned-banner-selected');
+      } else if (this.hoveredHex && this.hoveredHex.x == banner.hex.x && this.hoveredHex.y == banner.hex.y) {
+        classes.push('owned-banner-hover');
+      } else if (this.hoveredBanner?.key == banner.key) {
+        classes.push('owned-banner-hover');
+      }
+      return classes.join(' ');
+    },
+    bannerHighlight(banner) {
+      this.hoveredBanner = banner;
+    },
+    bannerUnhighlight(banner) {
+      this.hoveredBanner = null;
     },
     hexHighlight(hex) {
       this.hoveredHex = hex;
     },
     hexUnhighlight(hex) {
       this.hoveredHex = null;
+    },
+    GetMapBannerFromArea(area) {
+      if (!area.owner) return null;
+      const center = Center(area.x, area.y, this.hexagonSize, 0, 0);
+      const points = Corners(center.x, center.y, this.hexagonSize);
+
+      const xOffset = this.ownedHexBannerScale * 8.0;
+      const yOffset = (this.hexagonSize / 3) + (this.ownedHexBannerScale * 32.0);
+
+      const bannerData = {
+        x: center.x - xOffset,
+        y: center.y - yOffset,
+        key: `${area.x},${area.y}`,
+        center: center,
+        area: area,
+        href: `#banner-${area.owner}`,
+        hex: area
+      };
+
+      return bannerData;
     },
     GetMapHexFromArea(hex) {
       const center = Center(hex.x, hex.y, this.hexagonSize, 0, 0);
@@ -533,5 +482,16 @@ text.label {
 }
 .parchment {
   z-index: unset;
+}
+.owned-banner {
+  transform-origin: 8px 35px;
+  scale: 1;
+  transition: scale 100ms ease-in-out;
+}
+.owned-banner-hover {  
+  scale: 1.2
+}
+.owned-banner-selected {  
+  scale: 1.4
 }
 </style>

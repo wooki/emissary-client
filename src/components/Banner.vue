@@ -1,7 +1,6 @@
 <template>
   <g
     :transform="transform"
-    viewBox="0 0 16 32"
     :transform-origin="transformOrigin"
     class="banner"
     @click="click"
@@ -125,15 +124,10 @@ export default {
 </script>
 
 <style scoped>
-polygon {
-  cursor: pointer;
-  &.hovered,
-  &.selected {
-    pointer-events: none;
-  }
+.banner {
+  cursor: pointer;    
 }
 .hexagon.area.selected {
-  /* transform: scale(2); */
   animation: 800ms ease-in-out 0ms infinite running pulse;
 }
 
