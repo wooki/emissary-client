@@ -76,7 +76,7 @@
       </div>
     </div>
 
-    <div class="area-panel-units">
+    <div class="area-panel-reports">
       <div class="parchment"></div>
     </div>
   </div>

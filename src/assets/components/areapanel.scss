@@ -1,16 +1,12 @@
 
 .area-panel {
-    display: grid;
-    grid-template-columns: 12fr 3fr 3fr;
-    grid-template-rows: 1fr;
-    gap: 12px;
-    height: 100%;
-    overflow: auto;
+    display: flex;
+    flex-direction: row;
+    gap: 12px;    
   }
   
   .area-panel-summary {
     position: relative;
-    min-width: 200px;
     background-color: transparent;
     color: var(--color-text);
   }
@@ -20,20 +16,11 @@
     z-index: 1;
     background-color: transparent;
     color: var(--color-text);
-    transition: all 200ms ease-in-out;
-    min-width: max(15vw, 250px);;
+    transition: all 200ms ease-in-out;    
     
-
     &:has(.area-panel-details) {
-      min-width: 33vw;
+      min-width: 100%;
     }
-  }
-  
-  .area-panel-units {
-    position: relative;
-    z-index: 1;
-    background-color: transparent;
-    color: var(--color-text);
   }
   
   .area-panel-reports-container {
@@ -200,30 +187,15 @@
 
   @media (min-aspect-ratio: 1.2/1) {
     .area-panel {
-      grid-template-columns: 1fr;
-      grid-template-rows: 1fr 3fr 3fr;
+      flex-direction: column;      
       gap: 12px;
     }
-    .area-panel-summary {
-      min-width: unset;
-      min-height: 150px;
-    }
-  
-    .area-panel-info {
-      min-height: 200px;
-    }
-  
-    .area-panel-units {
-      min-height: 200px;
-    }
-
     .area-panel-reports {
       min-width: unset;
-      min-height: max(10vh, 150px);
       
       &:has(.area-panel-details) {
         min-width: unset;
-        min-height: 60vh;
+        min-height: 40vh;
       }
     }
   }

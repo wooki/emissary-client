@@ -2,6 +2,7 @@
     <div ref="dialog" class="dialog" popover="manual">
       <button class="close icon" @click="close"><CloseIcon /></button>
       <div class="content">
+        <div class="parchment"></div>
         <slot></slot>
       </div>
     </div>
@@ -30,7 +31,7 @@
       background-color: rgba(43, 32, 28, 0.66);
     }
     .dialog {
-      background-color: var(--color-background);
+      background-color: transparent;
       color: var(--color-text);
       min-width: 300px;
       padding: 10px 15px 15px 15px;
@@ -39,11 +40,17 @@
     }
     
     .close {
-      background-color: var(--color-background);
+      background-color: transparent;
       color: var(--color-text);
       position: absolute;
-      top: 0;
-      right: 0;
+      top: 4px;
+      right: 2px;
+      cursor: pointer;
+      &:hover,
+      &:focus-visible {
+          background: rgba(255, 255, 255, 0.1);
+          border: 1px solid var(--color-text);
+      }
     }
   </style>
   
