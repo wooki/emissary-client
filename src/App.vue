@@ -10,14 +10,14 @@
     </div>
     <button class="icon" @click="upload" title="Upload report file">
       <UploadIcon />
-    </button>
+    </button>    
   </header>
   <main :class="{ noreport: !report }">
     <Report v-if="report" :report="report" />
-  </main>
-  <sl-dialog ref="uploadReportDialogOpen" label="Load Report">
-    <OpenReport @loaded="loaded" />
-  </sl-dialog>
+  </main>  
+  <Dialog ref="uploadReportDialogOpen">
+    <OpenReport @loaded="loaded"/>
+  </Dialog>
   <svg style="position: absolute; height: 0; width: 0; opacity: 0">
     <filter id="wavy">
       <feTurbulence x="0" y="0" baseFrequency="0.02" numOctaves="5" seed="1" />
@@ -31,9 +31,9 @@ import Report from "./components/Report.vue";
 import OpenReport from "./components/OpenReport.vue";
 import Logo from "./assets/emissary.svg";
 import UploadIcon from "./assets/icons/upload.svg";
-import "@shoelace-style/shoelace/dist/components/dialog/dialog.js";
 import ReportClass from "@/libs/Report.js";
 import Banner from "./components/Banner.vue";
+import Dialog from './components/Dialog.vue'
 
 export default {
   data() {
@@ -47,13 +47,14 @@ export default {
     Report,
     OpenReport,
     Banner,
+    Dialog
   },
   methods: {
     upload() {
-      this.$refs.uploadReportDialogOpen.show();
+      this.$refs.uploadReportDialogOpen.open();
     },
     loaded(data) {
-      this.$refs.uploadReportDialogOpen.hide();
+      this.$refs.uploadReportDialogOpen.close();
       if (data.map && data.my_kingdom && data.kingdoms) {
         this.CreateReport(data);
         localStorage.setItem("report", JSON.stringify(data));

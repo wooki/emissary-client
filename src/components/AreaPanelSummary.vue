@@ -6,9 +6,9 @@
     <div v-if="showTradePolicy" class="area-panel-details">
         <button class="icon" @click="this.showTradePolicy = false"><BackIcon /></button>
         <div class="area-panel-report-title">Trade Policy</div>
-        <div class="area-panel-report-details-form">
-          
-          <p>testing</p>
+        <div class="area-panel-report-details-form">          
+          <TradePolicy :area="area" resource="food" @click="SetTradePolicy" />
+          <TradePolicy :area="area" resource="goods" @click="SetTradePolicy" />
         </div>
       </div>
   <div v-else class="area-panel-reports-container">
@@ -59,6 +59,7 @@
 
 <script>
 import Link from './Link.vue'
+import TradePolicy from './TradePolicy.vue'
 import BackIcon from "@/assets/icons/back.svg";
 
 export default {
@@ -74,7 +75,8 @@ export default {
   },
   components: {    
     Link,
-    BackIcon
+    BackIcon,
+    TradePolicy
   },
   emits: ["select"],
   data() {
@@ -98,10 +100,19 @@ export default {
     },
     ShowTradePolicy() {
       this.showTradePolicy = true;
+    },
+    SetTradePolicy(params) {
+      this.area.trade_policy[params.resource] = params.value;      
     }
   }
 }
 </script>
 
 <style scoped>  
+.area-panel-report-details-form {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 10px;
+}
 </style>

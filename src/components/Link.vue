@@ -65,6 +65,7 @@ button.link {
   border: 1px solid transparent;
   transition: all 100ms ease;
   transform: translateX(-3px) translateY(-1px);
+  text-align: left;
   .name {
     font-weight: bold;
   }  
