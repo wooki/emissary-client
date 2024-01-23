@@ -15,7 +15,7 @@
         >
           <!-- <div class="area-panel-report-details-type">{{ item.type }}</div> -->
           <div class="area-panel-report-details-message">
-            <TextEndingWithLink :text="item.message" @click="SelectArea" />            
+            <TextEndingWithLink :text="item.message" @click="SelectArea" />
           </div>
           <div
             class="area-panel-report-details-data"
@@ -78,6 +78,19 @@
 
     <div class="area-panel-reports">
       <div class="parchment"></div>
+      <div class="area-panel-reports-container">
+        <div class="area-panel-report">
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris
+            molestie neque id ex condimentum, vitae sodales nunc varius.
+            Vestibulum varius lacus id dolor convallis, vel rhoncus massa porta.
+            Mauris sodales eget elit non ullamcorper. Sed lobortis sem eu odio
+            congue placerat. Donec vestibulum venenatis sem, non hendrerit
+            turpis tincidunt ut. Integer ut ligula vel massa tempus maximus sit
+            amet et mi. In congue quam eget pellentesque vehicula.
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -87,13 +100,13 @@ import AreaPanelSummary from "./AreaPanelSummary.vue";
 import { AddFloats } from "@/libs/SafeMath.js";
 import BackIcon from "@/assets/icons/back.svg";
 import TextEndingWithLink from "./TextEndingWithLink.vue";
-import { Rounded } from '@/libs/SafeMath.js'
+import { Rounded } from "@/libs/SafeMath.js";
 
 export default {
   props: {
     report: {
       type: Object,
-      required: true
+      required: true,
     },
     area: {
       type: Object,
@@ -109,7 +122,7 @@ export default {
   components: {
     AreaPanelSummary,
     BackIcon,
-    TextEndingWithLink
+    TextEndingWithLink,
   },
   computed: {
     selectedReport() {
@@ -136,46 +149,44 @@ export default {
           values: new Map(),
           base: this.area.store.food,
           adjustment: [0],
-          digits: 0
-        }
+          digits: 0,
+        };
         goodsReport = {
           type: "GOODS",
           info: [],
           values: new Map(),
           base: this.area.store.goods,
           adjustment: [0],
-          digits: 0
-        }
+          digits: 0,
+        };
         goldReport = {
           type: "GOLD",
           info: [],
           values: new Map(),
           base: this.area.store.gold,
           adjustment: [0],
-          digits: 0
-        }
+          digits: 0,
+        };
       }
 
       if (this.area.population) {
-        
         populationReport = {
           type: "POPULATION",
           info: [],
           values: new Map(),
           base: Rounded(this.area.population, 2).toLocaleString(),
           adjustment: [0],
-          digits: 0
-        }        
+          digits: 0,
+        };
         reports.set("POPULATION", populationReport);
       }
 
       this.area.info.forEach((info) => {
-        
         reports.set(
           info.type,
           this.CreateOrAddToReport(reports, info, this.area),
         );
-        
+
         if (foodReport && info.data.food) {
           foodReport.info.push(info);
           foodReport.adjustment[0] = foodReport.adjustment[0] + info.data.food;
@@ -183,7 +194,8 @@ export default {
 
         if (goodsReport && info.data.goods) {
           goodsReport.info.push(info);
-          goodsReport.adjustment[0] = goodsReport.adjustment[0] + info.data.goods;
+          goodsReport.adjustment[0] =
+            goodsReport.adjustment[0] + info.data.goods;
         }
 
         if (goldReport && info.data.gold) {
@@ -195,7 +207,6 @@ export default {
           goldReport.info.push(info);
           goldReport.adjustment[0] = goldReport.adjustment[0] + info.data.cost;
         }
-        
       });
 
       if (foodReport) reports.set("FOOD", foodReport);
@@ -211,7 +222,7 @@ export default {
             report.adjustment = Array.from(report.values.values());
           }
         }
-      });      
+      });
 
       return Array.from(reports.values()).toSorted((a, b) => {
         return a.type.localeCompare(b.type);
@@ -241,7 +252,7 @@ export default {
           values: new Map(),
           base: null,
           adjustment: null,
-          digits: 2
+          digits: 2,
         };
       }
 
@@ -265,5 +276,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

@@ -39,6 +39,11 @@ export default {
       return this.report.map;
     },
   },
+  watch: {
+    report(newReport, oldReport) {
+      this.selectedHex = null;
+    },
+  },
   methods: {
     SelectHexagon(hex) {
       this.selectedHex = hex;
@@ -56,8 +61,8 @@ export default {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 2fr minmax(300px, 1fr);
-  height: calc(calc(100vh - 12px) - var(--header-height));
-  max-height: calc(calc(100vh - 12px) - var(--header-height));
+  height: calc(100vh - var(--header-height));
+  max-height: calc(100v- var(--header-height));
   gap: 12px;
   padding: 0 6px 12px 0;
 }
