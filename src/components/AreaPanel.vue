@@ -79,17 +79,7 @@
     <div class="area-panel-reports">
       <div class="parchment"></div>
       <div class="area-panel-reports-container">
-        <div class="area-panel-report">
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris
-            molestie neque id ex condimentum, vitae sodales nunc varius.
-            Vestibulum varius lacus id dolor convallis, vel rhoncus massa porta.
-            Mauris sodales eget elit non ullamcorper. Sed lobortis sem eu odio
-            congue placerat. Donec vestibulum venenatis sem, non hendrerit
-            turpis tincidunt ut. Integer ut ligula vel massa tempus maximus sit
-            amet et mi. In congue quam eget pellentesque vehicula.
-          </p>
-        </div>
+        <div class="area-panel-report">test</div>
       </div>
     </div>
   </div>
