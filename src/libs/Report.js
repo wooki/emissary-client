@@ -26,4 +26,10 @@ export default function Report(data) {
     if (flag[0] == 1) return Colors1[parseInt(flag[3])];
     return Colors1[parseInt(flag[4])];
   };
+  this.CreateOrders = () => {
+    // iterate all areas and add orders for owned settlements and units
+    let orders = [{ order: "test" }];
+
+    return JSON.stringify(orders);
+  };
 }

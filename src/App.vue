@@ -8,15 +8,18 @@
       <div class="report-info-empire">{{ report.MyKingdom() }},</div>
       <div class="report-info-turn">turn {{ report.turn }}</div>
     </div>
-    <button class="icon" @click="upload" title="Upload report file">
-      <UploadIcon />
-    </button>    
+    <button class="icon" @click="upload" title="Open report file">
+      <GetTurnIcon />
+    </button>
+    <button class="icon" @click="sendturn" title="Send turn file">
+      <SendTurnIcon />
+    </button>
   </header>
   <main :class="{ noreport: !report }">
     <Report v-if="report" :report="report" />
-  </main>  
+  </main>
   <Dialog ref="uploadReportDialogOpen">
-    <OpenReport @loaded="loaded"/>
+    <OpenReport @loaded="loaded" />
   </Dialog>
   <svg style="position: absolute; height: 0; width: 0; opacity: 0">
     <filter id="wavy">
@@ -30,10 +33,11 @@
 import Report from "./components/Report.vue";
 import OpenReport from "./components/OpenReport.vue";
 import Logo from "./assets/emissary.svg";
-import UploadIcon from "./assets/icons/upload.svg";
+import GetTurnIcon from "./assets/icons/getturn.svg";
+import SendTurnIcon from "./assets/icons/sendturn.svg";
 import ReportClass from "@/libs/Report.js";
 import Banner from "./components/Banner.vue";
-import Dialog from './components/Dialog.vue'
+import Dialog from "./components/Dialog.vue";
 
 export default {
   data() {
@@ -43,15 +47,31 @@ export default {
   },
   components: {
     Logo,
-    UploadIcon,
+    GetTurnIcon,
+    SendTurnIcon,
     Report,
     OpenReport,
     Banner,
-    Dialog
+    Dialog,
   },
   methods: {
     upload() {
       this.$refs.uploadReportDialogOpen.open();
+    },
+    sendturn() {
+      console.log("sendturn");
+      const orders = this.report.CreateOrders();
+      console.log("orders", orders);
+
+      const a = document.createElement("a");
+      const file = new Blob([orders], { type: "text/plain" });
+      a.setAttribute("href", URL.createObjectURL(file));
+      a.setAttribute(
+        "download",
+        `turn.${this.report.Me()}.${this.report.turn}.json`,
+      );
+      a.click();
+      URL.revokeObjectURL(a.getAttribute("href"));
     },
     loaded(data) {
       this.$refs.uploadReportDialogOpen.close();
