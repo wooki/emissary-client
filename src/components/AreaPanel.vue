@@ -1,6 +1,6 @@
 <template>
   <div class="area-panel">
-    <AreaPanelSummary :report="report" @select="SelectArea" :area="area" />
+    <AreaPanelSummary @updated="Updated" :report="report" @select="SelectArea" :area="area" />
 
     <div class="area-panel-reports">
       <div class="parchment"></div>
@@ -108,7 +108,7 @@ export default {
       selectedReportIndex: null,
     };
   },
-  emits: ["select"],
+  emits: ["select", "updated"],
   components: {
     AreaPanelSummary,
     BackIcon,
@@ -220,6 +220,9 @@ export default {
     },
   },
   methods: {
+    Updated(area) {
+      this.$emit("updated", area);
+    },  
     SelectArea(area) {
       this.SelectReport(null);
       this.$emit("select", area);

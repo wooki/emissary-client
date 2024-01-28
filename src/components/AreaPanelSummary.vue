@@ -78,7 +78,7 @@ export default {
     BackIcon,
     TradePolicy
   },
-  emits: ["select"],
+  emits: ["select", "updated"],
   data() {
     return {
       showTradePolicy: false
@@ -95,6 +95,9 @@ export default {
     }
   },
   methods: {
+    Updated(area) {
+      this.$emit("updated", area);
+    },  
     SelectArea(area) {
       this.$emit("select", area);
     },
@@ -103,6 +106,7 @@ export default {
     },
     SetTradePolicy(params) {
       this.area.trade_policy[params.resource] = params.value;      
+      this.$emit("updated", this.area);
     }
   }
 }

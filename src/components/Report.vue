@@ -9,6 +9,7 @@
         v-if="selectedHex"
         :area="selectedHex"
         @select="SelectArea"
+        @updated="Updated"
       />
     </div>
   </div>
@@ -25,6 +26,7 @@ export default {
       required: true,
     },
   },
+  emits: ["updated"],
   components: {
     Map,
     AreaPanel,
@@ -45,6 +47,9 @@ export default {
     },
   },
   methods: {
+    Updated(hex) {
+      this.$emit("updated", this.report);
+    },
     SelectHexagon(hex) {
       this.selectedHex = hex;
     },

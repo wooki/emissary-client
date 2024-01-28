@@ -16,7 +16,7 @@
     </button>
   </header>
   <main :class="{ noreport: !report }">
-    <Report v-if="report" :report="report" />
+    <Report v-if="report" :report="report" @updated="SaveLocalChanges" />
   </main>
   <Dialog ref="uploadReportDialogOpen">
     <OpenReport @loaded="loaded" />
@@ -77,6 +77,11 @@ export default {
       this.$refs.uploadReportDialogOpen.close();
       if (data.map && data.my_kingdom && data.kingdoms) {
         this.CreateReport(data);
+        localStorage.setItem("report", JSON.stringify(data));
+      }
+    },
+    SaveLocalChanges(data) {
+      if (data.map && data.my_kingdom && data.kingdoms) {      
         localStorage.setItem("report", JSON.stringify(data));
       }
     },
