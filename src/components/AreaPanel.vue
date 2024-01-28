@@ -17,6 +17,7 @@
           <div class="area-panel-report-details-message">
             <TextEndingWithLink :text="item.message" @click="SelectArea" />
           </div>
+          <template v-if="item.data">
           <div
             class="area-panel-report-details-data"
             v-for="(dataKey, dataKeyIndex) in Object.keys(item.data)"
@@ -33,6 +34,7 @@
               {{ item.data[dataKey] }}
             </div>
           </div>
+        </template>
         </div>
       </div>
 
@@ -176,23 +178,23 @@ export default {
             this.CreateOrAddToReport(reports, info, this.area),
           );
 
-          if (foodReport && info.data.food) {
+          if (foodReport && info.data?.food) {
             foodReport.info.push(info);
             foodReport.adjustment[0] = foodReport.adjustment[0] + info.data.food;
           }
 
-          if (goodsReport && info.data.goods) {
+          if (goodsReport && info.data?.goods) {
             goodsReport.info.push(info);
             goodsReport.adjustment[0] =
               goodsReport.adjustment[0] + info.data.goods;
           }
 
-          if (goldReport && info.data.gold) {
+          if (goldReport && info.data?.gold) {
             goldReport.info.push(info);
             goldReport.adjustment[0] = goldReport.adjustment[0] + info.data.gold;
           }
 
-          if (goldReport && info.data.cost) {
+          if (goldReport && info.data?.cost) {
             goldReport.info.push(info);
             goldReport.adjustment[0] = goldReport.adjustment[0] + info.data.cost;
           }
@@ -252,16 +254,18 @@ export default {
       // add info and values
       report.info.push(info);
 
-      Object.keys(info.data).forEach((key) => {
-        if (report.values.has(key)) {
-          report.values.set(
-            key,
-            AddFloats(report.values.get(key), info.data[key], 4),
-          );
-        } else {
-          report.values.set(key, info.data[key]);
-        }
-      });
+      if (info.data) {
+        Object.keys(info.data).forEach((key) => {
+          if (report.values.has(key)) {
+            report.values.set(
+              key,
+              AddFloats(report.values.get(key), info.data[key], 4),
+            );
+          } else {
+            report.values.set(key, info.data[key]);
+          }
+        });
+      }
 
       return report;
     },
