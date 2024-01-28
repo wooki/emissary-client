@@ -6,7 +6,7 @@
     @click="click"
     @mouseenter="mouseenter"
     @mouseleave="mouseleave"
-  >
+  > 
     <path fill="#000000" d="M 0,0 H 16 V 2 H 0 Z" />
     <path stroke="#000000" stroke-width="2" fill="none" d="M 8,-1 V 34" />
     <path :fill="color1" d="M 0,2 H 16 V 32 L 8,25 0,32 Z" />

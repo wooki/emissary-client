@@ -124,8 +124,6 @@ export default {
     aggregateReports() {
       const reports = new Map();
 
-      if (!this.area.info) return [];
-
       // one per type and one per store item, iterate and create or update
       let foodReport = null;
       let goodsReport = null;
@@ -164,40 +162,42 @@ export default {
           type: "POPULATION",
           info: [],
           values: new Map(),
-          base: Rounded(this.area.population, 2).toLocaleString(),
+          base: this.area.population.toLocaleString(),
           adjustment: [0],
           digits: 0,
         };
         reports.set("POPULATION", populationReport);
       }
 
-      this.area.info.forEach((info) => {
-        reports.set(
-          info.type,
-          this.CreateOrAddToReport(reports, info, this.area),
-        );
+      if (this.area.info) {
+        this.area.info.forEach((info) => {
+          reports.set(
+            info.type,
+            this.CreateOrAddToReport(reports, info, this.area),
+          );
 
-        if (foodReport && info.data.food) {
-          foodReport.info.push(info);
-          foodReport.adjustment[0] = foodReport.adjustment[0] + info.data.food;
-        }
+          if (foodReport && info.data.food) {
+            foodReport.info.push(info);
+            foodReport.adjustment[0] = foodReport.adjustment[0] + info.data.food;
+          }
 
-        if (goodsReport && info.data.goods) {
-          goodsReport.info.push(info);
-          goodsReport.adjustment[0] =
-            goodsReport.adjustment[0] + info.data.goods;
-        }
+          if (goodsReport && info.data.goods) {
+            goodsReport.info.push(info);
+            goodsReport.adjustment[0] =
+              goodsReport.adjustment[0] + info.data.goods;
+          }
 
-        if (goldReport && info.data.gold) {
-          goldReport.info.push(info);
-          goldReport.adjustment[0] = goldReport.adjustment[0] + info.data.gold;
-        }
+          if (goldReport && info.data.gold) {
+            goldReport.info.push(info);
+            goldReport.adjustment[0] = goldReport.adjustment[0] + info.data.gold;
+          }
 
-        if (goldReport && info.data.cost) {
-          goldReport.info.push(info);
-          goldReport.adjustment[0] = goldReport.adjustment[0] + info.data.cost;
-        }
-      });
+          if (goldReport && info.data.cost) {
+            goldReport.info.push(info);
+            goldReport.adjustment[0] = goldReport.adjustment[0] + info.data.cost;
+          }
+        });
+      }
 
       if (foodReport) reports.set("FOOD", foodReport);
       if (goodsReport) reports.set("GOODS", goodsReport);

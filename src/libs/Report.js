@@ -28,8 +28,20 @@ export default function Report(data) {
   };
   this.CreateOrders = () => {
     // iterate all areas and add orders for owned settlements and units
-    let orders = [{ order: "test" }];
+    let orders = [];
+    Object.keys(this.map).forEach(coord => {
+      const hex = this.map[coord];      
+      if (hex.owner == this.Me()) {
+        orders.push({
+          order: "trade_policy",
+          coord: coord,
+          data: hex.trade_policy
+        });        
+      }
+    });
 
+    console.log("orders");
+    console.dir(orders);
     return JSON.stringify(orders);
   };
 }
