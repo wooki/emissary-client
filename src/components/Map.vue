@@ -12,13 +12,14 @@
         <BannerMasks />
         <symbol
           v-for="kingdom in report.kingdoms"
-          :id="'banner-' + kingdom.player"      
-          viewBox="0 -1 16 34"  
-          height="35"  width="16"
+          :id="'banner-' + kingdom.player"
+          viewBox="0 -1 16 34"
+          height="35"
+          width="16"
         >
           <Banner :x="0" :y="0" :flag="kingdom.flag" />
         </symbol>
-      </defs>      
+      </defs>
 
       <Hexagon
         @mouseenter="hexHighlight"
@@ -43,7 +44,7 @@
         fill="none"
         stroke-dasharray="10,15"
         stroke-linecap="round"
-      />     
+      />
 
       <Hexagon
         v-if="hoveredHex"
@@ -66,9 +67,28 @@
         strokeDashArray="12,4"
       />
 
-      <g v-for="banner in ownedHexBanners" :key="'banner-'+banner.key" :transform="`translate(${banner.x}, ${banner.y}) scale(${ownedHexBannerScale})`" @click="SelectHexagon(banner.hex)" @mouseenter="bannerHighlight(banner)" @mouseleave="bannerUnhighlight(banner)">        
-          <g :class="OwnedBannerClass(banner)">
-          <use :href="banner.href" />      
+      <g
+        v-for="banner in ownedHexBanners"
+        :key="'banner-' + banner.key"
+        :transform="`translate(${banner.x}, ${banner.y}) scale(${ownedHexBannerScale})`"
+        @click="SelectHexagon(banner.hex)"
+        @mouseenter="bannerHighlight(banner)"
+        @mouseleave="bannerUnhighlight(banner)"
+      >
+        <g :class="OwnedBannerClass(banner)">
+          <!-- EXAMPLE ARMY
+          <path
+            stroke="#000"
+            stroke-width="1"
+            d="M 0,4 H 16 V 12 C 16,32 0,32 0,12 Z"
+          />
+          <use
+            mask="url(#army_mask)"
+            :href="banner.href"
+          /> -->
+          <!-- EXAMPLE AGENT<circle cx="8" cy="13.5" r="8" stroke="#000" stroke-width="1" />
+          <use mask="url(#agent_mask)" :href="banner.href" /> -->
+          <use :href="banner.href" />
         </g>
       </g>
 
@@ -132,7 +152,7 @@ export default {
   components: {
     Hexagon,
     Banner,
-    BannerMasks
+    BannerMasks,
   },
   data() {
     return {
@@ -217,10 +237,12 @@ export default {
       });
     },
     ownedHexBanners() {
-      return Object.values(this.map).filter(area => area.owner).map((area) => {
-        let banner = this.GetMapBannerFromArea(area);
-        return banner;
-      });      
+      return Object.values(this.map)
+        .filter((area) => area.owner)
+        .map((area) => {
+          let banner = this.GetMapBannerFromArea(area);
+          return banner;
+        });
     },
     mapLabels() {
       return this.mapSettlements.map((hex) => {
@@ -311,17 +333,25 @@ export default {
       });
     },
   },
-  methods: {        
+  methods: {
     OwnedBannerClass(banner) {
-      let classes = ['owned-banner'];     
-      if (this.selectedHex && this.selectedHex.x == banner.hex.x && this.selectedHex.y == banner.hex.y) {
-        classes.push('owned-banner-selected');
-      } else if (this.hoveredHex && this.hoveredHex.x == banner.hex.x && this.hoveredHex.y == banner.hex.y) {
-        classes.push('owned-banner-hover');
+      let classes = ["owned-banner"];
+      if (
+        this.selectedHex &&
+        this.selectedHex.x == banner.hex.x &&
+        this.selectedHex.y == banner.hex.y
+      ) {
+        classes.push("owned-banner-selected");
+      } else if (
+        this.hoveredHex &&
+        this.hoveredHex.x == banner.hex.x &&
+        this.hoveredHex.y == banner.hex.y
+      ) {
+        classes.push("owned-banner-hover");
       } else if (this.hoveredBanner?.key == banner.key) {
-        classes.push('owned-banner-hover');
+        classes.push("owned-banner-hover");
       }
-      return classes.join(' ');
+      return classes.join(" ");
     },
     bannerHighlight(banner) {
       this.hoveredBanner = banner;
@@ -341,7 +371,7 @@ export default {
       const points = Corners(center.x, center.y, this.hexagonSize);
 
       const xOffset = this.ownedHexBannerScale * 8.0;
-      const yOffset = (this.hexagonSize / 3) + (this.ownedHexBannerScale * 32.0);
+      const yOffset = this.hexagonSize / 3 + this.ownedHexBannerScale * 32.0;
 
       const bannerData = {
         x: center.x - xOffset,
@@ -350,7 +380,7 @@ export default {
         center: center,
         area: area,
         href: `#banner-${area.owner}`,
-        hex: area
+        hex: area,
       };
 
       return bannerData;
@@ -487,10 +517,10 @@ text.label {
   scale: 1;
   transition: scale 100ms ease-in-out;
 }
-.owned-banner-hover {  
-  scale: 1.2
+.owned-banner-hover {
+  scale: 1.2;
 }
-.owned-banner-selected {  
-  scale: 1.4
+.owned-banner-selected {
+  scale: 1.4;
 }
 </style>
