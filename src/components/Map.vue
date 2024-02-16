@@ -228,7 +228,12 @@ export default {
       if (displayWidth > displayHeight) displayHeight = displayWidth;
       if (displayHeight > displayWidth) displayWidth = displayHeight;
 
+      if (displayX == Infinity || displayX == -Infinity || displayX == Infinity || displayX == -Infinity) {
+        return "0 0 0 0"
+      }
+
       let DisplayBox = `${displayX} ${displayY} ${displayWidth * ratio} ${displayHeight}`;
+      
       return DisplayBox;
     },
     mapHexagons() {

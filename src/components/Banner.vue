@@ -72,6 +72,18 @@ export default {
       return this.Colors2[this.flagfields[3]];
     },
     color3() {
+      if (this.flagfields[0] == 2 && this.flagfields[3] == 2) {
+          return '#ffff66';        
+      }
+      if (this.flagfields[0] == 2 && this.flagfields[3] == 4) {
+          return '#ddddee';        
+      }
+      if (this.flagfields[0] == 1 && this.flagfields[2] == 9) {
+          return '#6000a6';
+      }
+      if (this.flagfields[0] == 2 && this.flagfields[3] == 9) {
+          return '#090909';        
+      }
       return this.Colors3[this.flagfields[4]];
     },
     mask1() {

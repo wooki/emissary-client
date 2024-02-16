@@ -1,14 +1,10 @@
 <template>
-  <div class="trade-policy select-options" :class="`trade-policy-${resource}`">
-    <div class="select-options-title">{{ resource }}</div>
-    <div :class="current == option.value ? 'active' : ''" v-for="option in options" :key="option.value" class="select-option" @click="SetPolicy(option)">
-      <div class="select-option-title">{{  option.title }}</div>
-      <div class="select-option-description">{{ option.desc }}</div>
-    </div>    
-  </div>
+  <SelectOptions class="trade-policy select-options" :class="`trade-policy-${resource}`" :title="resource" :data="area" :options="options" :current="current" @click="SetPolicy" />
 </template>
 
 <script>
+import SelectOptions from "./SelectOptions.vue";
+
 export default {
   props: {
     area: {
@@ -20,13 +16,16 @@ export default {
       required: true,
     }
   },
+  components: {
+    SelectOptions
+  },
   data() {
     return {
       options: [
         {
           value: "none",
           title: "None",
-          desc: `Do not buyor sell any ${this.resource}.`
+          desc: `Do not buy or sell any ${this.resource}.`
         },
         {
           value: "ration",
@@ -63,8 +62,8 @@ export default {
     }
   },
   methods: {
-    SetPolicy(option) {
-      this.$emit("click", { area: this.area, resource: this.resource, value: option.value });
+    SetPolicy(params) {
+      this.$emit("click", { area: this.area, resource: this.resource, value: params.value });
     },
   },
 };

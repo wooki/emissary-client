@@ -47,6 +47,19 @@
   .area-panel-report-title,
   & > label {
     font-weight: bold;
+    text-transform: uppercase;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+
+    svg {
+      margin-left: auto;
+      transform: translate(0, -2px);
+      color: var(--color-crimson);
+    }
   }
 
   .area-panel-report-base {
@@ -55,7 +68,7 @@
     gap: 2px 5px;
 
     .area-panel-report-title {
-      width: 100%;
+      width: 100%;      
     }
 
     .area-panel-report-value {

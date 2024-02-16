@@ -93,6 +93,7 @@ import { AddFloats } from "@/libs/SafeMath.js";
 import BackIcon from "@/assets/icons/back.svg";
 import TextEndingWithLink from "./TextEndingWithLink.vue";
 import { Rounded } from "@/libs/SafeMath.js";
+import OrderIcon from "../assets/icons/order.svg";
 
 export default {
   props: {
@@ -115,6 +116,7 @@ export default {
     AreaPanelSummary,
     BackIcon,
     TextEndingWithLink,
+    OrderIcon
   },
   computed: {
     selectedReport() {
