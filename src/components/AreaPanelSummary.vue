@@ -65,10 +65,14 @@
     <div v-if="area?.has_population" @click="ShowPanel('hireAgent')" class="area-panel-report has-details">
       <div class="area-panel-report-entries">
         <div class="area-panel-report-title">Hire Agent <OrderIcon /></div>
+        <div class="area-panel-report-entry" v-if="hireAgentDesc">
+          <div class="area-panel-report-entry-title">{{ hireAgentDesc.label }}</div>
+          <div class="area-panel-report-entry-value">{{ hireAgentDesc.value }}</div>
+        </div>
         <div class="area-panel-report-entry" v-if="area.hire_cost">
           <div class="area-panel-report-entry-title">Cost</div>
           <div class="area-panel-report-entry-value">{{ area.hire_cost }}g</div>
-        </div>        
+        </div>                
       </div>
     </div>    
     
@@ -115,6 +119,18 @@ export default {
     },
     ownedByMe() {
       return (this.area?.owner == this.report.Me());
+    },
+    hireAgentDesc() {
+      if (this.area.hire_agent == "hire") {
+        return {
+          label: "Order",
+          value: "hire"
+        };
+      }
+      return {
+          label: "Order",
+          value: "-"
+        };
     }
   },
   methods: {

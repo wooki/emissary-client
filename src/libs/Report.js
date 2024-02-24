@@ -36,8 +36,15 @@ export default function Report(data) {
           order: "trade_policy",
           coord: coord,
           data: hex.trade_policy
-        });        
+        });
       }
+      if (hex.hire_agent) {
+        orders.push({
+          order: "hire_agent",
+          coord: coord,
+          data: hex.hire_agent
+        });
+      }      
     });
 
     console.log("orders");

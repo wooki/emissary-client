@@ -23,7 +23,7 @@ export default {
     return {
       options: [
         {
-          value: "none",
+          value: "",
           title: "None",
           desc: `Do not hire.`
         },
@@ -38,7 +38,7 @@ export default {
   emits: ["click"],
   computed: {
     current() {
-      return this.area.hire_agent;
+      return this.area.hire_agent ?? "";
     }
   },
   methods: {
