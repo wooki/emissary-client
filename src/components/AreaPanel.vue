@@ -1,6 +1,6 @@
 <template>
   <div class="area-panel">
-    <AreaPanelSummary @updated="Updated" :report="report" @select="SelectArea" :area="area" />
+    <AreaPanelSummary @updated="Updated" :report="report" @select="SelectArea" :area="area" @highlight="HighlightArea" />
 
     <div class="area-panel-reports">
       <div class="parchment"></div>
@@ -15,7 +15,7 @@
         >
           <!-- <div class="area-panel-report-details-type">{{ item.type }}</div> -->
           <div class="area-panel-report-details-message">
-            <TextEndingWithLink :text="item.message" @click="SelectArea" />
+            <TextEndingWithLink :text="item.message" @click="SelectArea" @mouseenter="HighlightArea" @mouseleave="UnhighlightArea" />
           </div>
           <template v-if="item.data">
           <div
@@ -108,10 +108,10 @@ export default {
   },
   data: function () {
     return {
-      selectedReportIndex: null,
+      selectedReportIndex: null
     };
   },
-  emits: ["select", "updated"],
+  emits: ["select", "updated", "highlight"],
   components: {
     AreaPanelSummary,
     BackIcon,
@@ -224,6 +224,12 @@ export default {
     },
   },
   methods: {
+    HighlightArea(area) {
+      this.$emit("highlight", area);
+    },
+    UnhighlightArea(area) {
+      this.$emit("highlight", null);
+    },
     Updated(area) {
       this.$emit("updated", area);
     },  

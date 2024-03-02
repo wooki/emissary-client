@@ -26,7 +26,7 @@
     <div class="area-panel-report" v-if="!area.province && area.name">
       <label>Capital</label>
       <div class="field">
-        <Link @click="SelectArea" :x="area.x" :y="area.y" :name="area.name" />
+        <Link @click="SelectArea" @mouseenter="HighlightArea" @mouseleave="UnhighlightArea" :x="area.x" :y="area.y" :name="area.name" />
       </div>
     </div>
     <div v-else-if="area.name" class="area-panel-report"><label>Name</label><div class="field">{{ area.name }}</div></div>
@@ -38,13 +38,13 @@
     <div class="area-panel-report" v-if="area.province">
       <label>Province</label>
       <div class="field">
-        <Link @click="SelectArea" :x="area.province.x" :y="area.province.y" :name="area.province.name" />
+        <Link @click="SelectArea" @mouseenter="HighlightArea" @mouseleave="UnhighlightArea" :x="area.province.x" :y="area.province.y" :name="area.province.name" />
       </div>
     </div>
     <div v-if="area.trade" class="area-panel-report">
       <label>Region</label>
       <div class="field">
-        <Link @click="SelectArea" :x="area.trade.x" :y="area.trade.y" :name="area.trade.name" />
+        <Link @click="SelectArea" @mouseenter="HighlightArea" @mouseleave="UnhighlightArea" :x="area.trade.x" :y="area.trade.y" :name="area.trade.name" />
       </div>
     </div>  
     
@@ -105,7 +105,7 @@ export default {
     HireAgent,
     OrderIcon
   },
-  emits: ["select", "updated"],
+  emits: ["select", "updated", "highlight"],
   data() {
     return {
       activePanel: ""      
@@ -140,6 +140,12 @@ export default {
     Updated(area) {
       this.$emit("updated", area);
     },  
+    HighlightArea(coord) {
+      this.$emit("highlight", coord);
+    },
+    UnhighlightArea() {
+      this.$emit("highlight", null);
+    },
     SelectArea(area) {
       this.$emit("select", area);
     },

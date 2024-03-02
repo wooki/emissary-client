@@ -1,5 +1,5 @@
 <template>
-  <button class="link" @click="Click(coord)">
+  <button class="link" @click="Click(coord)" @mouseenter="MouseEnter" @mouseleave="MouseLeave">
     <div class="coord" v-if="showCoord || !showName || !name">{{ coord }}</div>
     <div class="name" v-if="showName && name">{{ name }}</div>
   </button>
@@ -31,9 +31,9 @@ export default {
     showName: {
       type: Boolean,
       default: true,
-    },
+    }
   },
-  emits: ["click"],
+  emits: ["click", "mouseenter", "mouseleave"],
   computed: {
     coord() {
       return `${this.x},${this.y}`;
@@ -43,6 +43,12 @@ export default {
     Click() {
       this.$emit("click", { x: this.x, y: this.y });
     },
+    MouseEnter() {
+      this.$emit("mouseenter", { x: this.x, y: this.y });
+    },
+    MouseLeave() {
+      this.$emit("mouseleave", { x: this.x, y: this.y });
+    }
   },
 };
 </script>

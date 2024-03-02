@@ -1,7 +1,7 @@
 <template>
   <div class="text-ending-with-link">
     <div>{{  textWithoutLink }}</div>
-    <Link v-if="link" :x="link.x" :y="link.y" @click="Click" />
+    <Link v-if="link" :x="link.x" :y="link.y" @click="Click" @mouseenter="MouseEnter" @mouseleave="MouseLeave" />
   </div>
 </template>
 
@@ -19,7 +19,7 @@ export default {
   components: {
     Link
   },
-  emits: ["click"],
+  emits: ["click", "mouseenter", "mouseleave"],
   computed: {
     coord() {
       return `${this.x},${this.y}`;
@@ -47,6 +47,12 @@ export default {
     Click() {
       this.$emit("click", this.link);
     },
+    MouseEnter() {
+      this.$emit("mouseenter", this.link);
+    },
+    MouseLeave() {
+      this.$emit("mouseleave", this.link);
+    }
   },
 };
 </script>

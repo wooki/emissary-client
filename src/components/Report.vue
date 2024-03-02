@@ -1,7 +1,7 @@
 <template>
   <div class="report">
     <div class="map-container">
-      <Map :report="report" :area="selectedHex" @select="SelectHexagon" />
+      <Map :report="report" :area="selectedHex" @select="SelectHexagon" :hoveredArea="hoveredHex" @hover="HoverHexagon" />
     </div>
     <div class="info">
       <AreaPanel
@@ -10,6 +10,7 @@
         :area="selectedHex"
         @select="SelectArea"
         @updated="Updated"
+        @highlight="HighlightHexagon"
       />
     </div>
   </div>
@@ -34,6 +35,7 @@ export default {
   data() {
     return {
       selectedHex: null,
+      hoveredHex: null,
     };
   },
   computed: {
@@ -53,6 +55,17 @@ export default {
     SelectHexagon(hex) {
       this.selectedHex = hex;
     },
+    HoverHexagon(hex) {
+      this.hoveredHex = hex;
+    },
+    HighlightHexagon(coord) {
+      if (coord) {
+        const hex = this.map[`${coord.x},${coord.y}`];
+        this.hoveredHex = hex;
+      } else {
+        this.hoveredHex = null;
+      }
+    },    
     SelectArea(area) {
       const hex = this.map[`${area.x},${area.y}`];
       this.selectedHex = hex;

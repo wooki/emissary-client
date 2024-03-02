@@ -129,6 +129,10 @@ export default {
       type: Object,
       default: null,
     },
+    hoveredArea: {
+      type: Object,
+      default: null,
+    },    
     hexagonSize: {
       type: Number,
       default: 32,
@@ -148,7 +152,7 @@ export default {
       },
     },
   },
-  emits: ["select"],
+  emits: ["select", "hover"],
   components: {
     Hexagon,
     Banner,
@@ -168,8 +172,7 @@ export default {
       ],
       scaleIndex: 10,
       mouseDown: false,
-      scrollSpeed: 5,
-      hoveredHex: null,
+      scrollSpeed: 5,      
       hoveredBanner: null,
       clientHeight: 0,
       clientWidth: 0,
@@ -182,6 +185,12 @@ export default {
     selectedHex() {
       if (this.area) {
         return this.GetMapHexFromArea(this.area);
+      }
+      return null;
+    },
+    hoveredHex() {
+      if (this.hoveredArea) {
+        return this.GetMapHexFromArea(this.hoveredArea);
       }
       return null;
     },
@@ -365,10 +374,12 @@ export default {
       this.hoveredBanner = null;
     },
     hexHighlight(hex) {
-      this.hoveredHex = hex;
+      // this.hoveredHex = hex;
+      this.$emit("hover", this.map[`${hex.x},${hex.y}`]);
     },
     hexUnhighlight(hex) {
-      this.hoveredHex = null;
+      // this.hoveredHex = null;
+      this.$emit("hover", null);
     },
     GetMapBannerFromArea(area) {
       if (!area.owner) return null;
