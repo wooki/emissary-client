@@ -26,6 +26,15 @@
       <feTurbulence x="0" y="0" baseFrequency="0.02" numOctaves="5" seed="1" />
       <feDisplacementMap in="SourceGraphic" scale="6" />
     </filter>
+    <filter id="desaturate">
+      <feColorMatrix
+      in="SourceGraphic"
+      type="matrix"
+      values="0.66 0 0 0 0
+              0 0.66 0 0 0
+              0 0 0.66 0 0
+              0 0 0 .66 0" />
+    </filter>
   </svg>
 </template>
 

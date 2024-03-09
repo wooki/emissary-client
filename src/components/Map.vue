@@ -34,6 +34,7 @@
         :fill="hex.fill"
         strokeWidth="1"
         :stroke="hex.stroke"
+        :desaturate="hex.desaturate"
       />
       <path
         v-for="border in mapBorders"
@@ -404,7 +405,7 @@ export default {
     GetMapHexFromArea(hex) {
       const center = Center(hex.x, hex.y, this.hexagonSize, 0, 0);
       const points = Corners(center.x, center.y, this.hexagonSize);
-
+      
       const hexData = {
         x: hex.x,
         y: hex.y,
@@ -417,6 +418,7 @@ export default {
         fill: this.terrainColours[hex.terrain],
         stroke: "#00000099",
         area: hex,
+        desaturate: hex.report_level == 0
       };
 
       return hexData;

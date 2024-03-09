@@ -11,6 +11,7 @@
       :fill="fill"
       :points="drawPoints"
       :stroke-dasharray="strokeDashArray"
+      :filter="desaturate ? `url('#desaturate')` : ''"
     />
     <!-- <text :x="points[0].x" :y="points[0].y">{{ coord }}</text> -->
     <image
@@ -19,6 +20,7 @@
       :y="points[0].y"
       href="../assets/icons/town.png"
       :width="points[1].x - points[5].x"
+      :filter="desaturate ? `url('#desaturate')` : ''"
     />
     <image
       v-if="terrain == 'city'"
@@ -26,6 +28,7 @@
       :y="points[0].y"
       href="../assets/icons/city.png"
       :width="points[1].x - points[5].x"
+      :filter="desaturate ? `url('#desaturate')` : ''"
     />
   </g>
 </template>
@@ -67,6 +70,10 @@ export default {
     center: {
       type: Object,
     },
+    desaturate: {
+      type: Boolean,
+      default: false,
+    }
   },
   emits: ["click", "mouseenter", "mouseleave"],
   computed: {
