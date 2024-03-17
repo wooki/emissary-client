@@ -45,6 +45,7 @@
         fill="none"
         stroke-dasharray="10,15"
         stroke-linecap="round"
+        :filter="border.filter"
       />
 
       <Hexagon
@@ -100,6 +101,7 @@
         :y="label.y"
         :fill="label.fill"
         :class="label.class"
+        :filter="label.filter"
       >
         {{ label.text }}
       </text>
@@ -278,6 +280,7 @@ export default {
           text: hex.name,
           fill: "#000000",
           class: `label label-${hex.terrain}`,
+          filter: (hex.report_level == 0) ? `url('#desaturate')` : ''
         };
 
         if (hex.owner == this.report.Me()) {
@@ -344,6 +347,7 @@ export default {
           key: `border-${settlement.name}`,
           path: path,
           stroke: stroke,
+          filter: (settlement.report_level == 0) ? `url('#desaturate')` : ''
         };
       });
     },
@@ -418,7 +422,7 @@ export default {
         fill: this.terrainColours[hex.terrain],
         stroke: "#00000099",
         area: hex,
-        desaturate: hex.report_level == 0
+        desaturate: hex.terrain != 'ocean' && hex.report_level == 0
       };
 
       return hexData;
