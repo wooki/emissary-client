@@ -2,19 +2,14 @@
   <div class="area-panel">
     <AreaPanelSummary @updated="Updated" :report="report" @select="SelectArea" :area="area" @highlight="HighlightArea" />
     <AreaPanelData @updated="Updated" :report="report" @select="SelectArea" :area="area" @highlight="HighlightArea" />
-
-    <div class="area-panel-reports">
-      <div class="parchment"></div>
-      <div class="area-panel-reports-container">
-        <div class="area-panel-report">test</div>
-      </div>
-    </div>
+    <AreaPanelItems @updated="Updated" :report="report" @select="SelectArea" :area="area" @highlight="HighlightArea" />    
   </div>
 </template>
 
 <script>
 import AreaPanelSummary from "./AreaPanelSummary.vue";
 import AreaPanelData from "./AreaPanelData.vue";
+import AreaPanelItems from "./AreaPanelItems.vue";
 
 export default {
   props: {
@@ -31,6 +26,7 @@ export default {
   components: {
     AreaPanelSummary,
     AreaPanelData,  
+    AreaPanelItems
   },
   methods: {
     HighlightArea(area) {
