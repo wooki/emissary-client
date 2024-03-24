@@ -10,16 +10,24 @@
       </div>
     </div>
 
-    <div v-else class="area-panel-reports-container">
+    <div v-else class="area-panel-reports-container area-panel-items">
       <div
         tabindex="0"
-        @click="selectItem(itemIndex)"
-        @keypress.enter="selectItem(itemIndex)"
+        @click="SelectItem(itemIndex)"
+        @keypress.enter="SelectItem(itemIndex)"
         v-for="(item, itemIndex) in items"
         :key="itemIndex"
-        class="area-panel-report has-details"
-      >
-        ITEM TITLE and ICON
+        class="area-panel-report has-details area-panel-item"
+        :class="`area-panel-${item.type}`"
+      >        
+        <svg v-if="item.owner">
+          <use :mask="`url(#${item.type}_mask)`" :href="`#banner-${item.owner}`"></use>
+        </svg>
+        <div class="item-summary">
+          <div class="item-summary-title">{{ item.type }}</div>
+          <div v-if="item.owner" class="field">for {{ EmpireName(item.owner) }}</div>
+          <div class="field" v-if="item.skill">{{ item.range ?? '-' }}/{{ item.depth ?? '-' }}/{{ item.skill ?? '-' }}</div>
+        </div>
       </div>
     </div>
   </div>
@@ -60,12 +68,19 @@ export default {
       return this.items[this.selectedItemIndex];
     },    
     items() {
+      const items = [];
+
       // get from area
-      console.log("GET ITEMS:", this.area);
+      Object.keys(this.area.agents).forEach((agentId) => {
+        items.push(Object.assign({
+          type: 'agent',
+        }, this.area.agents[agentId]));
+      });
 
       // look in this.area.agents (object keyed with unique id)
       // TODO: look for armies?, structures?, church? etc.
-      return [];
+      console.log("ITEMS", items);
+      return items;
     }
   },
   methods: {
@@ -88,7 +103,15 @@ export default {
       } else {
         this.selectedItemIndex = index;
       }
-    },    
+    },   
+    EmpireName(owner) {
+      if (!owner) return "Unowned";
+      if (this.OwnedByMe(owner)) return `${this.report.MyKingdom()}`;
+      return this.report.kingdoms[owner].name;
+    },
+    OwnedByMe(owner) {
+      return (owner == this.report.Me());
+    },     
   },
 };
 </script>

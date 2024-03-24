@@ -44,6 +44,35 @@
     border: 1px solid var(--color-text);
   }
 
+  &.area-panel-item {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    
+    & > svg {    
+      flex: 0 0 20px;
+      height: 20px;
+      width: 16px;
+      overflow: hidden;
+      use {
+        transform: translateY(-6px);
+      }
+    }
+
+    .item-summary {
+      flex: 1 1 auto;   
+      
+      .field {
+
+      }
+    }
+
+    .item-summary-title {
+      text-transform: uppercase;
+      font-weight: bold;
+    }    
+  }    
+
   .area-panel-report-title,
   & > label {
     font-weight: bold;
