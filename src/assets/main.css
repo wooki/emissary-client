@@ -1,9 +1,10 @@
 /* @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap"); */
 
-@import "../../node_modules/modern-normalize/modern-normalize.css";
+@import '../../node_modules/modern-normalize/modern-normalize.css';
 
-@import "./theme.css";
-@import "./shoelace.css";
+@import './theme.css';
+@import './shoelace.css';
 
-@import "./components/areapanel.scss";
-@import "./components/selectoptions.scss";
+@import './components/areapanel.scss';
+@import './components/areapaneldetails.scss';
+@import './components/selectoptions.scss';

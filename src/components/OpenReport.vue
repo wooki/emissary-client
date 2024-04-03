@@ -7,18 +7,17 @@
       <form class="open-report" @submit.prevent="uploadFile">
         <label for="report-file-upload">Open report file</label>
         <input
-          ref="file"
           id="report-file-upload"
+          ref="file"
           type="file"
-          accept=".json,application/json"
-        />
+          accept=".json,application/json" />
         <button>Open</button>
       </form>
     </sl-tab-panel>
     <sl-tab-panel name="url">
       <form class="open-report" @submit.prevent="loadUrl">
         <label for="report-file-upload">Open report file</label>
-        <input ref="url" id="report-file-url" type="url" v-model="url" />
+        <input id="report-file-url" ref="url" v-model="url" type="url" />
         <button>Open</button>
       </form>
     </sl-tab-panel>
@@ -26,16 +25,16 @@
 </template>
 
 <script>
-import "@shoelace-style/shoelace/dist/components/tab/tab.js";
-import "@shoelace-style/shoelace/dist/components/tab-group/tab-group.js";
-import "@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js";
-import "@shoelace-style/shoelace/dist/components/alert/alert.js";
+import '@shoelace-style/shoelace/dist/components/tab/tab.js';
+import '@shoelace-style/shoelace/dist/components/tab-group/tab-group.js';
+import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js';
+import '@shoelace-style/shoelace/dist/components/alert/alert.js';
 
 export default {
-  emits: ["loaded"],
+  emits: ['loaded'],
   data() {
     return {
-      url: "",
+      url: '',
     };
   },
   methods: {
@@ -44,7 +43,7 @@ export default {
         var reader = new FileReader();
         reader.onload = (event) => {
           var obj = JSON.parse(event.target.result);
-          this.$emit("loaded", obj);
+          this.$emit('loaded', obj);
         };
         reader.readAsText(this.$refs.file.files[0]);
       }
@@ -52,12 +51,12 @@ export default {
     loadUrl() {
       fetch(this.url, {
         headers: {
-          Accept: "application/json",
+          Accept: 'application/json',
         },
       })
         .then((response) => {
           response.json().then((data) => {
-            this.$emit("loaded", data);
+            this.$emit('loaded', data);
           });
         })
         .catch((error) => {

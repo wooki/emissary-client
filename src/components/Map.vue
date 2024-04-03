@@ -4,8 +4,7 @@
     @mousemove="mousemove"
     @mousedown="mousedown"
     @mouseup="mouseup"
-    @wheel="wheel"
-  >
+    @wheel="wheel">
     <div class="parchment"></div>
     <svg v-if="mounted" xmlns="http://www.w3.org/2000/svg" :viewBox="viewBox">
       <defs>
@@ -15,35 +14,32 @@
           :id="'banner-' + kingdom.player"
           viewBox="0 -1 16 34"
           height="35"
-          width="16"
-        >
+          width="16">
           <Banner :x="0" :y="0" :flag="kingdom.flag" />
         </symbol>
         <symbol
           :id="'banner-unknown'"
           viewBox="0 -1 16 34"
           height="35"
-          width="16"
-        >
+          width="16">
           <Banner :x="0" :y="0" flag="77777" />
         </symbol>
       </defs>
 
       <Hexagon
-        @mouseenter="hexHighlight"
-        @mouseleave="hexUnhighlight"
+        v-for="hex in mapHexagons"
+        :key="hex.key"
         :data="hex"
         :terrain="hex.terrain"
         :coord="`${hex.x},${hex.y}`"
-        @click="SelectHexagon(hex)"
-        v-for="hex in mapHexagons"
-        :key="hex.key"
         :points="hex.points"
         :fill="hex.fill"
-        strokeWidth="1"
+        stroke-width="1"
         :stroke="hex.stroke"
+        @mouseenter="hexHighlight"
         :desaturate="hex.desaturate"
-      />
+        @mouseleave="hexUnhighlight"
+        @click="SelectHexagon(hex)" />
       <path
         v-for="border in mapBorders"
         :key="border.key"
@@ -53,8 +49,7 @@
         fill="none"
         stroke-dasharray="10,15"
         stroke-linecap="round"
-        :filter="border.filter"
-      />
+        :filter="border.filter" />
 
       <Hexagon
         v-if="hoveredHex"
@@ -62,9 +57,8 @@
         :coord="`${hoveredHex.x},${hoveredHex.y}`"
         :points="hoveredHex.points"
         fill="none"
-        strokeWidth="4"
-        stroke="white"
-      />
+        stroke-width="4"
+        stroke="white" />
       <Hexagon
         v-if="selectedHex"
         terrain="selected"
@@ -72,10 +66,9 @@
         :center="selectedHex.center"
         :points="selectedHex.points"
         fill="none"
-        strokeWidth="6"
+        stroke-width="6"
         stroke="white"
-        strokeDashArray="12,4"
-      />
+        stroke-dash-array="12,4" />
 
       <g
         v-for="banner in ownedHexBanners"
@@ -83,8 +76,7 @@
         :transform="`translate(${banner.x}, ${banner.y}) scale(${ownedHexBannerScale})`"
         @click="SelectHexagon(banner.hex)"
         @mouseenter="bannerHighlight(banner)"
-        @mouseleave="bannerUnhighlight(banner)"
-      >
+        @mouseleave="bannerUnhighlight(banner)">
         <g :class="OwnedBannerClass(banner)">
           <!-- EXAMPLE ARMY
           <path
@@ -102,7 +94,11 @@
         </g>
       </g>
 
-      <AreaItems v-for="items in mapItems" :key="'items-' + items.key" :items="items" :hexagonSize="hexagonSize" />      
+      <AreaItems
+        v-for="items in mapItems"
+        :key="'items-' + items.key"
+        :items="items"
+        :hexagon-size="hexagonSize" />
 
       <text
         v-for="label in mapLabels"
@@ -111,8 +107,7 @@
         :y="label.y"
         :fill="label.fill"
         :class="label.class"
-        :filter="label.filter"
-      >
+        :filter="label.filter">
         {{ label.text }}
       </text>
     </svg>
@@ -121,19 +116,25 @@
 </template>
 
 <script>
-import BannerMasks from "./BannerMasks.vue";
-import Hexagon from "./Hexagon.vue";
-import Banner from "./Banner.vue";
+import BannerMasks from './BannerMasks.vue';
+import Hexagon from './Hexagon.vue';
+import Banner from './Banner.vue';
 import {
   Corners,
   Center,
   AdjacentCoords,
   SameCoord,
   ExtractPaths,
-} from "../libs/HexUtils";
-import AreaItems from "./AreaItems.vue";
+} from '../libs/HexUtils';
+import AreaItems from './AreaItems.vue';
 
 export default {
+  components: {
+    Hexagon,
+    Banner,
+    BannerMasks,
+    AreaItems,
+  },
   props: {
     report: {
       type: Object,
@@ -146,7 +147,7 @@ export default {
     hoveredArea: {
       type: Object,
       default: null,
-    },    
+    },
     hexagonSize: {
       type: Number,
       default: 32,
@@ -154,25 +155,19 @@ export default {
     terrainColours: {
       type: Object,
       default: {
-        peak: "dimgray",
-        ocean: "#3D59AB",
-        mountain: "slategray",
-        lowland: "#65b240",
-        forest: "#316e44",
-        desert: "goldenrod",
-        town: "Sienna",
-        city: "Sienna",
-        unknown: "#4c84d7",
+        peak: 'dimgray',
+        ocean: '#3D59AB',
+        mountain: 'slategray',
+        lowland: '#65b240',
+        forest: '#316e44',
+        desert: 'goldenrod',
+        town: 'Sienna',
+        city: 'Sienna',
+        unknown: '#4c84d7',
       },
     },
   },
-  emits: ["select", "hover"],
-  components: {
-    Hexagon,
-    Banner,
-    BannerMasks,
-    AreaItems
-  },
+  emits: ['select', 'hover'],
   data() {
     return {
       ownedHexBannerScale: 1.6,
@@ -187,7 +182,7 @@ export default {
       ],
       scaleIndex: 10,
       mouseDown: false,
-      scrollSpeed: 5,      
+      scrollSpeed: 5,
       hoveredBanner: null,
       clientHeight: 0,
       clientWidth: 0,
@@ -210,7 +205,7 @@ export default {
       return null;
     },
     mapBoundsPoints() {
-      if (!this.mounted) return "0 0 0 0";
+      if (!this.mounted) return '0 0 0 0';
 
       return `${this.mapBounds.min.x} ${this.mapBounds.min.y} ${this.mapBounds.max.x} ${this.mapBounds.min.y} ${this.mapBounds.max.x} ${this.mapBounds.max.y} ${this.mapBounds.min.x} ${this.mapBounds.max.y}`;
     },
@@ -224,7 +219,7 @@ export default {
       };
     },
     viewBox() {
-      if (!this.mounted) return "0 0 0 0";
+      if (!this.mounted) return '0 0 0 0';
 
       let bounds = this.mapBounds;
 
@@ -252,12 +247,17 @@ export default {
       if (displayWidth > displayHeight) displayHeight = displayWidth;
       if (displayHeight > displayWidth) displayWidth = displayHeight;
 
-      if (displayX == Infinity || displayX == -Infinity || displayX == Infinity || displayX == -Infinity) {
-        return "0 0 0 0"
+      if (
+        displayX == Infinity ||
+        displayX == -Infinity ||
+        displayX == Infinity ||
+        displayX == -Infinity
+      ) {
+        return '0 0 0 0';
       }
 
       let DisplayBox = `${displayX} ${displayY} ${displayWidth * ratio} ${displayHeight}`;
-      
+
       return DisplayBox;
     },
     mapHexagons() {
@@ -273,7 +273,7 @@ export default {
           return banner;
         });
     },
-    mapItems() {      
+    mapItems() {
       return Object.values(this.map)
         .filter((area) => {
           return Object.keys(area.agents).length > 0;
@@ -281,7 +281,7 @@ export default {
         .map((area) => {
           let items = this.GetMapItemsFromArea(area);
           return items;
-        });              
+        });
     },
     mapLabels() {
       return this.mapSettlements.map((hex) => {
@@ -300,9 +300,9 @@ export default {
           y: points[0].y + yOffset,
           key: `${hex.x},${hex.y}`,
           text: hex.name,
-          fill: "#000000",
+          fill: '#000000',
           class: `label label-${hex.terrain}`,
-          filter: (hex.report_level == 0) ? `url('#desaturate')` : ''
+          filter: hex.report_level == 0 ? `url('#desaturate')` : '',
         };
 
         if (hex.owner == this.report.Me()) {
@@ -314,17 +314,17 @@ export default {
     },
     mapSettlements() {
       return Object.values(this.map).filter((hex) =>
-        ["city", "town"].includes(hex.terrain),
+        ['city', 'town'].includes(hex.terrain),
       );
     },
     mapBorders() {
       return this.mapSettlements.map((settlement) => {
-        let stroke = "#000";
+        let stroke = '#000';
 
         // find all edges of this province
         let edgePointPairs = [];
         settlement.borders.forEach((border) => {
-          stroke = "#000";
+          stroke = '#000';
 
           // check adjacent in each direction and add points for that
           // edge of it is not
@@ -344,7 +344,7 @@ export default {
             }
           });
         });
-        let path = "";
+        let path = '';
         edgePointPairs.forEach((edgePointPair) => {
           path += ` M ${edgePointPair[0].x},${edgePointPair[0].y} L ${edgePointPair[1].x},${edgePointPair[1].y}`;
         });
@@ -369,30 +369,45 @@ export default {
           key: `border-${settlement.name}`,
           path: path,
           stroke: stroke,
-          filter: (settlement.report_level == 0) ? `url('#desaturate')` : ''
+          filter: settlement.report_level == 0 ? `url('#desaturate')` : '',
         };
       });
     },
   },
+  mounted() {
+    this.mounted = true;
+    this.clientWidth = this.$el.clientWidth;
+    this.clientHeight = this.$el.clientHeight;
+    this.resizeObserver = new ResizeObserver((entries) => {
+      this.clientWidth = this.$el.clientWidth;
+      this.clientHeight = this.$el.clientHeight;
+      this.$forceUpdate();
+    });
+    this.resizeObserver.observe(this.$el);
+  },
+  beforeUnmount() {
+    this.mounted = false;
+    this.resizeObserver.unobserve(this.$el);
+  },
   methods: {
     OwnedBannerClass(banner) {
-      let classes = ["owned-banner"];
+      let classes = ['owned-banner'];
       if (
         this.selectedHex &&
         this.selectedHex.x == banner.hex.x &&
         this.selectedHex.y == banner.hex.y
       ) {
-        classes.push("owned-banner-selected");
+        classes.push('owned-banner-selected');
       } else if (
         this.hoveredHex &&
         this.hoveredHex.x == banner.hex.x &&
         this.hoveredHex.y == banner.hex.y
       ) {
-        classes.push("owned-banner-hover");
+        classes.push('owned-banner-hover');
       } else if (this.hoveredBanner?.key == banner.key) {
-        classes.push("owned-banner-hover");
+        classes.push('owned-banner-hover');
       }
-      return classes.join(" ");
+      return classes.join(' ');
     },
     bannerHighlight(banner) {
       this.hoveredBanner = banner;
@@ -402,11 +417,11 @@ export default {
     },
     hexHighlight(hex) {
       // this.hoveredHex = hex;
-      this.$emit("hover", this.map[`${hex.x},${hex.y}`]);
+      this.$emit('hover', this.map[`${hex.x},${hex.y}`]);
     },
     hexUnhighlight(hex) {
       // this.hoveredHex = null;
-      this.$emit("hover", null);
+      this.$emit('hover', null);
     },
     GetMapBannerFromArea(area) {
       if (!area.owner) return null;
@@ -429,19 +444,18 @@ export default {
       return bannerData;
     },
     GetMapItemsFromArea(area) {
-      
       const center = Center(area.x, area.y, this.hexagonSize, 0, 0);
       const points = Corners(center.x, center.y, this.hexagonSize);
 
-      const xOffset = 0;//this.ownedHexBannerScale * 8.0;
-      const yOffset = 0;//this.hexagonSize / 3 + this.ownedHexBannerScale * 32.0;
+      const xOffset = 0; //this.ownedHexBannerScale * 8.0;
+      const yOffset = 0; //this.hexagonSize / 3 + this.ownedHexBannerScale * 32.0;
 
       const itemsData = {
         x: center.x - xOffset,
         y: center.y - yOffset,
         key: `${area.x},${area.y}`,
         center: center,
-        area: area,        
+        area: area,
       };
 
       return itemsData;
@@ -449,7 +463,7 @@ export default {
     GetMapHexFromArea(hex) {
       const center = Center(hex.x, hex.y, this.hexagonSize, 0, 0);
       const points = Corners(center.x, center.y, this.hexagonSize);
-      
+
       const hexData = {
         x: hex.x,
         y: hex.y,
@@ -460,9 +474,9 @@ export default {
         min: { x: points[5].x, y: points[0].y },
         max: { x: points[1].x, y: points[3].y },
         fill: this.terrainColours[hex.terrain],
-        stroke: "#00000099",
+        stroke: '#00000099',
         area: hex,
-        desaturate: hex.terrain != 'ocean' && hex.report_level == 0
+        desaturate: hex.terrain != 'ocean' && hex.report_level == 0,
       };
 
       return hexData;
@@ -474,7 +488,7 @@ export default {
       return null;
     },
     SelectHexagon(hex) {
-      this.$emit("select", this.map[`${hex.x},${hex.y}`]);
+      this.$emit('select', this.map[`${hex.x},${hex.y}`]);
     },
     wheel(e) {
       if (e.deltaY > 0 && this.scaleIndex > 0) {
@@ -523,21 +537,6 @@ export default {
         max,
       };
     },
-  },
-  mounted() {
-    this.mounted = true;
-    this.clientWidth = this.$el.clientWidth;
-    this.clientHeight = this.$el.clientHeight;
-    this.resizeObserver = new ResizeObserver((entries) => {
-      this.clientWidth = this.$el.clientWidth;
-      this.clientHeight = this.$el.clientHeight;
-      this.$forceUpdate();
-    });
-    this.resizeObserver.observe(this.$el);
-  },
-  beforeUnmount() {
-    this.mounted = false;
-    this.resizeObserver.unobserve(this.$el);
   },
 };
 </script>

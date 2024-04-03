@@ -5,27 +5,24 @@
     class="banner"
     @click="click"
     @mouseenter="mouseenter"
-    @mouseleave="mouseleave"
-  >
+    @mouseleave="mouseleave">
     <path fill="#000000" d="M 0,0 H 16 V 2 H 0 Z" />
     <path stroke="#000000" stroke-width="2" fill="none" d="M 8,-1 V 34" />
     <path :fill="color1" d="M 0,2 H 16 V 32 L 8,25 0,32 Z" />
     <path
       :fill="color2"
       d="M 0,2 H 16 V 32 L 8,25 0,32 Z"
-      :mask="`url(#${mask1})`"
-    />
+      :mask="`url(#${mask1})`" />
     <path
       v-if="mask2"
       :fill="color3"
       d="M 0,2 H 16 V 32 L 8,25 0,32 Z"
-      :mask="`url(#${mask2})`"
-    />
+      :mask="`url(#${mask2})`" />
   </g>
 </template>
 
 <script>
-import { Colors1, Colors2, Colors3 } from "@/libs/BannerColors.js";
+import { Colors1, Colors2, Colors3 } from '@/libs/BannerColors.js';
 
 export default {
   props: {
@@ -39,7 +36,7 @@ export default {
     },
     flag: {
       type: String,
-      default: "01234",
+      default: '01234',
       required: true,
     },
     scale: {
@@ -47,6 +44,7 @@ export default {
       default: 1,
     },
   },
+  emits: ['click', 'mouseenter', 'mouseleave'],
   data() {
     return {
       Colors1: Colors1,
@@ -54,7 +52,6 @@ export default {
       Colors3: Colors3,
     };
   },
-  emits: ["click", "mouseenter", "mouseleave"],
   computed: {
     transform() {
       return `scale(${this.scale}) translate(${this.x},${this.y})`;
@@ -63,7 +60,7 @@ export default {
       return `${Math.round(this.x)}px ${Math.round(this.y)}px`;
     },
     flagfields() {
-      return this.flag.split("");
+      return this.flag.split('');
     },
     color1() {
       return this.Colors1[this.flagfields[2]];
@@ -73,16 +70,16 @@ export default {
     },
     color3() {
       if (this.flagfields[0] == 2 && this.flagfields[3] == 2) {
-          return '#ffff66';        
+        return '#ffff66';
       }
       if (this.flagfields[0] == 2 && this.flagfields[3] == 4) {
-          return '#ddddee';        
+        return '#ddddee';
       }
       if (this.flagfields[0] == 1 && this.flagfields[2] == 9) {
-          return '#6000a6';
+        return '#6000a6';
       }
       if (this.flagfields[0] == 2 && this.flagfields[3] == 9) {
-          return '#090909';        
+        return '#090909';
       }
       return this.Colors3[this.flagfields[4]];
     },
@@ -123,13 +120,13 @@ export default {
   },
   methods: {
     click() {
-      this.$emit("click", this.data);
+      this.$emit('click', this.data);
     },
     mouseenter() {
-      this.$emit("mouseenter", this.data);
+      this.$emit('mouseenter', this.data);
     },
     mouseleave() {
-      this.$emit("mouseleave", this.data);
+      this.$emit('mouseleave', this.data);
     },
   },
 };

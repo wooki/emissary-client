@@ -1,7 +1,11 @@
 <template>
-  <button class="link" @click="Click(coord)" @mouseenter="MouseEnter" @mouseleave="MouseLeave">
-    <div class="coord" v-if="showCoord || !showName || !name">{{ coord }}</div>
-    <div class="name" v-if="showName && name">{{ name }}</div>
+  <button
+    class="link"
+    @click="Click(coord)"
+    @mouseenter="MouseEnter"
+    @mouseleave="MouseLeave">
+    <div v-if="showCoord || !showName || !name" class="coord">{{ coord }}</div>
+    <div v-if="showName && name" class="name">{{ name }}</div>
   </button>
 </template>
 
@@ -18,11 +22,11 @@ export default {
     },
     name: {
       type: String,
-      default: "",
+      default: '',
     },
     stroke: {
       type: String,
-      default: "#000",
+      default: '#000',
     },
     showCoord: {
       type: Boolean,
@@ -31,9 +35,9 @@ export default {
     showName: {
       type: Boolean,
       default: true,
-    }
+    },
   },
-  emits: ["click", "mouseenter", "mouseleave"],
+  emits: ['click', 'mouseenter', 'mouseleave'],
   computed: {
     coord() {
       return `${this.x},${this.y}`;
@@ -41,14 +45,14 @@ export default {
   },
   methods: {
     Click() {
-      this.$emit("click", { x: this.x, y: this.y });
+      this.$emit('click', { x: this.x, y: this.y });
     },
     MouseEnter() {
-      this.$emit("mouseenter", { x: this.x, y: this.y });
+      this.$emit('mouseenter', { x: this.x, y: this.y });
     },
     MouseLeave() {
-      this.$emit("mouseleave", { x: this.x, y: this.y });
-    }
+      this.$emit('mouseleave', { x: this.x, y: this.y });
+    },
   },
 };
 </script>
@@ -74,10 +78,11 @@ button.link {
   text-align: left;
   .name {
     font-weight: bold;
-  }  
+  }
 }
 
-button.link:hover, button.link:focus-visible {
+button.link:hover,
+button.link:focus-visible {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid var(--color-text);
 }

@@ -1,37 +1,41 @@
 <template>
   <div class="report">
     <div class="map-container">
-      <Map :report="report" :area="selectedHex" @select="SelectHexagon" :hoveredArea="hoveredHex" @hover="HoverHexagon" />
+      <Map
+        :report="report"
+        :area="selectedHex"
+        :hovered-area="hoveredHex"
+        @select="SelectHexagon"
+        @hover="HoverHexagon" />
     </div>
     <div class="info">
       <AreaPanel
-        :report="report"
         v-if="selectedHex"
+        :report="report"
         :area="selectedHex"
         @select="SelectArea"
         @updated="Updated"
-        @highlight="HighlightHexagon"
-      />
+        @highlight="HighlightHexagon" />
     </div>
   </div>
 </template>
 
 <script>
-import Map from "./Map.vue";
-import AreaPanel from "./AreaPanel.vue";
+import Map from './Map.vue';
+import AreaPanel from './AreaPanel.vue';
 
 export default {
+  components: {
+    Map,
+    AreaPanel,
+  },
   props: {
     report: {
       type: Object,
       required: true,
     },
   },
-  emits: ["updated"],
-  components: {
-    Map,
-    AreaPanel,
-  },
+  emits: ['updated'],
   data() {
     return {
       selectedHex: null,
@@ -50,7 +54,7 @@ export default {
   },
   methods: {
     Updated(hex) {
-      this.$emit("updated", this.report);
+      this.$emit('updated', this.report);
     },
     SelectHexagon(hex) {
       this.selectedHex = hex;
@@ -65,7 +69,7 @@ export default {
       } else {
         this.hoveredHex = null;
       }
-    },    
+    },
     SelectArea(area) {
       const hex = this.map[`${area.x},${area.y}`];
       this.selectedHex = hex;

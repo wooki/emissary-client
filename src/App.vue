@@ -1,17 +1,17 @@
 <template>
   <header>
     <Logo class="logo" />
-    <div class="report-info" v-if="report">
+    <div v-if="report" class="report-info">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 32">
         <Banner :x="0" :y="0" :flag="report.MyBanner()" :scale="1" />
       </svg>
       <div class="report-info-empire">{{ report.MyKingdom() }},</div>
       <div class="report-info-turn">turn {{ report.turn }}</div>
     </div>
-    <button class="icon" @click="upload" title="Open report file">
+    <button class="icon" title="Open report file" @click="upload">
       <GetTurnIcon />
     </button>
-    <button class="icon" @click="sendturn" title="Send turn file">
+    <button class="icon" title="Send turn file" @click="sendturn">
       <SendTurnIcon />
     </button>
   </header>
@@ -28,9 +28,9 @@
     </filter>
     <filter id="desaturate">
       <feColorMatrix
-      in="SourceGraphic"
-      type="matrix"
-      values="0.66 0 0 0 0
+        in="SourceGraphic"
+        type="matrix"
+        values="0.66 0 0 0 0
               0 0.66 0 0 0
               0 0 0.66 0 0
               0 0 0 0.33 0" />
@@ -39,21 +39,16 @@
 </template>
 
 <script>
-import Report from "./components/Report.vue";
-import OpenReport from "./components/OpenReport.vue";
-import Logo from "./assets/emissary.svg";
-import GetTurnIcon from "./assets/icons/getturn.svg";
-import SendTurnIcon from "./assets/icons/sendturn.svg";
-import ReportClass from "@/libs/Report.js";
-import Banner from "./components/Banner.vue";
-import Dialog from "./components/Dialog.vue";
+import Report from './components/Report.vue';
+import OpenReport from './components/OpenReport.vue';
+import Logo from './assets/emissary.svg';
+import GetTurnIcon from './assets/icons/getturn.svg';
+import SendTurnIcon from './assets/icons/sendturn.svg';
+import ReportClass from '@/libs/Report.js';
+import Banner from './components/Banner.vue';
+import Dialog from './components/Dialog.vue';
 
 export default {
-  data() {
-    return {
-      report: null,
-    };
-  },
   components: {
     Logo,
     GetTurnIcon,
@@ -63,44 +58,49 @@ export default {
     Banner,
     Dialog,
   },
+  data() {
+    return {
+      report: null,
+    };
+  },
+  mounted() {
+    let report = localStorage.getItem('report');
+    if (report) this.CreateReport(JSON.parse(report));
+  },
   methods: {
     upload() {
       this.$refs.uploadReportDialogOpen.open();
     },
     sendturn() {
-      console.log("sendturn");
+      console.log('sendturn');
       const orders = this.report.CreateOrders();
-      console.log("orders", orders);
+      console.log('orders', orders);
 
-      const a = document.createElement("a");
-      const file = new Blob([orders], { type: "text/plain" });
-      a.setAttribute("href", URL.createObjectURL(file));
+      const a = document.createElement('a');
+      const file = new Blob([orders], { type: 'text/plain' });
+      a.setAttribute('href', URL.createObjectURL(file));
       a.setAttribute(
-        "download",
+        'download',
         `turn.${this.report.Me()}.${this.report.turn}.json`,
       );
       a.click();
-      URL.revokeObjectURL(a.getAttribute("href"));
+      URL.revokeObjectURL(a.getAttribute('href'));
     },
     loaded(data) {
       this.$refs.uploadReportDialogOpen.close();
       if (data.map && data.my_kingdom && data.kingdoms) {
         this.CreateReport(data);
-        localStorage.setItem("report", JSON.stringify(data));
+        localStorage.setItem('report', JSON.stringify(data));
       }
     },
     SaveLocalChanges(data) {
-      if (data.map && data.my_kingdom && data.kingdoms) {      
-        localStorage.setItem("report", JSON.stringify(data));
+      if (data.map && data.my_kingdom && data.kingdoms) {
+        localStorage.setItem('report', JSON.stringify(data));
       }
     },
     CreateReport(rpt) {
       this.report = new ReportClass(rpt);
     },
-  },
-  mounted() {
-    let report = localStorage.getItem("report");
-    if (report) this.CreateReport(JSON.parse(report));
   },
 };
 </script>
@@ -165,8 +165,8 @@ main {
   &.noreport {
     &:before {
       opacity: 0.66;
-      content: "";
-      background-image: url("./assets/bg.webp");
+      content: '';
+      background-image: url('./assets/bg.webp');
       background-size: cover;
       display: block;
       min-height: calc(100vh - var(--header-height));

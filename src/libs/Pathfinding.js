@@ -7,7 +7,8 @@ export function hexGridAStar(jsonData, startCoord, endCoord, terrainWeights) {
     // Calculate the heuristic (Manhattan distance) and add terrain weight
     const dx = Math.abs(a.x - b.x);
     const dy = Math.abs(a.y - b.y);
-    const terrainWeight = terrainWeights[terrainA] + terrainWeights[terrainB].weight;
+    const terrainWeight =
+      terrainWeights[terrainA] + terrainWeights[terrainB].weight;
     return (dx + dy) * terrainWeight;
   }
 
@@ -15,7 +16,7 @@ export function hexGridAStar(jsonData, startCoord, endCoord, terrainWeights) {
     const { x, y } = coord;
     const neighbors = [];
 
-    throw "AI Gen code makes no sense here!";
+    throw 'AI Gen code makes no sense here!';
     const directions = [
       { dx: -1, dy: 0 },
       { dx: 1, dy: 0 },

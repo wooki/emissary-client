@@ -1,0 +1,22 @@
+.area-panel-item-details.area-panel-report {
+  margin-left: -12px;
+  margin-right: -12px;
+  max-width: unset;
+  
+
+  & > .area-panel-report-title {
+    margin: 0 6px;    
+  }
+
+  .area-panel-report-base {
+    .area-panel-report-title {
+      margin: 0;    
+    }
+  }
+
+  .area-panel-reports-container {
+    flex-direction: row;
+    width: 100%;
+  }
+}
+
