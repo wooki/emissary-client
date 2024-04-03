@@ -79,7 +79,7 @@ export default {
 
       // look in this.area.agents (object keyed with unique id)
       // TODO: look for armies?, structures?, church? etc.
-      console.log("ITEMS", items);
+      
       return items;
     }
   },

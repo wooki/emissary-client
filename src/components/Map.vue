@@ -19,6 +19,14 @@
         >
           <Banner :x="0" :y="0" :flag="kingdom.flag" />
         </symbol>
+        <symbol
+          :id="'banner-unknown'"
+          viewBox="0 -1 16 34"
+          height="35"
+          width="16"
+        >
+          <Banner :x="0" :y="0" flag="77777" />
+        </symbol>
       </defs>
 
       <Hexagon
@@ -94,6 +102,8 @@
         </g>
       </g>
 
+      <AreaItems v-for="items in mapItems" :key="'items-' + items.key" :items="items" :hexagonSize="hexagonSize" />      
+
       <text
         v-for="label in mapLabels"
         :key="label.key"
@@ -121,6 +131,7 @@ import {
   SameCoord,
   ExtractPaths,
 } from "../libs/HexUtils";
+import AreaItems from "./AreaItems.vue";
 
 export default {
   props: {
@@ -160,6 +171,7 @@ export default {
     Hexagon,
     Banner,
     BannerMasks,
+    AreaItems
   },
   data() {
     return {
@@ -260,6 +272,16 @@ export default {
           let banner = this.GetMapBannerFromArea(area);
           return banner;
         });
+    },
+    mapItems() {      
+      return Object.values(this.map)
+        .filter((area) => {
+          return Object.keys(area.agents).length > 0;
+        })
+        .map((area) => {
+          let items = this.GetMapItemsFromArea(area);
+          return items;
+        });              
     },
     mapLabels() {
       return this.mapSettlements.map((hex) => {
@@ -389,7 +411,7 @@ export default {
     GetMapBannerFromArea(area) {
       if (!area.owner) return null;
       const center = Center(area.x, area.y, this.hexagonSize, 0, 0);
-      const points = Corners(center.x, center.y, this.hexagonSize);
+      // const points = Corners(center.x, center.y, this.hexagonSize);
 
       const xOffset = this.ownedHexBannerScale * 8.0;
       const yOffset = this.hexagonSize / 3 + this.ownedHexBannerScale * 32.0;
@@ -405,6 +427,24 @@ export default {
       };
 
       return bannerData;
+    },
+    GetMapItemsFromArea(area) {
+      
+      const center = Center(area.x, area.y, this.hexagonSize, 0, 0);
+      const points = Corners(center.x, center.y, this.hexagonSize);
+
+      const xOffset = 0;//this.ownedHexBannerScale * 8.0;
+      const yOffset = 0;//this.hexagonSize / 3 + this.ownedHexBannerScale * 32.0;
+
+      const itemsData = {
+        x: center.x - xOffset,
+        y: center.y - yOffset,
+        key: `${area.x},${area.y}`,
+        center: center,
+        area: area,        
+      };
+
+      return itemsData;
     },
     GetMapHexFromArea(hex) {
       const center = Center(hex.x, hex.y, this.hexagonSize, 0, 0);
