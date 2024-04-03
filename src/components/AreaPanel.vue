@@ -39,7 +39,6 @@ export default {
       this.$emit("updated", area);
     },  
     SelectArea(area) {
-      this.SelectReport(null);
       this.$emit("select", area);
     }
   },
