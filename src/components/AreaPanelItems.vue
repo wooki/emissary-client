@@ -17,10 +17,9 @@
         :class="`area-panel-${item.type}`"
         @click="SelectItem(itemIndex)"
         @keypress.enter="SelectItem(itemIndex)">
-        <svg v-if="item.owner">
+        <svg v-if="item.owner" mask="url(#agent_mask)">
           <use
-            :mask="`url(#${item.type}_mask)`"
-            :href="`#banner-${item.owner}`"></use>
+            :href="`#agent-${item.owner}`"></use>
         </svg>
         <div class="item-summary">
           <div class="item-summary-title">{{ item.type }}</div>

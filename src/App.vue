@@ -2,7 +2,7 @@
   <header>
     <Logo class="logo" />
     <div v-if="report" class="report-info">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 32">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 8 16 16" height="16" width="16">
         <Banner :x="0" :y="0" :flag="report.MyBanner()" :scale="1" />
       </svg>
       <div class="report-info-empire">{{ report.MyKingdom() }},</div>

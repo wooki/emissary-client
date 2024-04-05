@@ -2,16 +2,16 @@
   <g>
     <!-- <rect :x="x" :y="y" :width="width" :height="height" stroke="red" fill="transparent" /> -->
     <!-- <rect v-for="(position, positionIndex) in positions" :key="positionIndex" :x="position.x" :y="position.y" :width="positionSize" :height="positionSize" stroke="blue" fill="transparent" /> -->
-    <g
+    <g class="xxx"
       v-for="(position, positionIndex) in positions"
       :key="positionIndex"
       :transform="transform(position)">
       <use
-        :transform="`scale(${scale}) translate(${offsetX},${offsetY})`"
-        :width="16"
-        :height="35"
-        :mask="`url(#${displayItems[positionIndex].type}_mask)`"
-        :href="displayItems[positionIndex].href" />
+        :transform="`scale(${positionSize / displayItems[positionIndex].height}) translate(${offsetX + displayItems[positionIndex].offsetX},${offsetY + displayItems[positionIndex].offsetY})`"
+        :width="displayItems[positionIndex].width"
+        :height="displayItems[positionIndex].height"
+        mask="url(#agent_mask)"
+        :href="displayItems[positionIndex].href" />        
     </g>
   </g>
 </template>
@@ -49,13 +49,34 @@ export default {
         let agent = this.items.area.agents[key];
         let item = Object.assign(
           {
-            href: `#banner-${agent.owner ?? 'unknown'}`,
+            href: `#agent-${agent.owner ?? 'unknown'}`,
             type: 'agent',
+            height: 16,
+            width: 16,
+            offsetX: 0,
+            offsetY: 0
           },
           agent,
         );
-        list.push(item);
+        list.push(item); 
       });
+
+      // Object.keys(this.items?.area?.armies).forEach((key) => {
+      //   let army = this.items.area.armies[key];
+      //   let item = Object.assign(
+      //     {
+      //       href: `#army-${agent.owner ?? 'unknown'}`,
+      //       type: 'army',
+      //       height: 22,
+      //       width: 16,
+      //       offsetX: 3,
+      //       offsetY: 0
+      //     },
+      //     army,
+      //   );
+      //   list.push(item); 
+      // });
+
       return list;
     },
     displayItemsCount() {
@@ -95,14 +116,11 @@ export default {
       return positions;
     },
     offsetX() {
-      return '5.5';
+      return 0;
     },
     offsetY() {
-      return '-2';
-    },
-    scale() {
-      return (this.positionSize / 35.0) * 1.3;
-    },
+      return 0;
+    }
   },
   methods: {
     transform(position) {

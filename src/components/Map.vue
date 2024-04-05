@@ -24,6 +24,36 @@
           width="16">
           <Banner :x="0" :y="0" flag="77777" />
         </symbol>
+        <symbol
+          v-for="kingdom in report.kingdoms"
+          :id="'agent-' + kingdom.player"
+          viewBox="0 8 16 16"
+          height="16"
+          width="16">
+          <Banner :x="0" :y="0" :flag="kingdom.flag" />
+        </symbol>
+        <symbol
+        :id="'agent-unknown'"
+        viewBox="0 8 16 16"
+          height="16"
+          width="16">
+          <Banner :x="0" :y="0" flag="77777" />
+        </symbol>        
+        <symbol
+          v-for="kingdom in report.kingdoms"
+          :id="'army-' + kingdom.player"
+          viewBox="0 2 16 22"
+          height="20"
+          width="16">
+          <Banner :x="0" :y="0" :flag="kingdom.flag" />
+        </symbol>
+        <symbol
+        :id="'army-unknown'"
+          viewBox="0 2 16 22"
+          height="20"
+          width="16">
+          <Banner :x="0" :y="0" flag="77777" />
+        </symbol>        
       </defs>
 
       <Hexagon
@@ -78,18 +108,6 @@
         @mouseenter="bannerHighlight(banner)"
         @mouseleave="bannerUnhighlight(banner)">
         <g :class="OwnedBannerClass(banner)">
-          <!-- EXAMPLE ARMY
-          <path
-            stroke="#000"
-            stroke-width="1"
-            d="M 0,4 H 16 V 12 C 16,32 0,32 0,12 Z"
-          />
-          <use
-            mask="url(#army_mask)"
-            :href="banner.href"
-          /> -->
-          <!-- EXAMPLE AGENT<circle cx="8" cy="13.5" r="8" stroke="#000" stroke-width="1" />
-          <use mask="url(#agent_mask)" :href="banner.href" /> -->
           <use :href="banner.href" />
         </g>
       </g>

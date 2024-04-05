@@ -53,13 +53,10 @@
     gap: 5px;
 
     & > svg {
-      flex: 0 0 20px;
-      height: 20px;
+      flex: 0 0 16px;
+      height: 16px;
       width: 16px;
       overflow: hidden;
-      use {
-        transform: translateY(-6px);
-      }
     }
 
     .item-summary {
