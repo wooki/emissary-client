@@ -1,6 +1,6 @@
 <template>
   <mask id="army_mask" maskUnits="userSpaceOnUse">
-    <path fill="#ffffff" d="M 0,0 H 16 V 6 C 16,18 8,22 8,22 C 8,22 0,18 0,8 Z" />
+    <path fill="#ffffff" d="M 0,0 H 16 V 6 C 16,18 8,22 8,22 C 8,22 0,18 0,6 Z" />
   </mask>
   <mask id="agent_mask" maskUnits="userSpaceOnUse">
     <circle cx="8" cy="8" r="7.5" fill="#ffffff" />

@@ -209,6 +209,13 @@ export default {
       });
     },
   },
+  watch: {
+    area(newVal, oldVal) {
+      if (newVal?.x != oldVal?.x || newVal?.y != oldVal?.y) {
+        this.SelectReport(this.selectedReportIndex);
+      }
+    }
+  },
   methods: {
     HighlightArea(area) {
       this.$emit('highlight', area);

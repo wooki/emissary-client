@@ -93,6 +93,13 @@ export default {
       return items;
     },
   },
+  watch: {
+    area(newVal, oldVal) {
+      if (newVal?.x != oldVal?.x || newVal?.y != oldVal?.y) {
+        this.SelectItem(this.selectedItemIndex);
+      }
+    }
+  },
   methods: {
     HighlightArea(area) {
       this.$emit('highlight', area);

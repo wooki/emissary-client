@@ -10,7 +10,6 @@
         :transform="`scale(${positionSize / displayItems[positionIndex].height}) translate(${offsetX + displayItems[positionIndex].offsetX},${offsetY + displayItems[positionIndex].offsetY})`"
         :width="displayItems[positionIndex].width"
         :height="displayItems[positionIndex].height"
-        mask="url(#agent_mask)"
         :href="displayItems[positionIndex].href" />        
     </g>
   </g>
@@ -58,24 +57,8 @@ export default {
           },
           agent,
         );
-        list.push(item); 
+        list.push(item);         
       });
-
-      // Object.keys(this.items?.area?.armies).forEach((key) => {
-      //   let army = this.items.area.armies[key];
-      //   let item = Object.assign(
-      //     {
-      //       href: `#army-${agent.owner ?? 'unknown'}`,
-      //       type: 'army',
-      //       height: 22,
-      //       width: 16,
-      //       offsetX: 3,
-      //       offsetY: 0
-      //     },
-      //     army,
-      //   );
-      //   list.push(item); 
-      // });
 
       return list;
     },

@@ -174,6 +174,13 @@ export default {
       };
     },
   },
+  watch: {
+    area(newVal, oldVal) {
+      if (newVal?.x != oldVal?.x || newVal?.y != oldVal?.y) {
+        this.ShowPanel('');
+      }
+    }
+  },
   methods: {
     ShowPanel(panel) {
       this.activePanel = panel;
