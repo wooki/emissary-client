@@ -5,7 +5,7 @@
     <div v-if="selectedItem" class="area-panel-details">
       <button class="icon" @click="SelectItem(null)"><BackIcon /></button>
 
-      <AgentDetails v-if="selectedItem.type == 'agent'" :agent="selectedItem" />
+      <AgentDetails v-if="selectedItem.type == 'agent'" :agent="selectedItem" :report="report" @order="OrderAgent" />
     </div>
 
     <div v-else class="area-panel-reports-container area-panel-items">
@@ -129,6 +129,10 @@ export default {
     OwnedByMe(owner) {
       return owner == this.report.Me();
     },
+    OrderAgent(agent) {
+      this.area.agents[agent.id] = agent;
+      this.$emit('updated', this.area);
+    }
   },
 };
 </script>

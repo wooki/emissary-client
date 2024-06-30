@@ -2,6 +2,7 @@ import { Colors1, Colors2, Colors3 } from '@/libs/BannerColors';
 
 export default function Report(data) {
   this.data = data;
+  this.original = structuredClone(data);
   this.turn = data.turn;
   this.map = data.map;
   this.my_kingdom = data.my_kingdom;
@@ -31,7 +32,11 @@ export default function Report(data) {
     let orders = [];
     Object.keys(this.map).forEach((coord) => {
       const hex = this.map[coord];
+      const originalHex = this.original.map[coord];
+
       if (hex.owner == this.Me()) {
+
+        console.log("trade_policy", hex.trade_policy, originalHex.trade_policy);
         orders.push({
           order: 'trade_policy',
           coord: coord,
@@ -44,6 +49,24 @@ export default function Report(data) {
           coord: coord,
           data: hex.hire_agent,
         });
+      }
+      if (Object.keys(hex.agents).length > 0) {
+        Object.keys(hex.agents).forEach(id => {
+          const agent = hex.agents[id];
+          
+          // process owned agents
+          if (agent.owner == this.Me()) {
+
+            if (agent['set_will_pay'] != undefined) {
+              orders.push({
+                order: 'set_pay_agent',
+                coord: coord,
+                agent: agent.id,
+                data: agent.set_will_pay,
+              });
+            }
+          }
+        });        
       }
     });
 

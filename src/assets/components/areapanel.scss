@@ -92,10 +92,36 @@
   .area-panel-report-base {
     display: flex;
     flex-wrap: wrap;
-    gap: 2px 5px;
+    gap: 2px 5px;       
+
+    &.has-details {
+      cursor: pointer;
+      border: 1px solid transparent;
+      transform: translateY(-1px);
+    }
+  
+    &.has-details:hover,
+    &.has-details:focus-visible {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--color-text);
+    }
 
     .area-panel-report-title {
       width: 100%;
+      display: flex;
+      flex-direction: row;
+      gap: 5px;
+      
+      & > span {
+        flex: 0 1 auto;
+      }
+      & > svg {
+        flex: 0 0 1em;
+        height: 1em;
+        width: 1em;
+        overflow: hidden;
+        margin-left: 0;
+      }
     }
 
     .area-panel-report-value {
