@@ -81,7 +81,7 @@
             class="area-panel-report-entry policy-food">
             <div class="area-panel-report-entry-title">Food</div>
             <div class="area-panel-report-entry-value">
-              {{ report.CurrentTradePolicy(SelectedHex, 'food') }}
+              {{ report.TradePolicy(SelectedHex, 'food') }}
             </div>
           </div>
           <div
@@ -89,7 +89,7 @@
             class="area-panel-report-entry policy-goods">
             <div class="area-panel-report-entry-title">Goods</div>
             <div class="area-panel-report-entry-value">              
-              {{ report.CurrentTradePolicy(SelectedHex, 'goods') }}
+              {{ report.TradePolicy(SelectedHex, 'goods') }}
             </div>
           </div>
         </div>
@@ -139,12 +139,11 @@ const SelectedHex = computed(() => report.selectedHex);
 
 const empireName = computed(() => {
   if (!SelectedHex.value.owner) return 'Unowned';
-  if (ownedByMe.value) return `${report.MyKingdom} (me)`;
+  if (ownedByMe.value) return `${report.MyKingdom.name} (me)`;
   return report.GetKingdom(SelectedHex.value.owner).name;
 });
 
 const ownedByMe = computed(() => {
-  console.log("ownedByMe", SelectedHex.value.owner, report.Me);
   return SelectedHex?.value.owner == report.Me;
 });
 
@@ -184,8 +183,20 @@ const SelectArea = (area) => {
 };
 
 const SetTradePolicy = (params) => {
-  // SelectedHex.trade_policy[params.resource] = params.value;
-  // emit('updated', SelectedHex);
+  let order = {
+      order: "set_trade_policy",
+      area: SelectedHex.value.x + ',' + SelectedHex.value.y,
+      food: report.TradePolicy(SelectedHex.value, 'food'),
+      goods: report.TradePolicy(SelectedHex.value, 'goods')    
+  };
+  
+  if (params.resource == 'food') {
+    order.food = params.value;
+  } else if (params.resource == 'goods') {
+    order.goods = params.value;
+  }
+  
+  report.AddOrder(order);
 };
 
 const SetHireAgent = (params) => {

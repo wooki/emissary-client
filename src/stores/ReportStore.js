@@ -3,7 +3,6 @@ import { Colors1, Colors2 } from '@/libs/BannerColors';
 
 export const useReportStore = defineStore('report', {
   state: () => ({
-    turn: null,
     report: null,
     orders: [],
     selectedHex: null,
@@ -15,6 +14,7 @@ export const useReportStore = defineStore('report', {
     Kingdoms: (state) => state.report.kingdoms,
     MyKingdom: (state) => state.report.my_kingdom,
     Me: (state) => state.report.my_kingdom.player,
+    Turn: (state) => state.report.turn,
     MyBanner: (state) => state.report.my_kingdom.flag,
     Color1: (state) => {
       let flag = state.report.my_kingdom.flag.split('');
@@ -27,15 +27,31 @@ export const useReportStore = defineStore('report', {
       return Colors2[parseInt(flag[4])];
     },
     Map: (state) => state.report.map,
+    TradePolicy: (state) => {
+      return (hex, resource) => {
+        // TODO: check if there is an order for this
+        console.log("TODO: check if there is an order for this");        
+        console.log("orders", state.orders);
+        
+        return hex.trade_policy[resource];
+      };
+    },
+    Order: (state) => {
+      return (coord, order) => {
+        return state.orders.find((o) => o.area == coord && o.order == order);
+      };
+    },
+    Orders: (state) => {
+      return {
+        player:  state.Me,
+        turn: state.Turn,
+        orders: state.orders,
+      }
+    },
   },
   actions: {
-    CurrentTradePolicy(hex, resource) {
-      // TODO: check if there is an order for this
-      return hex.trade_policy[resource];
-    },
     SetReport(data) {
-      this.report = data;
-      this.turn = data.turn;
+      this.report = data;      
     },
     SetOrders(orders) {
       this.orders = orders;
@@ -76,6 +92,10 @@ export const useReportStore = defineStore('report', {
     },
     AddOrder(order) {
       console.log('TODO: add order to game state', order);
+      const existingOrder = this.Order(order.area, order.order);
+      // TODO: sort this out, maybe restructure how orders are stored?
+      console.log("existingOrder", existingOrder);
+      
       this.orders.push(order);
       localStorage.setItem('orders', JSON.stringify(this.orders));
     },

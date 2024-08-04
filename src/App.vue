@@ -10,7 +10,7 @@
         <Banner :x="0" :y="0" :flag="report.MyBanner" :scale="1" />
       </svg>
       <div class="report-info-empire">{{ report.MyKingdom.name }},</div>
-      <div class="report-info-turn">turn {{ report.turn }}</div>
+      <div class="report-info-turn">turn {{ report.Turn }}</div>
     </div>
     <button class="icon" title="Open report file" @click="upload">
       <GetTurnIcon />
