@@ -1,81 +1,20 @@
 <template>
   <div class="report">
     <div class="map-container">
-      <Map
-        :report="report"
-        :area="selectedHex"
-        :hovered-area="hoveredHex"
-        @select="SelectHexagon"
-        @hover="HoverHexagon" />
+      <Map></Map>
     </div>
     <div class="info">
-      <AreaPanel
-        v-if="selectedHex"
-        :report="report"
-        :area="selectedHex"
-        @select="SelectArea"
-        @updated="Updated"
-        @highlight="HighlightHexagon" />
+      <AreaPanel v-if="report.selectedHex"></AreaPanel>
     </div>
   </div>
 </template>
 
-<script>
+<script setup>
 import Map from './Map.vue';
 import AreaPanel from './AreaPanel.vue';
+import { useReportStore } from '@/stores/ReportStore';
 
-export default {
-  components: {
-    Map,
-    AreaPanel,
-  },
-  props: {
-    report: {
-      type: Object,
-      required: true,
-    },
-  },
-  emits: ['updated'],
-  data() {
-    return {
-      selectedHex: null,
-      hoveredHex: null,
-    };
-  },
-  computed: {
-    map() {
-      return this.report.map;
-    },
-  },
-  watch: {
-    report(newReport, oldReport) {
-      this.selectedHex = null;
-    },
-  },
-  methods: {
-    Updated(hex) {
-      this.$emit('updated', this.report);
-    },
-    SelectHexagon(hex) {
-      this.selectedHex = hex;
-    },
-    HoverHexagon(hex) {
-      this.hoveredHex = hex;
-    },
-    HighlightHexagon(coord) {
-      if (coord) {
-        const hex = this.map[`${coord.x},${coord.y}`];
-        this.hoveredHex = hex;
-      } else {
-        this.hoveredHex = null;
-      }
-    },
-    SelectArea(area) {
-      const hex = this.map[`${area.x},${area.y}`];
-      this.selectedHex = hex;
-    },
-  },
-};
+const report = useReportStore();
 </script>
 
 <style scoped>

@@ -8,55 +8,10 @@
     <div class="parchment"></div>
     <svg v-if="mounted" xmlns="http://www.w3.org/2000/svg" :viewBox="viewBox">
       <defs>
-        <BannerMasks />
-        <symbol
-          v-for="kingdom in report.kingdoms"
-          :id="'banner-' + kingdom.player"
-          viewBox="0 -1 16 34"
-          height="35"
-          width="16">
-          <Banner :x="0" :y="0" :flag="kingdom.flag" />
-        </symbol>
-        <symbol
-          :id="'banner-unknown'"
-          viewBox="0 -1 16 34"
-          height="35"
-          width="16">
-          <Banner :x="0" :y="0" flag="77777" />
-        </symbol>
-        <symbol
-          v-for="kingdom in report.kingdoms"
-          :id="'agent-' + kingdom.player"
-          viewBox="0 8 16 16"
-          height="16"
-          width="16"
-          mask="url(#agent_mask)">
-          <Banner :x="0" :y="0" :flag="kingdom.flag" />
-        </symbol>
-        <symbol
-        :id="'agent-unknown'"
-        viewBox="0 8 16 16"
-          height="16"
-          width="16"
-          mask="url(#agent_mask)">
-          <Banner :x="0" :y="0" flag="77777" />
-        </symbol>        
-        <symbol
-          v-for="kingdom in report.kingdoms"
-          :id="'army-' + kingdom.player"
-          viewBox="0 2 16 22"
-          height="22"
-          width="16"
-          mask="url(#army_mask)">
-          <Banner :x="0" :y="0" :flag="kingdom.flag" />
-        </symbol>
-        <symbol
-        :id="'army-unknown'"
-          viewBox="0 2 16 22"
-          height="20"
-          width="16">
-          <Banner :x="0" :y="0" flag="77777" />
-        </symbol>        
+        <BannerMasks></BannerMasks>
+        <BannerSymbols
+          :v-if="report.isLoaded"
+          :kingdoms="report.Kingdoms"></BannerSymbols>
       </defs>
 
       <Hexagon
@@ -69,8 +24,8 @@
         :fill="hex.fill"
         stroke-width="1"
         :stroke="hex.stroke"
-        @mouseenter="hexHighlight"
         :desaturate="hex.desaturate"
+        @mouseenter="hexHighlight"
         @mouseleave="hexUnhighlight"
         @click="SelectHexagon(hex)" />
       <path
@@ -136,430 +91,370 @@
   </div>
 </template>
 
-<script>
+/**
+ * The `Map` component is responsible for rendering the game map, including hexagonal tiles, owned banners, and various map items and labels.
+ * It uses several child components to handle the rendering of specific elements, such as `Hexagon`, `BannerMasks`, `BannerSymbols`, and `AreaItems`.
+ * The component also handles user interactions, such as zooming, panning, and selecting hexagons.
+ * It uses the `ReportStore` to manage the state of the map and related data.
+ */
+<script setup>
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import BannerMasks from './BannerMasks.vue';
 import Hexagon from './Hexagon.vue';
-import Banner from './Banner.vue';
-import {
-  Corners,
-  Center,
-  AdjacentCoords,
-  SameCoord,
-  ExtractPaths,
-} from '../libs/HexUtils';
+import BannerSymbols from './BannerSymbols.vue';
 import AreaItems from './AreaItems.vue';
+import { Corners, Center, AdjacentCoords, SameCoord } from '../libs/HexUtils';
+import { useReportStore } from '@/stores/ReportStore';
 
-export default {
-  components: {
-    Hexagon,
-    Banner,
-    BannerMasks,
-    AreaItems,
+const report = useReportStore();
+
+const props = defineProps({
+  hexagonSize: {
+    type: Number,
+    default: 32,
   },
-  props: {
-    report: {
-      type: Object,
-      required: true,
-    },
-    area: {
-      type: Object,
-      default: null,
-    },
-    hoveredArea: {
-      type: Object,
-      default: null,
-    },
-    hexagonSize: {
-      type: Number,
-      default: 32,
-    },
-    terrainColours: {
-      type: Object,
-      default: {
-        peak: 'dimgray',
-        ocean: '#3D59AB',
-        mountain: 'slategray',
-        lowland: '#65b240',
-        forest: '#316e44',
-        desert: 'goldenrod',
-        town: 'Sienna',
-        city: 'Sienna',
-        unknown: '#4c84d7',
-      },
-    },
+  terrainColours: {
+    type: Object,
+    default: () => ({
+      peak: 'dimgray',
+      ocean: '#3D59AB',
+      mountain: 'slategray',
+      lowland: '#65b240',
+      forest: '#316e44',
+      desert: 'goldenrod',
+      town: 'Sienna',
+      city: 'Sienna',
+      unknown: '#4c84d7',
+    }),
   },
-  emits: ['select', 'hover'],
-  data() {
-    return {
-      ownedHexBannerScale: 1.6,
-      mounted: false,
-      focusX: 0,
-      focusY: 0,
-      clientX: null,
-      clientY: null,
-      scales: [
-        0.3, 0.4, 0.5, 0.63, 0.75, 0.85, 1, 1.2, 1.4, 1.6, 1.8, 2, 2.4, 2.8,
-        3.2, 3.8, 4.4, 5, 5.8, 6.6, 7.4, 8.4, 9.4, 10.4, 13,
-      ],
-      scaleIndex: 10,
-      mouseDown: false,
-      scrollSpeed: 5,
-      hoveredBanner: null,
-      clientHeight: 0,
-      clientWidth: 0,
-    };
-  },
-  computed: {
-    map() {
-      return this.report.map;
-    },
-    selectedHex() {
-      if (this.area) {
-        return this.GetMapHexFromArea(this.area);
-      }
-      return null;
-    },
-    hoveredHex() {
-      if (this.hoveredArea) {
-        return this.GetMapHexFromArea(this.hoveredArea);
-      }
-      return null;
-    },
-    mapBoundsPoints() {
-      if (!this.mounted) return '0 0 0 0';
+});
 
-      return `${this.mapBounds.min.x} ${this.mapBounds.min.y} ${this.mapBounds.max.x} ${this.mapBounds.min.y} ${this.mapBounds.max.x} ${this.mapBounds.max.y} ${this.mapBounds.min.x} ${this.mapBounds.max.y}`;
-    },
-    mapBounds() {
-      return this.getMapBounds();
-    },
-    mapCenter() {
-      return {
-        x: this.mapBounds.max.x - this.mapBounds.min.x,
-        y: this.mapBounds.max.y - this.mapBounds.min.y,
-      };
-    },
-    viewBox() {
-      if (!this.mounted) return '0 0 0 0';
+const ownedHexBannerScale = ref(1.6);
+const mounted = ref(false);
+const focusX = ref(0);
+const focusY = ref(0);
+const clientX = ref(null);
+const clientY = ref(null);
+const scales = [
+  0.3, 0.4, 0.5, 0.63, 0.75, 0.85, 1, 1.2, 1.4, 1.6, 1.8, 2, 2.4, 2.8, 3.2, 3.8,
+  4.4, 5, 5.8, 6.6, 7.4, 8.4, 9.4, 10.4, 13,
+];
+const scaleIndex = ref(10);
+const mouseDown = ref(false);
+const scrollSpeed = 5;
+const hoveredBanner = ref(null);
+const clientHeight = ref(0);
+const clientWidth = ref(0);
 
-      let bounds = this.mapBounds;
+onMounted(() => {
+  mounted.value = true;
+  clientWidth.value = document.querySelector('.map').clientWidth;
+  clientHeight.value = document.querySelector('.map').clientHeight;
+  const resizeObserver = new ResizeObserver(() => {
+    clientWidth.value = document.querySelector('.map').clientWidth;
+    clientHeight.value = document.querySelector('.map').clientHeight;
+  });
+  resizeObserver.observe(document.querySelector('.map'));
+});
 
-      let scale = this.scales[this.scaleIndex];
-      let ratio = this.clientWidth / this.clientHeight;
+onBeforeUnmount(() => {
+  mounted.value = false;
+  this.resizeObserver.unobserve(this.$el);
+});
 
-      let centerX =
-        this.mapBounds.min.x +
-        Math.round((this.mapBounds.max.x - this.mapBounds.min.x) / 2);
-      let centerY =
-        this.mapBounds.min.y +
-        Math.round((this.mapBounds.max.y - this.mapBounds.min.y) / 2);
-      let displayWidth = Math.round(
-        ((this.mapBounds.max.x - this.mapBounds.min.x) / scale) * ratio,
-      );
-      let displayHeight = Math.round(
-        (this.mapBounds.max.y - this.mapBounds.min.y) / scale,
-      );
-      let displayX = centerX - Math.round(displayWidth / 2);
-      let displayY = centerY - Math.round(displayHeight / 2);
-      displayX = displayX + this.focusX;
-      displayY = displayY + this.focusY;
-
-      // set height and width to be whichever is larger
-      if (displayWidth > displayHeight) displayHeight = displayWidth;
-      if (displayHeight > displayWidth) displayWidth = displayHeight;
-
-      if (
-        displayX == Infinity ||
-        displayX == -Infinity ||
-        displayX == Infinity ||
-        displayX == -Infinity
-      ) {
-        return '0 0 0 0';
-      }
-
-      let DisplayBox = `${displayX} ${displayY} ${displayWidth * ratio} ${displayHeight}`;
-
-      return DisplayBox;
-    },
-    mapHexagons() {
-      return Object.values(this.map).map((hex) => {
-        return this.GetMapHexFromArea(hex);
-      });
-    },
-    ownedHexBanners() {
-      return Object.values(this.map)
-        .filter((area) => area.owner)
-        .map((area) => {
-          let banner = this.GetMapBannerFromArea(area);
-          return banner;
-        });
-    },
-    mapItems() {
-      return Object.values(this.map)
-        .filter((area) => {
-          return Object.keys(area.agents).length > 0;
-        })
-        .map((area) => {
-          let items = this.GetMapItemsFromArea(area);
-          return items;
-        });
-    },
-    mapLabels() {
-      return this.mapSettlements.map((hex) => {
-        const center = Center(hex.x, hex.y, this.hexagonSize, 0, 0);
-        const points = Corners(center.x, center.y, this.hexagonSize);
-
-        let xOffset = 0;
-        let yOffset = 0;
-        if (hex.owner) {
-          xOffset = this.hexagonSize / 2;
-          yOffset = this.hexagonSize / 10;
-        }
-
-        const labelData = {
-          x: points[0].x + xOffset,
-          y: points[0].y + yOffset,
-          key: `${hex.x},${hex.y}`,
-          text: hex.name,
-          fill: '#000000',
-          class: `label label-${hex.terrain}`,
-          filter: hex.report_level == 0 ? `url('#desaturate')` : '',
-        };
-
-        if (hex.owner == this.report.Me()) {
-          labelData.class = `label label-${hex.terrain} label-me`;
-        }
-
-        return labelData;
-      });
-    },
-    mapSettlements() {
-      return Object.values(this.map).filter((hex) =>
-        ['city', 'town'].includes(hex.terrain),
-      );
-    },
-    mapBorders() {
-      return this.mapSettlements.map((settlement) => {
-        let stroke = '#000';
-
-        // find all edges of this province
-        let edgePointPairs = [];
-        settlement.borders.forEach((border) => {
-          stroke = '#000';
-
-          // check adjacent in each direction and add points for that
-          // edge of it is not
-          let adjacent = AdjacentCoords(border);
-
-          adjacent.forEach((neighbour, index) => {
-            let neighbourHex = this.GetMapHexFromCoord(neighbour);
-
-            if (
-              neighbourHex &&
-              !SameCoord(neighbourHex, settlement) &&
-              !SameCoord(neighbourHex.area.province, settlement)
-            ) {
-              let p1 = neighbourHex.points[(index + 3) % 6];
-              let p2 = neighbourHex.points[(index + 4) % 6];
-              edgePointPairs.push([p1, p2]);
-            }
-          });
-        });
-        let path = '';
-        edgePointPairs.forEach((edgePointPair) => {
-          path += ` M ${edgePointPair[0].x},${edgePointPair[0].y} L ${edgePointPair[1].x},${edgePointPair[1].y}`;
-        });
-
-        // this sorts out the borders into longer lines but due to way
-        // we add a dashed line this actually doesn't look as good on
-        // the screen - so remain with old solution for now
-        // let borderPaths = ExtractPaths(edgePointPairs);
-        // borderPaths.forEach((borderPath) => {
-        //   if (borderPath.length > 0) {
-        //     let operator = "M";
-        //     borderPath.forEach((point) => {
-        //       path += ` ${operator} ${point[0].x},${point[0].y}`
-        //       operator = "L";
-        //     });
-        //     let point = borderPath.toReversed()[0];
-        //     path += ` ${operator} ${point[1].x},${point[1].y}`
-        //   }
-        // });
-
-        return {
-          key: `border-${settlement.name}`,
-          path: path,
-          stroke: stroke,
-          filter: settlement.report_level == 0 ? `url('#desaturate')` : '',
-        };
-      });
-    },
-  },
-  mounted() {
-    this.mounted = true;
-    this.clientWidth = this.$el.clientWidth;
-    this.clientHeight = this.$el.clientHeight;
-    this.resizeObserver = new ResizeObserver((entries) => {
-      this.clientWidth = this.$el.clientWidth;
-      this.clientHeight = this.$el.clientHeight;
-      this.$forceUpdate();
-    });
-    this.resizeObserver.observe(this.$el);
-  },
-  beforeUnmount() {
-    this.mounted = false;
-    this.resizeObserver.unobserve(this.$el);
-  },
-  methods: {
-    OwnedBannerClass(banner) {
-      let classes = ['owned-banner'];
-      if (
-        this.selectedHex &&
-        this.selectedHex.x == banner.hex.x &&
-        this.selectedHex.y == banner.hex.y
-      ) {
-        classes.push('owned-banner-selected');
-      } else if (
-        this.hoveredHex &&
-        this.hoveredHex.x == banner.hex.x &&
-        this.hoveredHex.y == banner.hex.y
-      ) {
-        classes.push('owned-banner-hover');
-      } else if (this.hoveredBanner?.key == banner.key) {
-        classes.push('owned-banner-hover');
-      }
-      return classes.join(' ');
-    },
-    bannerHighlight(banner) {
-      this.hoveredBanner = banner;
-    },
-    bannerUnhighlight(banner) {
-      this.hoveredBanner = null;
-    },
-    hexHighlight(hex) {
-      // this.hoveredHex = hex;
-      this.$emit('hover', this.map[`${hex.x},${hex.y}`]);
-    },
-    hexUnhighlight(hex) {
-      // this.hoveredHex = null;
-      this.$emit('hover', null);
-    },
-    GetMapBannerFromArea(area) {
-      if (!area.owner) return null;
-      const center = Center(area.x, area.y, this.hexagonSize, 0, 0);
-      // const points = Corners(center.x, center.y, this.hexagonSize);
-
-      const xOffset = this.ownedHexBannerScale * 8.0;
-      const yOffset = this.hexagonSize / 3 + this.ownedHexBannerScale * 32.0;
-
-      const bannerData = {
-        x: center.x - xOffset,
-        y: center.y - yOffset,
-        key: `${area.x},${area.y}`,
-        center: center,
-        area: area,
-        href: `#banner-${area.owner}`,
-        hex: area,
-      };
-
-      return bannerData;
-    },
-    GetMapItemsFromArea(area) {
-      const center = Center(area.x, area.y, this.hexagonSize, 0, 0);
-      const points = Corners(center.x, center.y, this.hexagonSize);
-
-      const xOffset = 0; //this.ownedHexBannerScale * 8.0;
-      const yOffset = 0; //this.hexagonSize / 3 + this.ownedHexBannerScale * 32.0;
-
-      const itemsData = {
-        x: center.x - xOffset,
-        y: center.y - yOffset,
-        key: `${area.x},${area.y}`,
-        center: center,
-        area: area,
-      };
-
-      return itemsData;
-    },
-    GetMapHexFromArea(hex) {
-      const center = Center(hex.x, hex.y, this.hexagonSize, 0, 0);
-      const points = Corners(center.x, center.y, this.hexagonSize);
-
-      const hexData = {
-        x: hex.x,
-        y: hex.y,
-        key: `${hex.x},${hex.y}`,
-        terrain: hex.terrain,
-        points: points,
-        center: center,
-        min: { x: points[5].x, y: points[0].y },
-        max: { x: points[1].x, y: points[3].y },
-        fill: this.terrainColours[hex.terrain],
-        stroke: '#00000099',
-        area: hex,
-        desaturate: hex.terrain != 'ocean' && hex.report_level == 0,
-      };
-
-      return hexData;
-    },
-    GetMapHexFromCoord(coord) {
-      if (this.map[`${coord.x},${coord.y}`]) {
-        return this.GetMapHexFromArea(this.map[`${coord.x},${coord.y}`]);
-      }
-      return null;
-    },
-    SelectHexagon(hex) {
-      this.$emit('select', this.map[`${hex.x},${hex.y}`]);
-    },
-    wheel(e) {
-      if (e.deltaY > 0 && this.scaleIndex > 0) {
-        this.scaleIndex = this.scaleIndex - 1;
-      } else if (e.deltaY < 0 && this.scaleIndex < this.scales.length - 1) {
-        this.scaleIndex = this.scaleIndex + 1;
-      }
-    },
-    mousedown(e) {
-      this.mouseDown = true;
-      this.clientX = e.clientX;
-      this.clientY = e.clientY;
-    },
-    mouseup() {
-      this.mouseDown = false;
-      this.clientX = null;
-      this.clientY = null;
-    },
-    mousemove(e) {
-      if (this.mouseDown && this.clientX && this.clientY) {
-        let scale = this.scales[this.scaleIndex];
-
-        this.focusX =
-          this.focusX +
-          Math.round(((this.clientX - e.clientX) * this.scrollSpeed) / scale);
-        this.focusY =
-          this.focusY +
-          Math.round(((this.clientY - e.clientY) * this.scrollSpeed) / scale);
-
-        this.clientX = e.clientX;
-        this.clientY = e.clientY;
-      }
-    },
-    getMapBounds() {
-      let min = { x: Infinity, y: Infinity };
-      let max = { x: 0, y: 0 };
-      this.mapHexagons.forEach((hex) => {
-        if (hex.min.x < min.x) min.x = Math.floor(hex.min.x);
-        if (hex.min.y < min.y) min.y = Math.floor(hex.min.y);
-        if (hex.max.x > max.x) max.x = Math.ceil(hex.max.x);
-        if (hex.max.y > max.y) max.y = Math.ceil(hex.max.y);
-      });
-
-      return {
-        min,
-        max,
-      };
-    },
-  },
+const wheel = (e) => {
+  if (e.deltaY > 0 && scaleIndex.value > 0) {
+    scaleIndex.value--;
+  } else if (e.deltaY < 0 && scaleIndex.value < scales.length - 1) {
+    scaleIndex.value++;
+  }
 };
+
+const mousedown = (e) => {
+  mouseDown.value = true;
+  clientX.value = e.clientX;
+  clientY.value = e.clientY;
+};
+
+const mouseup = () => {
+  mouseDown.value = false;
+  clientX.value = null;
+  clientY.value = null;
+};
+
+const mousemove = (e) => {
+  if (mouseDown.value && clientX.value && clientY.value) {
+    let scale = scales[scaleIndex.value];
+
+    focusX.value += Math.round(
+      ((clientX.value - e.clientX) * scrollSpeed) / scale,
+    );
+    focusY.value += Math.round(
+      ((clientY.value - e.clientY) * scrollSpeed) / scale,
+    );
+
+    clientX.value = e.clientX;
+    clientY.value = e.clientY;
+  }
+};
+
+const hexHighlight = (hex) => {
+  report.HighlightHex(hex);
+};
+
+const hexUnhighlight = () => {
+  report.HighlightHex(null);
+};
+
+const bannerHighlight = (banner) => {
+  report.HighlightBanner(banner);
+};
+
+const bannerUnhighlight = () => {
+  report.HighlightBanner(null);
+};
+
+const SelectHexagon = (hex) => {
+  report.SelectHex(hex);
+};
+
+const OwnedBannerClass = (banner) => {
+  let classes = ['owned-banner'];
+  if (
+    report.selectedHex &&
+    report.selectedHex.x == banner.hex.x &&
+    report.selectedHex.y == banner.hex.y
+  ) {
+    classes.push('owned-banner-selected');
+  } else if (
+    report.highlightedHex &&
+    report.highlightedHex.x == banner.hex.x &&
+    report.highlightedHex.y == banner.hex.y
+  ) {
+    classes.push('owned-banner-hover');
+  } else if (hoveredBanner.value?.key == banner.key) {
+    classes.push('owned-banner-hover');
+  }
+  return classes.join(' ');
+};
+
+const mapBounds = computed(() => getMapBounds());
+
+const viewBox = computed(() => {
+  if (!mounted.value) return '0 0 0 0';
+
+  let scale = scales[scaleIndex.value];
+  let ratio = clientWidth.value / clientHeight.value;
+
+  let centerX =
+    mapBounds.value.min.x +
+    Math.round((mapBounds.value.max.x - mapBounds.value.min.x) / 2);
+  let centerY =
+    mapBounds.value.min.y +
+    Math.round((mapBounds.value.max.y - mapBounds.value.min.y) / 2);
+  let displayWidth = Math.round(
+    ((mapBounds.value.max.x - mapBounds.value.min.x) / scale) * ratio,
+  );
+  let displayHeight = Math.round(
+    (mapBounds.value.max.y - mapBounds.value.min.y) / scale,
+  );
+  let displayX = centerX - Math.round(displayWidth / 2);
+  let displayY = centerY - Math.round(displayHeight / 2);
+  displayX = displayX + focusX.value;
+  displayY = displayY + focusY.value;
+
+  if (displayWidth > displayHeight) displayHeight = displayWidth;
+  if (displayHeight > displayWidth) displayWidth = displayHeight;
+
+  if (
+    displayX == Infinity ||
+    displayX == -Infinity ||
+    displayY == Infinity ||
+    displayY == -Infinity
+  ) {
+    return '0 0 0 0';
+  }
+
+  return `${displayX} ${displayY} ${displayWidth * ratio} ${displayHeight}`;
+});
+
+const mapHexagons = computed(() =>
+  Object.values(report.Map).map((hex) => GetMapHexFromArea(hex)),
+);
+
+const ownedHexBanners = computed(() =>
+  Object.values(report.Map)
+    .filter((area) => area.owner)
+    .map((area) => GetMapBannerFromArea(area)),
+);
+
+const mapItems = computed(() =>
+  Object.values(report.Map)
+    .filter((area) => Object.keys(area.agents).length > 0)
+    .map((area) => GetMapItemsFromArea(area)),
+);
+
+const mapLabels = computed(() => {
+  return mapSettlements.value.map((hex) => {
+    const center = Center(hex.x, hex.y, props.hexagonSize, 0, 0);
+    const points = Corners(center.x, center.y, props.hexagonSize);
+
+    let xOffset = 0;
+    let yOffset = 0;
+    if (hex.owner) {
+      xOffset = props.hexagonSize / 2;
+      yOffset = props.hexagonSize / 10;
+    }
+
+    const labelData = {
+      x: points[0].x + xOffset,
+      y: points[0].y + yOffset,
+      key: `${hex.x},${hex.y}`,
+      text: hex.name,
+      fill: '#000000',
+      class: `label label-${hex.terrain}`,
+      filter: hex.report_level == 0 ? `url('#desaturate')` : '',
+    };
+
+    if (hex.owner == report.Me) {
+      labelData.class = `label label-${hex.terrain} label-me`;
+    }
+
+    return labelData;
+  });
+});
+
+const mapSettlements = computed(() => {
+  return Object.values(report.Map).filter((hex) =>
+    ['city', 'town'].includes(hex.terrain),
+  );
+});
+
+const mapBorders = computed(() => {
+  return mapSettlements.value.map((settlement) => {
+    let stroke = '#000';
+
+    // find all edges of this province
+    let edgePointPairs = [];
+    settlement.borders.forEach((border) => {
+      stroke = '#000';
+
+      // check adjacent in each direction and add points for that
+      // edge of it is not
+      let adjacent = AdjacentCoords(border);
+
+      adjacent.forEach((neighbour, index) => {
+        let neighbourHex = GetMapHexFromCoord(neighbour);
+
+        if (
+          neighbourHex &&
+          !SameCoord(neighbourHex, settlement) &&
+          !SameCoord(neighbourHex.area.province, settlement)
+        ) {
+          let p1 = neighbourHex.points[(index + 3) % 6];
+          let p2 = neighbourHex.points[(index + 4) % 6];
+          edgePointPairs.push([p1, p2]);
+        }
+      });
+    });
+    let path = '';
+    edgePointPairs.forEach((edgePointPair) => {
+      path += ` M ${edgePointPair[0].x},${edgePointPair[0].y} L ${edgePointPair[1].x},${edgePointPair[1].y}`;
+    });
+
+    return {
+      key: `border-${settlement.name}`,
+      path: path,
+      stroke: stroke,
+      filter: settlement.report_level == 0 ? `url('#desaturate')` : '',
+    };
+  });
+});
+
+
+const getMapBounds = () => {
+  let min = { x: Infinity, y: Infinity };
+  let max = { x: 0, y: 0 };
+  mapHexagons.value.forEach((hex) => {
+    if (hex.min.x < min.x) min.x = Math.floor(hex.min.x);
+    if (hex.min.y < min.y) min.y = Math.floor(hex.min.y);
+    if (hex.max.x > max.x) max.x = Math.ceil(hex.max.x);
+    if (hex.max.y > max.y) max.y = Math.ceil(hex.max.y);
+  });
+
+  return { min, max };
+};
+
+const selectedHex = computed(() => {
+  if (report.selectedHex) {
+    return GetMapHexFromArea(report.selectedHex);
+  }
+  return null;
+});
+const hoveredHex = computed(() => {
+  if (report.highlightedHex) {
+    return GetMapHexFromArea(report.highlightedHex);
+  }
+  return null;
+});
+
+const GetMapHexFromArea = (hex) => {
+  const center = Center(hex.x, hex.y, props.hexagonSize, 0, 0);
+  const points = Corners(center.x, center.y, props.hexagonSize);
+
+  return {
+    x: hex.x,
+    y: hex.y,
+    key: `${hex.x},${hex.y}`,
+    terrain: hex.terrain,
+    points: points,
+    center: center,
+    min: { x: points[5].x, y: points[0].y },
+    max: { x: points[1].x, y: points[3].y },
+    fill: props.terrainColours[hex.terrain],
+    stroke: '#00000099',
+    area: hex,
+    desaturate: hex.terrain != 'ocean' && hex.report_level == 0,
+  };
+};
+
+const GetMapHexFromCoord = (coord) => {
+  if (report.Map[`${coord.x},${coord.y}`]) {
+    return GetMapHexFromArea(report.Map[`${coord.x},${coord.y}`]);
+  }
+  return null;
+};
+
+const GetMapBannerFromArea = (area) => {
+  if (!area.owner) return null;
+  const center = Center(area.x, area.y, props.hexagonSize, 0, 0);
+
+  const xOffset = 1.6 * 8.0;
+  const yOffset = props.hexagonSize / 3 + 1.6 * 32.0;
+
+  return {
+    x: center.x - xOffset,
+    y: center.y - yOffset,
+    key: `${area.x},${area.y}`,
+    center: center,
+    area: area,
+    href: `#banner-${area.owner}`,
+    hex: area,
+  };
+};
+
+const GetMapItemsFromArea = (area) => {
+  const center = Center(area.x, area.y, props.hexagonSize, 0, 0);
+
+  return {
+    x: center.x,
+    y: center.y,
+    key: `${area.x},${area.y}`,
+    center: center,
+    area: area,
+  };
+};
+
 </script>
 
 <style scoped>

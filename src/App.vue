@@ -1,11 +1,15 @@
 <template>
   <header>
     <Logo class="logo" />
-    <div v-if="report" class="report-info">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 8 16 16" height="16" width="16">
-        <Banner :x="0" :y="0" :flag="report.MyBanner()" :scale="1" />
+    <div v-if="report.isLoaded" class="report-info">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 8 16 16"
+        height="16"
+        width="16">
+        <Banner :x="0" :y="0" :flag="report.MyBanner" :scale="1" />
       </svg>
-      <div class="report-info-empire">{{ report.MyKingdom() }},</div>
+      <div class="report-info-empire">{{ report.MyKingdom.name }},</div>
       <div class="report-info-turn">turn {{ report.turn }}</div>
     </div>
     <button class="icon" title="Open report file" @click="upload">
@@ -16,11 +20,11 @@
     </button>
   </header>
   <main :class="{ noreport: !report }">
-    <Report v-if="report" :report="report" @updated="SaveLocalChanges" />
+    <Report v-if="report.isLoaded" />
   </main>
-  <Dialog ref="uploadReportDialogOpen">
+  <DialogBox ref="uploadReportDialogOpen">
     <OpenReport @loaded="loaded" />
-  </Dialog>
+  </DialogBox>
   <svg style="position: absolute; height: 0; width: 0; opacity: 0">
     <filter id="wavy">
       <feTurbulence x="0" y="0" baseFrequency="0.02" numOctaves="5" seed="1" />
@@ -38,70 +42,51 @@
   </svg>
 </template>
 
-<script>
-import Report from './components/Report.vue';
-import OpenReport from './components/OpenReport.vue';
-import Logo from './assets/emissary.svg';
-import GetTurnIcon from './assets/icons/getturn.svg';
-import SendTurnIcon from './assets/icons/sendturn.svg';
-import ReportClass from '@/libs/Report.js';
-import Banner from './components/Banner.vue';
-import Dialog from './components/Dialog.vue';
+<script setup>
+import { ref, onMounted } from 'vue';
+import Report from '@/components/Report.vue';
+import OpenReport from '@/components/OpenReport.vue';
+import Logo from '@/assets/emissary.svg';
+import GetTurnIcon from '@/assets/icons/getturn.svg';
+import SendTurnIcon from '@/assets/icons/sendturn.svg';
+import Banner from '@/components/Banner.vue';
+import DialogBox from '@/components/Dialog.vue';
+import { useReportStore } from '@/stores/ReportStore';
 
-export default {
-  components: {
-    Logo,
-    GetTurnIcon,
-    SendTurnIcon,
-    Report,
-    OpenReport,
-    Banner,
-    Dialog,
-  },
-  data() {
-    return {
-      report: null,
-    };
-  },
-  mounted() {
-    let report = localStorage.getItem('report');
-    if (report) this.CreateReport(JSON.parse(report));
-  },
-  methods: {
-    upload() {
-      this.$refs.uploadReportDialogOpen.open();
-    },
-    sendturn() {
-      console.log('sendturn');
-      const orders = this.report.CreateOrders();
-      console.log('orders', orders);
+const uploadReportDialogOpen = ref(null);
+const report = useReportStore();
 
-      const a = document.createElement('a');
-      const file = new Blob([orders], { type: 'text/plain' });
-      a.setAttribute('href', URL.createObjectURL(file));
-      a.setAttribute(
-        'download',
-        `turn.${this.report.Me()}.${this.report.turn}.json`,
-      );
-      a.click();
-      URL.revokeObjectURL(a.getAttribute('href'));
-    },
-    loaded(data) {
-      this.$refs.uploadReportDialogOpen.close();
-      if (data.map && data.my_kingdom && data.kingdoms) {
-        this.CreateReport(data);
-        localStorage.setItem('report', JSON.stringify(data));
-      }
-    },
-    SaveLocalChanges(data) {
-      if (data.map && data.my_kingdom && data.kingdoms) {
-        localStorage.setItem('report', JSON.stringify(data));
-      }
-    },
-    CreateReport(rpt) {
-      this.report = new ReportClass(rpt);
-    },
-  },
+onMounted(() => {
+  report.LoadReport();
+});
+
+const upload = () => {
+  uploadReportDialogOpen.value.open();
+};
+
+const sendturn = () => {
+  console.log('sendturn');
+  const orders = report.orders;
+  console.log('orders', orders);
+
+  const a = document.createElement('a');
+  const file = new Blob([orders], { type: 'text/plain' });
+  a.setAttribute('href', URL.createObjectURL(file));
+  a.setAttribute(
+    'download',
+    `turn.${report.value.Me()}.${report.value.turn}.json`,
+  );
+  a.click();
+  URL.revokeObjectURL(a.getAttribute('href'));
+};
+
+const loaded = (data) => {
+  uploadReportDialogOpen.value.close();
+  if (data.map && data.my_kingdom && data.kingdoms) {
+    report.SetReport(data);
+    report.ClearOrders();
+    report.SaveReport();
+  }
 };
 </script>
 

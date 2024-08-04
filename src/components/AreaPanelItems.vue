@@ -5,7 +5,11 @@
     <div v-if="selectedItem" class="area-panel-details">
       <button class="icon" @click="SelectItem(null)"><BackIcon /></button>
 
-      <AgentDetails v-if="selectedItem.type == 'agent'" :agent="selectedItem" :report="report" @order="OrderAgent" />
+      <AgentDetails
+        v-if="selectedItem.type == 'agent'"
+        :agent="selectedItem"
+        :report="report"
+        @order="OrderAgent" />
     </div>
 
     <div v-else class="area-panel-reports-container area-panel-items">
@@ -18,8 +22,7 @@
         @click="SelectItem(itemIndex)"
         @keypress.enter="SelectItem(itemIndex)">
         <svg v-if="item.owner" mask="url(#agent_mask)">
-          <use
-            :href="`#agent-${item.owner}`"></use>
+          <use :href="`#agent-${item.owner}`"></use>
         </svg>
         <div class="item-summary">
           <div class="item-summary-title">{{ item.type }}</div>
@@ -98,7 +101,7 @@ export default {
       if (newVal?.x != oldVal?.x || newVal?.y != oldVal?.y) {
         this.SelectItem(this.selectedItemIndex);
       }
-    }
+    },
   },
   methods: {
     HighlightArea(area) {
@@ -132,7 +135,7 @@ export default {
     OrderAgent(agent) {
       this.area.agents[agent.id] = agent;
       this.$emit('updated', this.area);
-    }
+    },
   },
 };
 </script>

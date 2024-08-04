@@ -2,7 +2,8 @@
   <g>
     <!-- <rect :x="x" :y="y" :width="width" :height="height" stroke="red" fill="transparent" /> -->
     <!-- <rect v-for="(position, positionIndex) in positions" :key="positionIndex" :x="position.x" :y="position.y" :width="positionSize" :height="positionSize" stroke="blue" fill="transparent" /> -->
-    <g class="xxx"
+    <g
+      class="xxx"
       v-for="(position, positionIndex) in positions"
       :key="positionIndex"
       :transform="transform(position)">
@@ -10,7 +11,7 @@
         :transform="`scale(${positionSize / displayItems[positionIndex].height}) translate(${offsetX + displayItems[positionIndex].offsetX},${offsetY + displayItems[positionIndex].offsetY})`"
         :width="displayItems[positionIndex].width"
         :height="displayItems[positionIndex].height"
-        :href="displayItems[positionIndex].href" />        
+        :href="displayItems[positionIndex].href" />
     </g>
   </g>
 </template>
@@ -53,11 +54,11 @@ export default {
             height: 16,
             width: 16,
             offsetX: 0,
-            offsetY: 0
+            offsetY: 0,
           },
           agent,
         );
-        list.push(item);         
+        list.push(item);
       });
 
       return list;
@@ -103,7 +104,7 @@ export default {
     },
     offsetY() {
       return 0;
-    }
+    },
   },
   methods: {
     transform(position) {

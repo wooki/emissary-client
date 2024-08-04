@@ -35,8 +35,7 @@ export default function Report(data) {
       const originalHex = this.original.map[coord];
 
       if (hex.owner == this.Me()) {
-
-        console.log("trade_policy", hex.trade_policy, originalHex.trade_policy);
+        console.log('trade_policy', hex.trade_policy, originalHex.trade_policy);
         orders.push({
           order: 'trade_policy',
           coord: coord,
@@ -51,12 +50,11 @@ export default function Report(data) {
         });
       }
       if (Object.keys(hex.agents).length > 0) {
-        Object.keys(hex.agents).forEach(id => {
+        Object.keys(hex.agents).forEach((id) => {
           const agent = hex.agents[id];
-          
+
           // process owned agents
           if (agent.owner == this.Me()) {
-
             if (agent['set_will_pay'] != undefined) {
               orders.push({
                 order: 'set_pay_agent',
@@ -66,7 +64,7 @@ export default function Report(data) {
               });
             }
           }
-        });        
+        });
       }
     });
 

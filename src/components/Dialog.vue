@@ -46,6 +46,7 @@ export default {
   top: 4px;
   right: 2px;
   cursor: pointer;
+  z-index: 1;
   &:hover,
   &:focus-visible {
     background: rgba(255, 255, 255, 0.1);

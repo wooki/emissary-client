@@ -214,7 +214,7 @@ export default {
       if (newVal?.x != oldVal?.x || newVal?.y != oldVal?.y) {
         this.SelectReport(this.selectedReportIndex);
       }
-    }
+    },
   },
   methods: {
     HighlightArea(area) {

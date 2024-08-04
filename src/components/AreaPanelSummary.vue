@@ -6,8 +6,8 @@
       <button class="icon" @click="ShowPanel('')"><BackIcon /></button>
       <div class="area-panel-report-title">Trade Policy</div>
       <div class="area-panel-report-details-form">
-        <TradePolicy :area="area" resource="food" @click="SetTradePolicy" />
-        <TradePolicy :area="area" resource="goods" @click="SetTradePolicy" />
+        <TradePolicy :area="SelectedHex" resource="food" @click="SetTradePolicy" />
+        <TradePolicy :area="SelectedHex" resource="goods" @click="SetTradePolicy" />
       </div>
     </div>
 
@@ -15,54 +15,54 @@
       <button class="icon" @click="ShowPanel('')"><BackIcon /></button>
       <div class="area-panel-report-title">Hire Agent</div>
       <div class="area-panel-report-details-form">
-        <HireAgent :area="area" @click="SetHireAgent" />
+        <HireAgent :area="SelectedHex" @click="SetHireAgent" />
       </div>
     </div>
 
     <div v-if="activePanel == ''" class="area-panel-reports-container">
-      <div v-if="!area.province && area.name" class="area-panel-report">
+      <div v-if="!SelectedHex.province && SelectedHex.name" class="area-panel-report">
         <label>Capital</label>
         <div class="field">
           <Link
-            :x="area.x"
-            :y="area.y"
-            :name="area.name"
+            :x="SelectedHex.x"
+            :y="SelectedHex.y"
+            :name="SelectedHex.name"
             @click="SelectArea"
             @mouseenter="HighlightArea"
             @mouseleave="UnhighlightArea" />
         </div>
       </div>
-      <div v-else-if="area.name" class="area-panel-report">
+      <div v-else-if="SelectedHex.name" class="area-panel-report">
         <label>Name</label>
-        <div class="field">{{ area.name }}</div>
+        <div class="field">{{ SelectedHex.name }}</div>
       </div>
       <div class="area-panel-report">
         <label>Terrain</label>
-        <div class="field">{{ area.terrain }}</div>
+        <div class="field">{{ SelectedHex.terrain }}</div>
       </div>
-      <div v-if="area.owner" class="area-panel-report">
+      <div v-if="SelectedHex.owner" class="area-panel-report">
         <label>Owner</label>
         <div class="field">{{ empireName }}</div>
       </div>
-      <div v-if="area.province" class="area-panel-report">
+      <div v-if="SelectedHex.province" class="area-panel-report">
         <label>Province</label>
         <div class="field">
           <Link
-            :x="area.province.x"
-            :y="area.province.y"
-            :name="area.province.name"
+            :x="SelectedHex.province.x"
+            :y="SelectedHex.province.y"
+            :name="SelectedHex.province.name"
             @click="SelectArea"
             @mouseenter="HighlightArea"
             @mouseleave="UnhighlightArea" />
         </div>
       </div>
-      <div v-if="area.trade" class="area-panel-report">
+      <div v-if="SelectedHex.trade" class="area-panel-report">
         <label>Region</label>
         <div class="field">
           <Link
-            :x="area.trade.x"
-            :y="area.trade.y"
-            :name="area.trade.name"
+            :x="SelectedHex.trade.x"
+            :y="SelectedHex.trade.y"
+            :name="SelectedHex.trade.name"
             @click="SelectArea"
             @mouseenter="HighlightArea"
             @mouseleave="UnhighlightArea" />
@@ -70,33 +70,33 @@
       </div>
 
       <div
-        v-if="area?.trade_policy"
+        v-if="SelectedHex?.trade_policy"
         class="area-panel-report"
         :class="ownedByMe ? 'has-details' : ''"
-        @click="ShowPanel('tradePolicy')">
+        @click="ownedByMe ? ShowPanel('tradePolicy') : null">
         <div class="area-panel-report-entries">
           <div class="area-panel-report-title">Trade Policy <OrderIcon /></div>
           <div
-            v-if="area.trade_policy.food"
+            v-if="SelectedHex.trade_policy.food"
             class="area-panel-report-entry policy-food">
             <div class="area-panel-report-entry-title">Food</div>
             <div class="area-panel-report-entry-value">
-              {{ area.trade_policy.food }}
+              {{ report.CurrentTradePolicy(SelectedHex, 'food') }}
             </div>
           </div>
           <div
-            v-if="area.trade_policy.goods"
+            v-if="SelectedHex.trade_policy.goods"
             class="area-panel-report-entry policy-goods">
             <div class="area-panel-report-entry-title">Goods</div>
-            <div class="area-panel-report-entry-value">
-              {{ area.trade_policy.goods }}
+            <div class="area-panel-report-entry-value">              
+              {{ report.CurrentTradePolicy(SelectedHex, 'goods') }}
             </div>
           </div>
         </div>
       </div>
 
       <div
-        v-if="area?.has_population"
+        v-if="SelectedHex?.has_population"
         class="area-panel-report has-details"
         @click="ShowPanel('hireAgent')">
         <div class="area-panel-report-entries">
@@ -109,10 +109,10 @@
               {{ hireAgentDesc.value }}
             </div>
           </div>
-          <div v-if="area.hire_cost" class="area-panel-report-entry">
+          <div v-if="SelectedHex.hire_cost" class="area-panel-report-entry">
             <div class="area-panel-report-entry-title">Cost</div>
             <div class="area-panel-report-entry-value">
-              {{ area.hire_cost }}g
+              {{ SelectedHex.hire_cost }}g
             </div>
           </div>
         </div>
@@ -121,93 +121,77 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, watch } from 'vue';
 import Link from './Link.vue';
 import TradePolicy from './TradePolicy.vue';
 import HireAgent from './HireAgent.vue';
 import BackIcon from '@/assets/icons/back.svg';
 import OrderIcon from '../assets/icons/order.svg';
 
-export default {
-  components: {
-    Link,
-    BackIcon,
-    TradePolicy,
-    HireAgent,
-    OrderIcon,
-  },
-  props: {
-    report: {
-      type: Object,
-      required: true,
-    },
-    area: {
-      type: Object,
-      required: true,
-    },
-  },
-  emits: ['select', 'updated', 'highlight'],
-  data() {
+import { useReportStore } from '@/stores/ReportStore';
+
+const report = useReportStore();
+
+const activePanel = ref('');
+
+const SelectedHex = computed(() => report.selectedHex);
+
+const empireName = computed(() => {
+  if (!SelectedHex.value.owner) return 'Unowned';
+  if (ownedByMe.value) return `${report.MyKingdom} (me)`;
+  return report.GetKingdom(SelectedHex.value.owner).name;
+});
+
+const ownedByMe = computed(() => {
+  console.log("ownedByMe", SelectedHex.value.owner, report.Me);
+  return SelectedHex?.value.owner == report.Me;
+});
+
+const hireAgentDesc = computed(() => {
+  if (SelectedHex.value.hire_agent == 'hire') {
     return {
-      activePanel: '',
+      label: 'Order',
+      value: 'hire',
     };
-  },
-  computed: {
-    empireName() {
-      if (!this.area.owner) return 'Unowned';
-      if (this.ownedByMe) return `${this.report.MyKingdom()} (me)`;
-      return this.report.kingdoms[this.area.owner].name;
-    },
-    ownedByMe() {
-      return this.area?.owner == this.report.Me();
-    },
-    hireAgentDesc() {
-      if (this.area.hire_agent == 'hire') {
-        return {
-          label: 'Order',
-          value: 'hire',
-        };
-      }
-      return {
-        label: 'Order',
-        value: '-',
-      };
-    },
-  },
-  watch: {
-    area(newVal, oldVal) {
-      if (newVal?.x != oldVal?.x || newVal?.y != oldVal?.y) {
-        this.ShowPanel('');
-      }
-    }
-  },
-  methods: {
-    ShowPanel(panel) {
-      this.activePanel = panel;
-    },
-    Updated(area) {
-      this.$emit('updated', area);
-    },
-    HighlightArea(coord) {
-      this.$emit('highlight', coord);
-    },
-    UnhighlightArea() {
-      this.$emit('highlight', null);
-    },
-    SelectArea(area) {
-      this.$emit('select', area);
-    },
-    SetTradePolicy(params) {
-      this.area.trade_policy[params.resource] = params.value;
-      this.$emit('updated', this.area);
-    },
-    SetHireAgent(params) {
-      this.area.hire_agent = params.value;
-      this.$emit('updated', this.area);
-    },
-  },
+  }
+  return {
+    label: 'Order',
+    value: '-',
+  };
+});
+
+watch(() => SelectedHex, (newVal, oldVal) => {
+  if (newVal?.x != oldVal?.x || newVal?.y != oldVal?.y) {
+    ShowPanel('');
+  }
+}, { deep: true });
+
+const ShowPanel = (panel) => {
+  activePanel.value = panel;
 };
-</script>
+
+const HighlightArea = (coord) => {
+  report.HighlightHex(coord);
+};
+
+const UnhighlightArea = () => {
+  report.HighlightHex(null);
+};
+
+const SelectArea = (area) => {
+  report.SelectArea(area);
+};
+
+const SetTradePolicy = (params) => {
+  // SelectedHex.trade_policy[params.resource] = params.value;
+  // emit('updated', SelectedHex);
+};
+
+const SetHireAgent = (params) => {
+  // SelectedHex.hire_agent = params.value;
+  // emit('updated', SelectedHex);
+};</script>
 
 <style scoped>
 .area-panel-report-details-form {
