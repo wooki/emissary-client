@@ -57,7 +57,7 @@ const props = defineProps({
   },
 });
 
-const kingdomsArray = computed(() => {  
+const kingdomsArray = computed(() => {
   return Object.values(props.kingdoms);
 });
 </script>

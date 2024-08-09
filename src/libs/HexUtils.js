@@ -1,3 +1,7 @@
+export function Coord(x, y) {
+  return `${x},${y}`;
+}
+
 export function Sizes(size) {
   let hexsizesData = {
     a: size / 2,

@@ -91,12 +91,12 @@
   </div>
 </template>
 
-/**
- * The `Map` component is responsible for rendering the game map, including hexagonal tiles, owned banners, and various map items and labels.
- * It uses several child components to handle the rendering of specific elements, such as `Hexagon`, `BannerMasks`, `BannerSymbols`, and `AreaItems`.
- * The component also handles user interactions, such as zooming, panning, and selecting hexagons.
- * It uses the `ReportStore` to manage the state of the map and related data.
- */
+/** * The `Map` component is responsible for rendering the game map, including
+hexagonal tiles, owned banners, and various map items and labels. * It uses
+several child components to handle the rendering of specific elements, such as
+`Hexagon`, `BannerMasks`, `BannerSymbols`, and `AreaItems`. * The component also
+handles user interactions, such as zooming, panning, and selecting hexagons. *
+It uses the `ReportStore` to manage the state of the map and related data. */
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import BannerMasks from './BannerMasks.vue';
@@ -371,7 +371,6 @@ const mapBorders = computed(() => {
   });
 });
 
-
 const getMapBounds = () => {
   let min = { x: Infinity, y: Infinity };
   let max = { x: 0, y: 0 };
@@ -454,7 +453,6 @@ const GetMapItemsFromArea = (area) => {
     area: area,
   };
 };
-
 </script>
 
 <style scoped>

@@ -1,13 +1,14 @@
 import { defineStore } from 'pinia';
 import { Colors1, Colors2 } from '@/libs/BannerColors';
+import { Coord } from '@/libs/HexUtils';
 
 export const useReportStore = defineStore('report', {
   state: () => ({
     report: null,
-    orders: [],
+    orders: {},
     selectedHex: null,
     highlightedHex: null,
-    highlightedBanner: null
+    highlightedBanner: null,
   }),
   getters: {
     isLoaded: (state) => state.report !== null,
@@ -29,29 +30,31 @@ export const useReportStore = defineStore('report', {
     Map: (state) => state.report.map,
     TradePolicy: (state) => {
       return (hex, resource) => {
-        // TODO: check if there is an order for this
-        console.log("TODO: check if there is an order for this");        
-        console.log("orders", state.orders);
-        
+        const coord = Coord(hex.x, hex.y);
+        if (state.orders[coord] && state.orders[coord]['set_trade_policy']) {
+            return state.orders[coord]['set_trade_policy'][resource];
+        }
         return hex.trade_policy[resource];
       };
     },
-    Order: (state) => {
-      return (coord, order) => {
-        return state.orders.find((o) => o.area == coord && o.order == order);
+    Orders: (state) => {
+      const orders = [];
+      // TODO: add orders
+      return {
+        player: state.Me,
+        turn: state.Turn,
+        orders: orders,
       };
     },
-    Orders: (state) => {
-      return {
-        player:  state.Me,
-        turn: state.Turn,
-        orders: state.orders,
-      }
+    Kingdom(state) {
+      return (name) => {
+        return state.Kingdoms[name];
+      };
     },
   },
   actions: {
     SetReport(data) {
-      this.report = data;      
+      this.report = data;
     },
     SetOrders(orders) {
       this.orders = orders;
@@ -80,30 +83,29 @@ export const useReportStore = defineStore('report', {
       }
     },
     HighlightHex(hex) {
-        this.highlightedHex = hex;
-      },
-      HighlightBanner(banner) {
-        this.highlightedBanner = banner;
-      },
-      
+      this.highlightedHex = hex;
+    },
+    HighlightBanner(banner) {
+      this.highlightedBanner = banner;
+    },
+
     SelectArea(area) {
-      const hex = this.Map[`${area.x},${area.y}`];
+      const hex = this.Map[Coord(area.x, area.y)];
       this.SelectHex(hex);
     },
-    AddOrder(order) {
-      console.log('TODO: add order to game state', order);
-      const existingOrder = this.Order(order.area, order.order);
-      // TODO: sort this out, maybe restructure how orders are stored?
-      console.log("existingOrder", existingOrder);
-      
-      this.orders.push(order);
+    AddAgentOrder(order) {
+      console.log("TODO: add agent order", order);      
+    },
+    AddArmyOrder(order) {
+      console.log("TODO: add army order", order);
+    },
+    AddHexOrder(coord, order, data) {
+      if (!this.orders[coord]) this.orders[coord] = {};
+      this.orders[coord][order] = data;
       localStorage.setItem('orders', JSON.stringify(this.orders));
     },
     SaveReport() {
       localStorage.setItem('report', JSON.stringify(this.report));
-    },
-    GetKingdom(name) {
-      return this.Kingdoms[name];
     },
   },
 });

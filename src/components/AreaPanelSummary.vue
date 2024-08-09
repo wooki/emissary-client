@@ -6,8 +6,14 @@
       <button class="icon" @click="ShowPanel('')"><BackIcon /></button>
       <div class="area-panel-report-title">Trade Policy</div>
       <div class="area-panel-report-details-form">
-        <TradePolicy :area="SelectedHex" resource="food" @click="SetTradePolicy" />
-        <TradePolicy :area="SelectedHex" resource="goods" @click="SetTradePolicy" />
+        <TradePolicy
+          :area="SelectedHex"
+          resource="food"
+          @click="SetTradePolicy" />
+        <TradePolicy
+          :area="SelectedHex"
+          resource="goods"
+          @click="SetTradePolicy" />
       </div>
     </div>
 
@@ -20,7 +26,9 @@
     </div>
 
     <div v-if="activePanel == ''" class="area-panel-reports-container">
-      <div v-if="!SelectedHex.province && SelectedHex.name" class="area-panel-report">
+      <div
+        v-if="!SelectedHex.province && SelectedHex.name"
+        class="area-panel-report">
         <label>Capital</label>
         <div class="field">
           <Link
@@ -88,7 +96,7 @@
             v-if="SelectedHex.trade_policy.goods"
             class="area-panel-report-entry policy-goods">
             <div class="area-panel-report-entry-title">Goods</div>
-            <div class="area-panel-report-entry-value">              
+            <div class="area-panel-report-entry-value">
               {{ report.TradePolicy(SelectedHex, 'goods') }}
             </div>
           </div>
@@ -128,6 +136,7 @@ import TradePolicy from './TradePolicy.vue';
 import HireAgent from './HireAgent.vue';
 import BackIcon from '@/assets/icons/back.svg';
 import OrderIcon from '../assets/icons/order.svg';
+import { Coord } from '@/libs/HexUtils';
 
 import { useReportStore } from '@/stores/ReportStore';
 
@@ -140,7 +149,7 @@ const SelectedHex = computed(() => report.selectedHex);
 const empireName = computed(() => {
   if (!SelectedHex.value.owner) return 'Unowned';
   if (ownedByMe.value) return `${report.MyKingdom.name} (me)`;
-  return report.GetKingdom(SelectedHex.value.owner).name;
+  return report.Kingdom(SelectedHex.value.owner).name;
 });
 
 const ownedByMe = computed(() => {
@@ -160,11 +169,15 @@ const hireAgentDesc = computed(() => {
   };
 });
 
-watch(() => SelectedHex, (newVal, oldVal) => {
-  if (newVal?.x != oldVal?.x || newVal?.y != oldVal?.y) {
-    ShowPanel('');
-  }
-}, { deep: true });
+watch(
+  () => SelectedHex,
+  (newVal, oldVal) => {
+    if (newVal?.x != oldVal?.x || newVal?.y != oldVal?.y) {
+      ShowPanel('');
+    }
+  },
+  { deep: true },
+);
 
 const ShowPanel = (panel) => {
   activePanel.value = panel;
@@ -183,26 +196,26 @@ const SelectArea = (area) => {
 };
 
 const SetTradePolicy = (params) => {
+  const coord = Coord(SelectedHex.value.x, SelectedHex.value.y);
   let order = {
-      order: "set_trade_policy",
-      area: SelectedHex.value.x + ',' + SelectedHex.value.y,
-      food: report.TradePolicy(SelectedHex.value, 'food'),
-      goods: report.TradePolicy(SelectedHex.value, 'goods')    
+    food: report.TradePolicy(SelectedHex.value, 'food'),
+    goods: report.TradePolicy(SelectedHex.value, 'goods'),
   };
-  
+
   if (params.resource == 'food') {
     order.food = params.value;
   } else if (params.resource == 'goods') {
     order.goods = params.value;
   }
-  
-  report.AddOrder(order);
+
+  report.AddHexOrder(coord, 'set_trade_policy', order);
 };
 
 const SetHireAgent = (params) => {
   // SelectedHex.hire_agent = params.value;
   // emit('updated', SelectedHex);
-};</script>
+};
+</script>
 
 <style scoped>
 .area-panel-report-details-form {

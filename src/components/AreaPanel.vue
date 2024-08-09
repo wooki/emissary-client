@@ -14,7 +14,6 @@ import AreaPanelItems from './AreaPanelItems.vue';
 import { useReportStore } from '@/stores/ReportStore';
 
 const report = useReportStore();
-
 </script>
 
 <style scoped></style>
