@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { Colors1, Colors2 } from '@/libs/BannerColors';
 import { Coord } from '@/libs/HexUtils';
+import { TradePolicies } from './data/TradePolicies';
 
 export const useReportStore = defineStore('report', {
   state: () => ({
@@ -9,6 +10,7 @@ export const useReportStore = defineStore('report', {
     selectedHex: null,
     highlightedHex: null,
     highlightedBanner: null,
+    tradePolicyOptions: TradePolicies,
   }),
   getters: {
     isLoaded: (state) => state.report !== null,
@@ -32,7 +34,7 @@ export const useReportStore = defineStore('report', {
       return (hex, resource) => {
         const coord = Coord(hex.x, hex.y);
         if (state.orders[coord] && state.orders[coord]['set_trade_policy']) {
-            return state.orders[coord]['set_trade_policy'][resource];
+          return state.orders[coord]['set_trade_policy'][resource];
         }
         return hex.trade_policy[resource];
       };
@@ -94,10 +96,10 @@ export const useReportStore = defineStore('report', {
       this.SelectHex(hex);
     },
     AddAgentOrder(order) {
-      console.log("TODO: add agent order", order);      
+      console.log('TODO: add agent order', order);
     },
     AddArmyOrder(order) {
-      console.log("TODO: add army order", order);
+      console.log('TODO: add army order', order);
     },
     AddHexOrder(coord, order, data) {
       if (!this.orders[coord]) this.orders[coord] = {};

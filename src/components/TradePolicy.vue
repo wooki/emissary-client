@@ -9,73 +9,37 @@
     @click="SetPolicy" />
 </template>
 
-<script>
+<script setup>
+import { computed } from 'vue';
+import { useReportStore } from '@/stores/ReportStore';
 import SelectOptions from './SelectOptions.vue';
 
-export default {
-  components: {
-    SelectOptions,
+const props = defineProps({
+  resource: {
+    type: String,
+    required: true,
   },
-  props: {
-    area: {
-      type: Object,
-      required: true,
-    },
-    resource: {
-      type: String,
-      required: true,
-    },
-  },
-  emits: ['click'],
-  data() {
-    return {
-      options: [
-        {
-          value: 'none',
-          title: 'None',
-          desc: `Do not buy or sell any ${this.resource}.`,
-        },
-        {
-          value: 'ration',
-          title: 'Ration',
-          desc: `Buy/sell up to half required for upkeep/industry.`,
-        },
-        {
-          value: 'trade',
-          title: 'Trade',
-          desc: `Buy/sell up to quantity required for upkeep/industry.`,
-        },
-        {
-          value: 'reserve',
-          title: 'Reserve',
-          desc: `Buy/sell up to twice upkeep/industry.`,
-        },
-        {
-          value: 'stockpile',
-          title: 'Stockpile',
-          desc: `Buy/sell up to three times upkeep/industry.`,
-        },
-        {
-          value: 'hoard',
-          title: 'Hoard',
-          desc: `Buy/sell up to five times upkeep/industry.`,
-        },
-      ],
-    };
-  },
-  computed: {
-    current() {
-      return this.area.trade_policy[this.resource];
-    },
-  },
-  methods: {
-    SetPolicy(params) {
-      this.$emit('click', {
-        area: this.area,
-        resource: this.resource,
-        value: params.value,
-      });
-    },
-  },
+});
+
+const emit = defineEmits(['click']);
+
+const reportStore = useReportStore();
+const area = computed(() => reportStore.selectedHex);
+
+const options = computed(() =>
+  reportStore.tradePolicyOptions.map((option) => ({
+    ...option,
+    desc: option.desc(props.resource),
+  })),
+);
+
+const current = computed(() => area.value?.trade_policy[props.resource]);
+
+const SetPolicy = (params) => {
+  emit('click', {
+    area: area.value,
+    resource: props.resource,
+    value: params.value,
+  });
 };
 </script>
