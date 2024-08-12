@@ -1,13 +1,13 @@
 <template>
   <div v-if="report.isLoaded && report.selectedHex" class="area-panel">
-    <AreaPanelSummary />
+    <AreaSummary />
     <!-- <AreaPanelData></AreaPanelData>      
     <AreaPanelItems></AreaPanelItems>       -->
   </div>
 </template>
 
 <script setup>
-import AreaPanelSummary from './AreaPanelSummary.vue';
+import AreaSummary from './panels/AreaSummary.vue';
 import AreaPanelData from './AreaPanelData.vue';
 import AreaPanelItems from './AreaPanelItems.vue';
 

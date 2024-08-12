@@ -7,49 +7,38 @@
     @click="SetPolicy" />
 </template>
 
-<script>
+<script setup>
+import { computed, ref } from 'vue';
+import { useReportStore } from '@/stores/reportStore';
 import SelectOptions from './SelectOptions.vue';
 
-export default {
-  components: {
-    SelectOptions,
+const emit = defineEmits(['click']);
+
+const reportStore = useReportStore();
+const area = computed(() => reportStore.selectedHex);
+
+const hireMessage = computed(() => {
+  return area.value.hire_cost
+    ? `Hire an agent for ${area.value.hire_cost}g for 12 turns.`
+    : `Hire an agent at market value for 12 turns.`;
+});
+
+const options = ref([
+  {
+    value: '',
+    title: 'None',
+    desc: `Do not hire.`,
   },
-  props: {
-    area: {
-      type: Object,
-      required: true,
-    },
+  {
+    value: 'hire',
+    title: 'Hire',
+    desc: hireMessage,
   },
-  emits: ['click'],
-  data() {
-    let hireMessage = `Hire an agent at market value for 12 turns.`;
-    if (this.area.hire_cost) {
-      hireMessage = `Hire an agent for ${this.area.hire_cost}g for 12 turns.`;
-    }
-    return {
-      options: [
-        {
-          value: '',
-          title: 'None',
-          desc: `Do not hire.`,
-        },
-        {
-          value: 'hire',
-          title: 'Hire',
-          desc: hireMessage,
-        },
-      ],
-    };
-  },
-  computed: {
-    current() {
-      return this.area.hire_agent ?? '';
-    },
-  },
-  methods: {
-    SetPolicy(params) {
-      this.$emit('click', { area: this.area, value: params.value });
-    },
-  },
+]);
+
+const current = computed(() => reportStore.HireAgent(area.value));
+
+const SetPolicy = (params) => {
+  emit('click', { area: area.value, value: params.value });
 };
 </script>

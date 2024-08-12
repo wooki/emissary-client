@@ -131,11 +131,11 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue';
-import Link from './Link.vue';
-import TradePolicy from './TradePolicy.vue';
-import HireAgent from './HireAgent.vue';
+import Link from '../Link.vue';
+import TradePolicy from '../TradePolicy.vue';
+import HireAgent from '../HireAgent.vue';
 import BackIcon from '@/assets/icons/back.svg';
-import OrderIcon from '../assets/icons/order.svg';
+import OrderIcon from '@/assets/icons/order.svg';
 import { Coord } from '@/libs/HexUtils';
 
 import { useReportStore } from '@/stores/ReportStore';
@@ -157,16 +157,13 @@ const ownedByMe = computed(() => {
 });
 
 const hireAgentDesc = computed(() => {
-  if (SelectedHex.value.hire_agent == 'hire') {
+  if (report.HireAgent(SelectedHex.value) == 'hire') {
     return {
       label: 'Order',
       value: 'hire',
     };
   }
-  return {
-    label: 'Order',
-    value: '-',
-  };
+  return null;
 });
 
 watch(
@@ -212,8 +209,12 @@ const SetTradePolicy = (params) => {
 };
 
 const SetHireAgent = (params) => {
-  // SelectedHex.hire_agent = params.value;
-  // emit('updated', SelectedHex);
+  const coord = Coord(SelectedHex.value.x, SelectedHex.value.y);
+  let order = {
+    hire: params.value,
+  };
+
+  report.AddHexOrder(coord, 'hire_agent', order);
 };
 </script>
 

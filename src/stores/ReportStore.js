@@ -39,6 +39,15 @@ export const useReportStore = defineStore('report', {
         return hex.trade_policy[resource];
       };
     },
+    HireAgent: (state) => {
+      return (hex) => {
+        const coord = Coord(hex.x, hex.y);
+        if (state.orders[coord] && state.orders[coord]['hire_agent']) {
+          return state.orders[coord]['hire_agent']['hire'];
+        }
+        return '';
+      };
+    },
     Orders: (state) => {
       const orders = [];
       // TODO: add orders
@@ -90,7 +99,6 @@ export const useReportStore = defineStore('report', {
     HighlightBanner(banner) {
       this.highlightedBanner = banner;
     },
-
     SelectArea(area) {
       const hex = this.Map[Coord(area.x, area.y)];
       this.SelectHex(hex);
