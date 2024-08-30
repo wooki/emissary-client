@@ -65,16 +65,15 @@ const upload = () => {
 };
 
 const sendturn = () => {
-  console.log('sendturn');
-  const orders = report.orders;
-  console.log('orders', orders);
+  const orders = report.Orders;
+  console.log('sendturn', orders);
 
   const a = document.createElement('a');
-  const file = new Blob([orders], { type: 'text/plain' });
+  const file = new Blob([JSON.stringify(orders, null, '\t')], { type: 'text/plain' });
   a.setAttribute('href', URL.createObjectURL(file));
   a.setAttribute(
     'download',
-    `turn.${report.value.Me()}.${report.value.turn}.json`,
+    `turn.${report.Me}.${report.Turn}.json`,
   );
   a.click();
   URL.revokeObjectURL(a.getAttribute('href'));

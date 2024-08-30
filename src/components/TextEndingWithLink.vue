@@ -10,55 +10,45 @@
       @mouseleave="MouseLeave" />
   </div>
 </template>
-
-<script>
+<script setup>
+import { computed } from 'vue';
 import Link from './Link.vue';
 
-export default {
-  components: {
-    Link,
+const props = defineProps({
+  text: {
+    type: String,
+    required: true,
   },
-  props: {
-    text: {
-      type: String,
-      required: true,
-    },
-  },
-  emits: ['click', 'mouseenter', 'mouseleave'],
-  computed: {
-    coord() {
-      return `${this.x},${this.y}`;
-    },
-    regexMatch() {
-      return /(\d\d?\d?),(\d\d?\d?)/.exec(this.text);
-    },
-    textWithoutLink() {
-      if (this.regexMatch) return this.text.substring(0, this.regexMatch.index);
-      return this.text;
-    },
-    link() {
-      if (this.regexMatch) {
-        const x = parseInt(this.regexMatch[1]);
-        const y = parseInt(this.regexMatch[2]);
-        return {
-          x,
-          y,
-        };
-      }
-      return null;
-    },
-  },
-  methods: {
-    Click() {
-      this.$emit('click', this.link);
-    },
-    MouseEnter() {
-      this.$emit('mouseenter', this.link);
-    },
-    MouseLeave() {
-      this.$emit('mouseleave', this.link);
-    },
-  },
+});
+
+const emit = defineEmits(['click', 'mouseenter', 'mouseleave']);
+
+const regexMatch = computed(() => /(\d\d?\d?),(\d\d?\d?)/.exec(props.text));
+
+const textWithoutLink = computed(() => {
+  if (regexMatch.value) return props.text.substring(0, regexMatch.value.index);
+  return props.text;
+});
+
+const link = computed(() => {
+  if (regexMatch.value) {
+    const x = parseInt(regexMatch.value[1]);
+    const y = parseInt(regexMatch.value[2]);
+    return { x, y };
+  }
+  return null;
+});
+
+const Click = () => {
+  emit('click', link.value);
+};
+
+const MouseEnter = () => {
+  emit('mouseenter', link.value);
+};
+
+const MouseLeave = () => {
+  emit('mouseleave', link.value);
 };
 </script>
 

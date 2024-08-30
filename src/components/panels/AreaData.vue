@@ -9,7 +9,6 @@
         v-for="(item, itemIndex) in selectedReport.info"
         :key="itemIndex"
         class="area-panel-report-details-row">
-        <!-- <div class="area-panel-report-details-type">{{ item.type }}</div> -->
         <div class="area-panel-report-details-message">
           <TextEndingWithLink
             :text="item.message"
@@ -73,205 +72,187 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, watch } from 'vue';
 import { AddFloats } from '@/libs/SafeMath.js';
 import BackIcon from '@/assets/icons/back.svg';
-import TextEndingWithLink from './TextEndingWithLink.vue';
-import OrderIcon from '../assets/icons/order.svg';
+import TextEndingWithLink from '@/components/TextEndingWithLink.vue';
+// import OrderIcon from '@/assets/icons/order.svg';
+import { useReportStore } from '@/stores/ReportStore';
 
-export default {
-  components: {
-    BackIcon,
-    TextEndingWithLink,
-    OrderIcon,
-  },
-  props: {
-    report: {
-      type: Object,
-      required: true,
-    },
-    area: {
-      type: Object,
-      required: true,
-    },
-  },
-  emits: ['select', 'updated', 'highlight'],
-  data: function () {
-    return {
-      selectedReportIndex: null,
+const report = useReportStore();
+
+const SelectedHex = computed(() => report.selectedHex);
+
+const selectedReportIndex = ref(null);
+
+const selectedReport = computed(() => {
+  if (selectedReportIndex.value == null) return null;
+
+  let reportsArray = Array.from(aggregateReports.value.values());
+  return reportsArray[selectedReportIndex.value];
+});
+
+const aggregateReports = computed(() => {
+  const reports = new Map();
+
+  // one per type and one per store item, iterate and create or update
+  let foodReport = null;
+  let goodsReport = null;
+  let goldReport = null;
+  let populationReport = null;
+  
+  if (SelectedHex.value.store) {
+    foodReport = {
+      type: 'FOOD',
+      info: [],
+      values: new Map(),
+      base: SelectedHex.value.store.food,
+      adjustment: [0],
+      digits: 0,
     };
-  },
-  computed: {
-    selectedReport() {
-      if (this.selectedReportIndex == null) return null;
+    goodsReport = {
+      type: 'GOODS',
+      info: [],
+      values: new Map(),
+      base: SelectedHex.value.store.goods,
+      adjustment: [0],
+      digits: 0,
+    };
+    goldReport = {
+      type: 'GOLD',
+      info: [],
+      values: new Map(),
+      base: SelectedHex.value.store.gold,
+      adjustment: [0],
+      digits: 0,
+    };
+  }
 
-      let reportsArray = Array.from(this.aggregateReports.values());
-      return reportsArray[this.selectedReportIndex];
-    },
-    aggregateReports() {
-      const reports = new Map();
+  if (SelectedHex.value.population) {
+    populationReport = {
+      type: 'POPULATION',
+      info: [],
+      values: new Map(),
+      base: SelectedHex.value.population.toLocaleString(),
+      adjustment: [0],
+      digits: 0,
+    };
+    reports.set('POPULATION', populationReport);
+  }
 
-      // one per type and one per store item, iterate and create or update
-      let foodReport = null;
-      let goodsReport = null;
-      let goldReport = null;
-      let populationReport = null;
+  if (SelectedHex.value.info) {
+    SelectedHex.value.info.forEach((info) => {
+      reports.set(
+        info.type,
+        CreateOrAddToReport(reports, info, SelectedHex),
+      );
 
-      if (this.area.store) {
-        foodReport = {
-          type: 'FOOD',
-          info: [],
-          values: new Map(),
-          base: this.area.store.food,
-          adjustment: [0],
-          digits: 0,
-        };
-        goodsReport = {
-          type: 'GOODS',
-          info: [],
-          values: new Map(),
-          base: this.area.store.goods,
-          adjustment: [0],
-          digits: 0,
-        };
-        goldReport = {
-          type: 'GOLD',
-          info: [],
-          values: new Map(),
-          base: this.area.store.gold,
-          adjustment: [0],
-          digits: 0,
-        };
+      if (foodReport && info.data?.food) {
+        foodReport.info.push(info);
+        foodReport.adjustment[0] =
+          foodReport.adjustment[0] + info.data.food;
       }
 
-      if (this.area.population) {
-        populationReport = {
-          type: 'POPULATION',
-          info: [],
-          values: new Map(),
-          base: this.area.population.toLocaleString(),
-          adjustment: [0],
-          digits: 0,
-        };
-        reports.set('POPULATION', populationReport);
+      if (goodsReport && info.data?.goods) {
+        goodsReport.info.push(info);
+        goodsReport.adjustment[0] =
+          goodsReport.adjustment[0] + info.data.goods;
       }
 
-      if (this.area.info) {
-        this.area.info.forEach((info) => {
-          reports.set(
-            info.type,
-            this.CreateOrAddToReport(reports, info, this.area),
-          );
-
-          if (foodReport && info.data?.food) {
-            foodReport.info.push(info);
-            foodReport.adjustment[0] =
-              foodReport.adjustment[0] + info.data.food;
-          }
-
-          if (goodsReport && info.data?.goods) {
-            goodsReport.info.push(info);
-            goodsReport.adjustment[0] =
-              goodsReport.adjustment[0] + info.data.goods;
-          }
-
-          if (goldReport && info.data?.gold) {
-            goldReport.info.push(info);
-            goldReport.adjustment[0] =
-              goldReport.adjustment[0] + info.data.gold;
-          }
-
-          if (goldReport && info.data?.cost) {
-            goldReport.info.push(info);
-            goldReport.adjustment[0] =
-              goldReport.adjustment[0] + info.data.cost;
-          }
-        });
+      if (goldReport && info.data?.gold) {
+        goldReport.info.push(info);
+        goldReport.adjustment[0] =
+          goldReport.adjustment[0] + info.data.gold;
       }
 
-      if (foodReport) reports.set('FOOD', foodReport);
-      if (goodsReport) reports.set('GOODS', goodsReport);
-      if (goldReport) reports.set('GOLD', goldReport);
-
-      reports.forEach((report, reportKey, rpts) => {
-        const valueKeys = Array.from(report.values.keys());
-        if (valueKeys.length == 1) {
-          const baseKey = valueKeys[0];
-          if (this.area[baseKey] != null) {
-            report.base = this.area[baseKey];
-            report.adjustment = Array.from(report.values.values());
-          }
-        }
-      });
-
-      return Array.from(reports.values()).toSorted((a, b) => {
-        return a.type.localeCompare(b.type);
-      });
-    },
-  },
-  watch: {
-    area(newVal, oldVal) {
-      if (newVal?.x != oldVal?.x || newVal?.y != oldVal?.y) {
-        this.SelectReport(this.selectedReportIndex);
+      if (goldReport && info.data?.cost) {
+        goldReport.info.push(info);
+        goldReport.adjustment[0] =
+          goldReport.adjustment[0] + info.data.cost;
       }
-    },
-  },
-  methods: {
-    HighlightArea(area) {
-      this.$emit('highlight', area);
-    },
-    UnhighlightArea(area) {
-      this.$emit('highlight', null);
-    },
-    Updated(area) {
-      this.$emit('updated', area);
-    },
-    SelectArea(area) {
-      this.SelectReport(null);
-      this.$emit('select', area);
-    },
-    SelectReport(index) {
-      if (this.selectedReportIndex == index) {
-        this.selectedReportIndex = null;
-      } else {
-        this.selectedReportIndex = index;
-      }
-    },
-    CreateOrAddToReport(reports, info) {
-      let report = {};
-      if (reports.has(info.type)) {
-        report = reports.get(info.type);
-      } else {
-        report = {
-          type: info.type,
-          info: [],
-          values: new Map(),
-          base: null,
-          adjustment: null,
-          digits: 2,
-        };
-      }
+    });
+  }
 
-      // add info and values
-      report.info.push(info);
+  if (foodReport) reports.set('FOOD', foodReport);
+  if (goodsReport) reports.set('GOODS', goodsReport);
+  if (goldReport) reports.set('GOLD', goldReport);
 
-      if (info.data) {
-        Object.keys(info.data).forEach((key) => {
-          if (report.values.has(key)) {
-            report.values.set(
-              key,
-              AddFloats(report.values.get(key), info.data[key], 4),
-            );
-          } else {
-            report.values.set(key, info.data[key]);
-          }
-        });
+  reports.forEach((report, reportKey, rpts) => {
+    const valueKeys = Array.from(report.values.keys());
+    if (valueKeys.length == 1) {
+      const baseKey = valueKeys[0];
+      if (SelectedHex[baseKey] != null) {
+        report.base = SelectedHex[baseKey];
+        report.adjustment = Array.from(report.values.values());
       }
+    }
+  });
 
-      return report;
-    },
-  },
+  return Array.from(reports.values()).toSorted((a, b) => {
+    return a.type.localeCompare(b.type);
+  });
+});
+
+watch(() => SelectedHex, (newVal, oldVal) => {
+  if (newVal?.x != oldVal?.x || newVal?.y != oldVal?.y) {
+    SelectReport(selectedReportIndex.value);
+  }
+}, { deep: true });
+
+const HighlightArea = (coord) => {
+  report.HighlightHex(coord);
 };
+
+const UnhighlightArea = () => {
+  report.HighlightHex(null);
+};
+
+const SelectArea = (area) => {
+  report.SelectArea(area);
+};
+
+function SelectReport(index) {
+  if (selectedReportIndex.value == index) {
+    selectedReportIndex.value = null;
+  } else {
+    selectedReportIndex.value = index;
+  }
+}
+
+function CreateOrAddToReport(reports, info) {
+  let report = {};
+  if (reports.has(info.type)) {
+    report = reports.get(info.type);
+  } else {
+    report = {
+      type: info.type,
+      info: [],
+      values: new Map(),
+      base: null,
+      adjustment: null,
+      digits: 2,
+    };
+  }
+
+  // add info and values
+  report.info.push(info);
+
+  if (info.data) {
+    Object.keys(info.data).forEach((key) => {
+      if (report.values.has(key)) {
+        report.values.set(
+          key,
+          AddFloats(report.values.get(key), info.data[key], 4),
+        );
+      } else {
+        report.values.set(key, info.data[key]);
+      }
+    });
+  }
+
+  return report;
+}
 </script>
 
 <style scoped></style>

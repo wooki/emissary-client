@@ -6,7 +6,7 @@ import { TradePolicies } from './data/TradePolicies';
 export const useReportStore = defineStore('report', {
   state: () => ({
     report: null,
-    orders: {},
+    orders: new Object(),
     selectedHex: null,
     highlightedHex: null,
     highlightedBanner: null,
@@ -49,8 +49,21 @@ export const useReportStore = defineStore('report', {
       };
     },
     Orders: (state) => {
+      console.log('orders', state.orders);
       const orders = [];
-      // TODO: add orders
+      Object.keys(state.orders).forEach((areaKey) => {
+        Object.keys(state.orders[areaKey]).forEach((orderKey) => {
+          let order = {
+            coord: areaKey,
+            order: orderKey,
+          };
+          Object.keys(state.orders[areaKey][orderKey]).forEach((orderParamKey) => {
+            order[orderParamKey] = state.orders[areaKey][orderKey][orderParamKey];
+          });
+          orders.push(order);
+        });        
+      });
+      console.log('orders=>', orders);
       return {
         player: state.Me,
         turn: state.Turn,
@@ -110,9 +123,10 @@ export const useReportStore = defineStore('report', {
       console.log('TODO: add army order', order);
     },
     AddHexOrder(coord, order, data) {
-      if (!this.orders[coord]) this.orders[coord] = {};
-      this.orders[coord][order] = data;
-      localStorage.setItem('orders', JSON.stringify(this.orders));
+      
+      if (!this.orders[coord]) this.orders[coord] = new Object();
+      this.orders[coord][order] = data;      
+      localStorage.setItem('orders', JSON.stringify(this.orders));      
     },
     SaveReport() {
       localStorage.setItem('report', JSON.stringify(this.report));
