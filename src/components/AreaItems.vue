@@ -70,6 +70,9 @@ export default {
       return this.calculatePostionSize(0);
     },
     positions() {
+      // TODO: when the hex isn't a settlement the positions can
+      // me pushed up a little so a single row is vertically centred
+
       let rows = Math.floor(this.height / this.positionSize);
       let cols = Math.floor(this.width / this.positionSize);
 

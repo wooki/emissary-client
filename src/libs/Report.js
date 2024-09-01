@@ -32,7 +32,7 @@ export default function Report(data) {
     let orders = [];
     Object.keys(this.map).forEach((coord) => {
       const hex = this.map[coord];
-      
+
       if (hex.owner == this.Me()) {
         orders.push({
           order: 'trade_policy',

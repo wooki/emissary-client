@@ -101,7 +101,7 @@ const aggregateReports = computed(() => {
   let goodsReport = null;
   let goldReport = null;
   let populationReport = null;
-  
+
   if (SelectedHex.value.store) {
     foodReport = {
       type: 'FOOD',
@@ -143,33 +143,26 @@ const aggregateReports = computed(() => {
 
   if (SelectedHex.value.info) {
     SelectedHex.value.info.forEach((info) => {
-      reports.set(
-        info.type,
-        CreateOrAddToReport(reports, info, SelectedHex),
-      );
+      reports.set(info.type, CreateOrAddToReport(reports, info, SelectedHex));
 
       if (foodReport && info.data?.food) {
         foodReport.info.push(info);
-        foodReport.adjustment[0] =
-          foodReport.adjustment[0] + info.data.food;
+        foodReport.adjustment[0] = foodReport.adjustment[0] + info.data.food;
       }
 
       if (goodsReport && info.data?.goods) {
         goodsReport.info.push(info);
-        goodsReport.adjustment[0] =
-          goodsReport.adjustment[0] + info.data.goods;
+        goodsReport.adjustment[0] = goodsReport.adjustment[0] + info.data.goods;
       }
 
       if (goldReport && info.data?.gold) {
         goldReport.info.push(info);
-        goldReport.adjustment[0] =
-          goldReport.adjustment[0] + info.data.gold;
+        goldReport.adjustment[0] = goldReport.adjustment[0] + info.data.gold;
       }
 
       if (goldReport && info.data?.cost) {
         goldReport.info.push(info);
-        goldReport.adjustment[0] =
-          goldReport.adjustment[0] + info.data.cost;
+        goldReport.adjustment[0] = goldReport.adjustment[0] + info.data.cost;
       }
     });
   }
@@ -194,11 +187,15 @@ const aggregateReports = computed(() => {
   });
 });
 
-watch(() => SelectedHex, (newVal, oldVal) => {
-  if (newVal?.x != oldVal?.x || newVal?.y != oldVal?.y) {
-    SelectReport(selectedReportIndex.value);
-  }
-}, { deep: true });
+watch(
+  () => SelectedHex,
+  (newVal, oldVal) => {
+    if (newVal?.x != oldVal?.x || newVal?.y != oldVal?.y) {
+      SelectReport(selectedReportIndex.value);
+    }
+  },
+  { deep: true },
+);
 
 const HighlightArea = (coord) => {
   report.HighlightHex(coord);

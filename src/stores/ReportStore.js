@@ -8,7 +8,6 @@ export const useReportStore = defineStore('report', {
     report: null,
     orders: new Object(),
     selectedHex: null,
-    highlightedHex: null,
     highlightedBanner: null,
     tradePolicyOptions: TradePolicies,
   }),
@@ -57,11 +56,14 @@ export const useReportStore = defineStore('report', {
             coord: areaKey,
             order: orderKey,
           };
-          Object.keys(state.orders[areaKey][orderKey]).forEach((orderParamKey) => {
-            order[orderParamKey] = state.orders[areaKey][orderKey][orderParamKey];
-          });
+          Object.keys(state.orders[areaKey][orderKey]).forEach(
+            (orderParamKey) => {
+              order[orderParamKey] =
+                state.orders[areaKey][orderKey][orderParamKey];
+            },
+          );
           orders.push(order);
-        });        
+        });
       });
       console.log('orders=>', orders);
       return {
@@ -123,10 +125,9 @@ export const useReportStore = defineStore('report', {
       console.log('TODO: add army order', order);
     },
     AddHexOrder(coord, order, data) {
-      
       if (!this.orders[coord]) this.orders[coord] = new Object();
-      this.orders[coord][order] = data;      
-      localStorage.setItem('orders', JSON.stringify(this.orders));      
+      this.orders[coord][order] = data;
+      localStorage.setItem('orders', JSON.stringify(this.orders));
     },
     SaveReport() {
       localStorage.setItem('report', JSON.stringify(this.report));

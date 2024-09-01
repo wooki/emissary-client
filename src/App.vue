@@ -69,12 +69,11 @@ const sendturn = () => {
   console.log('sendturn', orders);
 
   const a = document.createElement('a');
-  const file = new Blob([JSON.stringify(orders, null, '\t')], { type: 'text/plain' });
+  const file = new Blob([JSON.stringify(orders, null, '\t')], {
+    type: 'text/plain',
+  });
   a.setAttribute('href', URL.createObjectURL(file));
-  a.setAttribute(
-    'download',
-    `turn.${report.Me}.${report.Turn}.json`,
-  );
+  a.setAttribute('download', `turn.${report.Me}.${report.Turn}.json`);
   a.click();
   URL.revokeObjectURL(a.getAttribute('href'));
 };

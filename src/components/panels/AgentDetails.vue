@@ -43,45 +43,39 @@
   </div>
 </template>
 
-<script>
-import OrderIcon from '../assets/icons/order.svg';
+<script setup>
+import { computed, onMounted } from 'vue';
+import OrderIcon from '@/assets/icons/order.svg';
+import { useReportStore } from '@/stores/reportStore';
 
-export default {
-  props: {
-    agent: {
-      type: Object,
-      required: true,
-    },
-    report: {
-      type: Object,
-      required: true,
-    },
+const reportStore = useReportStore();
+
+const props = defineProps({
+  agent: {
+    type: Object,
+    required: true,
   },
-  components: {
-    OrderIcon,
-  },
-  emits: ['order'],
-  computed: {
-    ownedByMe() {
-      return this.agent?.owner == this.report.Me();
-    },
-    willPay() {
-      if (this.agent['set_will_pay'] != undefined) {
-        return this.agent['set_will_pay'];
-      }
-      return this.agent.will_pay;
-    },
-  },
-  methods: {
-    ToggleWillPay() {
-      this.agent['set_will_pay'] = !this.willPay;
-      this.$emit('order', this.agent);
-    },
-  },
-  mounted() {
-    console.log('agent', this.agent);
-  },
-};
+});
+
+const emit = defineEmits(['order']);
+
+const ownedByMe = computed(() => props.agent?.owner == reportStore.Me);
+
+const willPay = computed(() => {
+  if (props.agent['set_will_pay'] != undefined) {
+    return props.agent['set_will_pay'];
+  }
+  return props.agent.will_pay;
+});
+
+function ToggleWillPay() {
+  props.agent['set_will_pay'] = !willPay.value;
+  emit('order', props.agent);
+}
+
+onMounted(() => {
+  console.log('agent', props.agent);
+});
 </script>
 
 <style scoped></style>

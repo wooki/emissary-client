@@ -44,7 +44,7 @@
 import { ref, computed, watch } from 'vue';
 import { useReportStore } from '@/stores/reportStore';
 import BackIcon from '@/assets/icons/back.svg';
-import OrderIcon from '../assets/icons/order.svg';
+import OrderIcon from '@/assets/icons/order.svg';
 import AgentDetails from './AgentDetails.vue';
 
 const reportStore = useReportStore();
@@ -62,12 +62,13 @@ const items = computed(() => {
   const items = [];
 
   // get from area
-  Object.keys(SelectedHex.value.agents).forEach((agentId) => {    items.push(
+  Object.keys(SelectedHex.value.agents).forEach((agentId) => {
+    items.push(
       Object.assign(
         {
           type: 'agent',
         },
-        reportStore.currentArea.agents[agentId],
+        SelectedHex.value.agents[agentId],
       ),
     );
   });
@@ -77,13 +78,7 @@ const items = computed(() => {
   return items;
 });
 
-watch(() => reportStore.currentArea, (newVal, oldVal) => {
-  if (newVal?.x != oldVal?.x || newVal?.y != oldVal?.y) {
-    selectItem(selectedItemIndex.value);
-  }
-}, { deep: true });
-
-function selectItem(index) {
+function SelectItem(index) {
   if (selectedItemIndex.value == index) {
     selectedItemIndex.value = null;
   } else {
@@ -91,14 +86,14 @@ function selectItem(index) {
   }
 }
 
-function empireName(owner) {
+function EmpireName(owner) {
   if (!owner) return 'Unowned';
-  if (ownedByMe(owner)) return `${reportStore.myKingdom}`;
-  return reportStore.kingdoms[owner].name;
+  if (ownedByMe(owner)) return `${reportStore.MyKingdom.name}`;
+  return reportStore.Kingdom(owner).name;
 }
 
 function ownedByMe(owner) {
-  return owner == reportStore.me;
+  return owner == reportStore.Me;
 }
 
 function orderAgent(agent) {
