@@ -89,7 +89,7 @@
             class="area-panel-report-entry policy-food">
             <div class="area-panel-report-entry-title">Food</div>
             <div class="area-panel-report-entry-value">
-              {{ report.TradePolicy(SelectedHex, 'food') }}
+              {{ report.ExistingTradePolicy(SelectedHex, 'food') }}
             </div>
           </div>
           <div
@@ -97,7 +97,7 @@
             class="area-panel-report-entry policy-goods">
             <div class="area-panel-report-entry-title">Goods</div>
             <div class="area-panel-report-entry-value">
-              {{ report.TradePolicy(SelectedHex, 'goods') }}
+              {{ report.ExistingTradePolicy(SelectedHex, 'goods') }}
             </div>
           </div>
         </div>
@@ -142,7 +142,7 @@ import { useReportStore } from '@/stores/ReportStore';
 
 const report = useReportStore();
 
-const activePanel = ref('');
+const activePanel = computed(() => report.activeSummaryPanel);
 
 const SelectedHex = computed(() => report.selectedHex);
 
@@ -157,7 +157,7 @@ const ownedByMe = computed(() => {
 });
 
 const hireAgentDesc = computed(() => {
-  if (report.HireAgent(SelectedHex.value) == 'hire') {
+  if (report.ExistingHireAgent(SelectedHex.value)) {
     return {
       label: 'Order',
       value: 'hire',
@@ -177,7 +177,7 @@ watch(
 );
 
 const ShowPanel = (panel) => {
-  activePanel.value = panel;
+  report.activeSummaryPanel = panel;
 };
 
 const HighlightArea = (coord) => {
@@ -195,8 +195,8 @@ const SelectArea = (area) => {
 const SetTradePolicy = (params) => {
   const coord = Coord(SelectedHex.value.x, SelectedHex.value.y);
   let order = {
-    food: report.TradePolicy(SelectedHex.value, 'food'),
-    goods: report.TradePolicy(SelectedHex.value, 'goods'),
+    food: report.ExistingTradePolicy(SelectedHex.value, 'food'),
+    goods: report.ExistingTradePolicy(SelectedHex.value, 'goods'),
   };
 
   if (params.resource == 'food') {

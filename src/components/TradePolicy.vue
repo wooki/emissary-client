@@ -34,7 +34,7 @@ const options = computed(() =>
 );
 
 const current = computed(() =>
-  reportStore.TradePolicy(area.value, props.resource),
+  reportStore.ExistingTradePolicy(area.value, props.resource),
 );
 
 const SetPolicy = (params) => {

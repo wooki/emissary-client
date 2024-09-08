@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { Colors1, Colors2 } from '@/libs/BannerColors';
 import { Coord } from '@/libs/HexUtils';
 import { TradePolicies } from './data/TradePolicies';
+import { toRaw } from 'vue';
 
 export const useReportStore = defineStore('report', {
   state: () => ({
@@ -10,6 +11,7 @@ export const useReportStore = defineStore('report', {
     selectedHex: null,
     highlightedBanner: null,
     tradePolicyOptions: TradePolicies,
+    activeSummaryPanel: '',
   }),
   getters: {
     isLoaded: (state) => state.report !== null,
@@ -29,22 +31,36 @@ export const useReportStore = defineStore('report', {
       return Colors2[parseInt(flag[4])];
     },
     Map: (state) => state.report.map,
-    TradePolicy: (state) => {
-      return (hex, resource) => {
+    ExistingHexOrder: (state) => {
+      return (hex, orderType) => {
         const coord = Coord(hex.x, hex.y);
-        if (state.orders[coord] && state.orders[coord]['set_trade_policy']) {
-          return state.orders[coord]['set_trade_policy'][resource];
+        if (state.orders[coord] && state.orders[coord][orderType]) {
+          return state.orders[coord][orderType];
         }
-        return hex.trade_policy[resource];
+        return null;
       };
     },
-    HireAgent: (state) => {
+    ExistingTradePolicy: (state) => {
+      return (hex, resource) => {
+        const orderValue = state.ExistingHexOrder(hex, 'set_trade_policy');
+        return orderValue !== null ? orderValue[resource] : hex.trade_policy[resource];
+      };
+    },
+    ExistingHireAgent: (state) => {
       return (hex) => {
+        const orderValue = state.ExistingHexOrder(hex, 'hire_agent');
+        return orderValue !== null ? orderValue.hire : false;
+      };
+    },
+    ExistingAgentOrder: (state) => {
+      return (hex, agentid, order) => {
         const coord = Coord(hex.x, hex.y);
-        if (state.orders[coord] && state.orders[coord]['hire_agent']) {
-          return state.orders[coord]['hire_agent']['hire'];
+         
+        if (state.orders[coord] && state.orders[coord][agentid][order]) {
+          return state.orders[coord][agentid][order];
         }
-        return '';
+        
+        return hex?.agents[agentid];
       };
     },
     Orders: (state) => {
@@ -79,6 +95,9 @@ export const useReportStore = defineStore('report', {
     },
   },
   actions: {
+    SetActiveSummaryPanel(value) {
+      this.activeSummaryPanel = value;
+    },
     SetReport(data) {
       this.report = data;
     },
@@ -107,6 +126,7 @@ export const useReportStore = defineStore('report', {
       } else {
         this.selectedHex = hex;
       }
+      this.SetActiveSummaryPanel('');
     },
     HighlightHex(hex) {
       this.highlightedHex = hex;
@@ -118,19 +138,22 @@ export const useReportStore = defineStore('report', {
       const hex = this.Map[Coord(area.x, area.y)];
       this.SelectHex(hex);
     },
-    AddAgentOrder(order) {
-      console.log('TODO: add agent order', order);
+    AddAgentOrder(coord, agentid, order, data) {
+      if (!this.orders[coord]) this.orders[coord] = new Object();
+      if (!this.orders[coord][agentid]) this.orders[coord][agentid] = new Object();
+      this.orders[coord][agentid][order] = data;            
+      localStorage.setItem('orders', JSON.stringify(Object.assign({}, toRaw(this.orders))));
     },
-    AddArmyOrder(order) {
-      console.log('TODO: add army order', order);
+    AddArmyOrder(coord, order, data) {
+      console.log('TODO: add army order', coord, order, data);
     },
     AddHexOrder(coord, order, data) {
       if (!this.orders[coord]) this.orders[coord] = new Object();
       this.orders[coord][order] = data;
-      localStorage.setItem('orders', JSON.stringify(this.orders));
+      localStorage.setItem('orders', JSON.stringify(Object.assign({}, toRaw(this.orders))));
     },
     SaveReport() {
-      localStorage.setItem('report', JSON.stringify(this.report));
+      localStorage.setItem('report', JSON.stringify(Object.assign({}, toRaw(this.report))));
     },
   },
 });

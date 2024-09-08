@@ -4,7 +4,7 @@
     :data="area"
     :options="options"
     :current="current"
-    @click="SetPolicy" />
+    @click="SetHire" />
 </template>
 
 <script setup>
@@ -36,9 +36,9 @@ const options = ref([
   },
 ]);
 
-const current = computed(() => reportStore.HireAgent(area.value));
+const current = computed(() => reportStore.ExistingHireAgent(area.value));
 
-const SetPolicy = (params) => {
+const SetHire = (params) => {
   emit('click', { area: area.value, value: params.value });
 };
 </script>

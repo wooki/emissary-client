@@ -47,6 +47,7 @@
 import { computed, onMounted } from 'vue';
 import OrderIcon from '@/assets/icons/order.svg';
 import { useReportStore } from '@/stores/reportStore';
+import { Coord } from '@/libs/HexUtils';
 
 const reportStore = useReportStore();
 
@@ -57,20 +58,19 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['order']);
+const SelectedHex = computed(() => reportStore.selectedHex);
+const coord = Coord(SelectedHex.value.x, SelectedHex.value.y);  
 
 const ownedByMe = computed(() => props.agent?.owner == reportStore.Me);
 
 const willPay = computed(() => {
-  if (props.agent['set_will_pay'] != undefined) {
-    return props.agent['set_will_pay'];
-  }
-  return props.agent.will_pay;
+  return reportStore.ExistingAgentOrder(SelectedHex.value, props.agent?.id, "set_will_pay").will_pay;
 });
+console.log("willPay", willPay.value);
 
+  
 function ToggleWillPay() {
-  props.agent['set_will_pay'] = !willPay.value;
-  emit('order', props.agent);
+  reportStore.AddAgentOrder(coord, props.agent?.id, "set_will_pay", { will_pay: !willPay.value });
 }
 
 onMounted(() => {

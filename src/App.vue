@@ -43,7 +43,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, toRaw } from 'vue';
 import Report from '@/components/Report.vue';
 import OpenReport from '@/components/OpenReport.vue';
 import Logo from '@/assets/emissary.svg';
@@ -65,7 +65,7 @@ const upload = () => {
 };
 
 const sendturn = () => {
-  const orders = report.Orders;
+  const orders = Object.assign({}, toRaw(report.Orders));
   console.log('sendturn', orders);
 
   const a = document.createElement('a');
