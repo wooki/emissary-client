@@ -24,7 +24,7 @@
         :fill="hex.fill"
         stroke-width="1"
         :stroke="hex.stroke"
-        :desaturate="hex.desaturate"
+        :notVisible="hex.notVisible"
         @mouseenter="hexHighlight"
         @mouseleave="hexUnhighlight"
         @click="SelectHexagon(hex)" />
@@ -413,7 +413,7 @@ const GetMapHexFromArea = (hex) => {
     fill: props.terrainColours[hex.terrain],
     stroke: '#00000099',
     area: hex,
-    desaturate: hex.terrain != 'ocean' && hex.report_level == 0,
+    notVisible: hex.terrain != 'ocean' && hex.report_level == 0,
   };
 };
 

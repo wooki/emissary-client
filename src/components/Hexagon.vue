@@ -8,7 +8,7 @@
       :fill="fill"
       :points="drawPoints"
       :stroke-dasharray="strokeDashArray"
-      :filter="desaturate ? `url('#desaturate')` : ''"
+      :filter="notVisible ? `url('#desaturate')` : ''"
       @click="click"
       @mouseenter="mouseenter"
       @mouseleave="mouseleave" />
@@ -19,86 +19,93 @@
       :y="points[0].y"
       href="../assets/icons/town.png"
       :width="points[1].x - points[5].x"
-      :filter="desaturate ? `url('#desaturate')` : ''" />
+      :filter="notVisible ? `url('#desaturate')` : ''" />
     <image
       v-if="terrain == 'city'"
       :x="points[5].x"
       :y="points[0].y"
       href="../assets/icons/city.png"
       :width="points[1].x - points[5].x"
-      :filter="desaturate ? `url('#desaturate')` : ''" />
+      :filter="notVisible ? `url('#desaturate')` : ''" />    
   </g>
 </template>
 
-<script>
-export default {
-  props: {
-    coord: {
-      type: String,
-      default: '',
-    },
-    terrain: {
-      type: String,
-      default: 'lowland',
-    },
-    stroke: {
-      type: String,
-      default: '#000',
-    },
-    strokeWidth: {
-      type: String,
-      default: '1',
-    },
-    strokeDashArray: {
-      type: String,
-      default: '0',
-    },
-    fill: {
-      type: String,
-      default: '#fff',
-    },
-    points: {
-      type: Array,
-      required: true,
-    },
-    data: {
-      type: Object,
-    },
-    center: {
-      type: Object,
-    },
-    desaturate: {
-      type: Boolean,
-      default: false,
-    },
+<script setup>
+import { computed } from 'vue';
+import { useReportStore } from '@/stores/reportStore';
+
+const props = defineProps({
+  coord: {
+    type: String,
+    default: '',
   },
-  emits: ['click', 'mouseenter', 'mouseleave'],
-  computed: {
-    drawPoints() {
-      return this.points
-        .slice(0, 6)
-        .map((p) => `${p.x},${p.y}`)
-        .join(' ');
-    },
-    getClass() {
-      return `hexagon area ${this.terrain}`;
-    },
-    transformOrigin() {
-      if (!this.center) return '50% 50%';
-      return `${Math.round(this.center.x)}px ${Math.round(this.center.y)}px`;
-    },
+  terrain: {
+    type: String,
+    default: 'lowland',
   },
-  methods: {
-    click() {
-      this.$emit('click', this.data);
-    },
-    mouseenter() {
-      this.$emit('mouseenter', this.data);
-    },
-    mouseleave() {
-      this.$emit('mouseleave', this.data);
-    },
+  stroke: {
+    type: String,
+    default: '#000',
   },
+  strokeWidth: {
+    type: String,
+    default: '1',
+  },
+  strokeDashArray: {
+    type: String,
+    default: '0',
+  },
+  fill: {
+    type: String,
+    default: '#fff',
+  },
+  points: {
+    type: Array,
+    required: true,
+  },
+  data: {
+    type: Object,
+    default: () => ({}),
+  },
+  center: {
+    type: Object,
+    default: () => ({}),
+  },
+  notVisible: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+
+const emit = defineEmits(['click', 'mouseenter', 'mouseleave']);
+
+const drawPoints = computed(() => {
+  return props.points
+    .slice(0, 6)
+    .map((p) => `${p.x},${p.y}`)
+    .join(' ');
+});
+
+const getClass = computed(() => {
+  return `hexagon area ${props.terrain}`;
+});
+
+const transformOrigin = computed(() => {
+  if (!props.center) return '50% 50%';
+  return `${Math.round(props.center.x)}px ${Math.round(props.center.y)}px`;
+});
+
+const click = () => {
+  emit('click', props.data);
+};
+
+const mouseenter = () => {
+  emit('mouseenter', props.data);
+};
+
+const mouseleave = () => {
+  emit('mouseleave', props.data);
 };
 </script>
 
@@ -117,5 +124,9 @@ polygon {
 
 image {
   pointer-events: none;
+}
+
+.order {
+  fill: var(--color-crimson);
 }
 </style>
