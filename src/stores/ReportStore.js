@@ -56,7 +56,7 @@ export const useReportStore = defineStore('report', {
       return (hex, agentid, order) => {
         const coord = Coord(hex.x, hex.y);
          
-        if (state.orders[coord] && state.orders[coord][agentid][order]) {
+        if (state.orders[coord] && state.orders[coord][agentid] && state.orders[coord][agentid][order]) {
           return state.orders[coord][agentid][order];
         }
         

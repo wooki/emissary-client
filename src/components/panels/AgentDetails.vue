@@ -37,8 +37,13 @@
         </div>
         <div class="area-panel-report-value">{{ willPay ? 'YES' : 'NO' }}</div>
       </div>
-    </div>
 
+      <div class="area-panel-report-base" v-for="(message, messageIndex) in agent.messages" :key="messageIndex">
+        <div class="area-panel-report-title">Report from {{ message.from }}</div>
+        <div class="area-panel-entry-value">{{ message.message }}</div>
+      </div>
+    </div>
+    
     <div class="area-panel-report-orders"></div>
   </div>
 </template>
@@ -66,7 +71,6 @@ const ownedByMe = computed(() => props.agent?.owner == reportStore.Me);
 const willPay = computed(() => {
   return reportStore.ExistingAgentOrder(SelectedHex.value, props.agent?.id, "set_will_pay").will_pay;
 });
-console.log("willPay", willPay.value);
 
   
 function ToggleWillPay() {
