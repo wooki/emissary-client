@@ -38,12 +38,17 @@
         <div class="area-panel-report-value">{{ willPay ? 'YES' : 'NO' }}</div>
       </div>
 
-      <div class="area-panel-report-base" v-for="(message, messageIndex) in agent.messages" :key="messageIndex">
-        <div class="area-panel-report-title">Report from {{ message.from }}</div>
+      <div
+        class="area-panel-report-base"
+        v-for="(message, messageIndex) in agent.messages"
+        :key="messageIndex">
+        <div class="area-panel-report-title">
+          Report from {{ message.from }}
+        </div>
         <div class="area-panel-entry-value">{{ message.message }}</div>
       </div>
     </div>
-    
+
     <div class="area-panel-report-orders"></div>
   </div>
 </template>
@@ -64,17 +69,22 @@ const props = defineProps({
 });
 
 const SelectedHex = computed(() => reportStore.selectedHex);
-const coord = Coord(SelectedHex.value.x, SelectedHex.value.y);  
+const coord = Coord(SelectedHex.value.x, SelectedHex.value.y);
 
 const ownedByMe = computed(() => props.agent?.owner == reportStore.Me);
 
 const willPay = computed(() => {
-  return reportStore.ExistingAgentOrder(SelectedHex.value, props.agent?.id, "set_will_pay").will_pay;
+  return reportStore.ExistingAgentOrder(
+    SelectedHex.value,
+    props.agent?.id,
+    'set_will_pay',
+  ).will_pay;
 });
 
-  
 function ToggleWillPay() {
-  reportStore.AddAgentOrder(coord, props.agent?.id, "set_will_pay", { will_pay: !willPay.value });
+  reportStore.AddAgentOrder(coord, props.agent?.id, 'set_will_pay', {
+    will_pay: !willPay.value,
+  });
 }
 
 onMounted(() => {

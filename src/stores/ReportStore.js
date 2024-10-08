@@ -43,7 +43,9 @@ export const useReportStore = defineStore('report', {
     ExistingTradePolicy: (state) => {
       return (hex, resource) => {
         const orderValue = state.ExistingHexOrder(hex, 'set_trade_policy');
-        return orderValue !== null ? orderValue[resource] : hex.trade_policy[resource];
+        return orderValue !== null
+          ? orderValue[resource]
+          : hex.trade_policy[resource];
       };
     },
     ExistingHireAgent: (state) => {
@@ -55,11 +57,15 @@ export const useReportStore = defineStore('report', {
     ExistingAgentOrder: (state) => {
       return (hex, agentid, order) => {
         const coord = Coord(hex.x, hex.y);
-         
-        if (state.orders[coord] && state.orders[coord][agentid] && state.orders[coord][agentid][order]) {
+
+        if (
+          state.orders[coord] &&
+          state.orders[coord][agentid] &&
+          state.orders[coord][agentid][order]
+        ) {
           return state.orders[coord][agentid][order];
         }
-        
+
         return hex?.agents[agentid];
       };
     },
@@ -140,9 +146,13 @@ export const useReportStore = defineStore('report', {
     },
     AddAgentOrder(coord, agentid, order, data) {
       if (!this.orders[coord]) this.orders[coord] = new Object();
-      if (!this.orders[coord][agentid]) this.orders[coord][agentid] = new Object();
-      this.orders[coord][agentid][order] = data;            
-      localStorage.setItem('orders', JSON.stringify(Object.assign({}, toRaw(this.orders))));
+      if (!this.orders[coord][agentid])
+        this.orders[coord][agentid] = new Object();
+      this.orders[coord][agentid][order] = data;
+      localStorage.setItem(
+        'orders',
+        JSON.stringify(Object.assign({}, toRaw(this.orders))),
+      );
     },
     AddArmyOrder(coord, order, data) {
       console.log('TODO: add army order', coord, order, data);
@@ -150,10 +160,16 @@ export const useReportStore = defineStore('report', {
     AddHexOrder(coord, order, data) {
       if (!this.orders[coord]) this.orders[coord] = new Object();
       this.orders[coord][order] = data;
-      localStorage.setItem('orders', JSON.stringify(Object.assign({}, toRaw(this.orders))));
+      localStorage.setItem(
+        'orders',
+        JSON.stringify(Object.assign({}, toRaw(this.orders))),
+      );
     },
     SaveReport() {
-      localStorage.setItem('report', JSON.stringify(Object.assign({}, toRaw(this.report))));
+      localStorage.setItem(
+        'report',
+        JSON.stringify(Object.assign({}, toRaw(this.report))),
+      );
     },
   },
 });

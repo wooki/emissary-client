@@ -26,7 +26,7 @@
       :y="points[0].y"
       href="../assets/icons/city.png"
       :width="points[1].x - points[5].x"
-      :filter="notVisible ? `url('#desaturate')` : ''" />    
+      :filter="notVisible ? `url('#desaturate')` : ''" />
   </g>
 </template>
 
@@ -76,7 +76,6 @@ const props = defineProps({
     default: false,
   },
 });
-
 
 const emit = defineEmits(['click', 'mouseenter', 'mouseleave']);
 
