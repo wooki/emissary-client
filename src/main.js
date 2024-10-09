@@ -16,3 +16,7 @@ const app = createApp(App);
 
 app.use(pinia);
 app.mount('#app');
+
+// import BannerTestPage from '@/components/BannerTestPage.vue';
+// const app = createApp(BannerTestPage);
+// app.mount('#app');

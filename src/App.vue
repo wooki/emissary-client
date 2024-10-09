@@ -2,13 +2,7 @@
   <header>
     <Logo class="logo" />
     <div v-if="report.isLoaded" class="report-info">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 8 16 16"
-        height="16"
-        width="16">
-        <Banner :x="0" :y="0" :flag="report.MyBanner" :scale="1" />
-      </svg>
+      <BannerSvg mask="army" :x="0" :y="0" :flag="report.MyBanner" :scale="1" />      
       <div class="report-info-empire">{{ report.MyKingdom.name }},</div>
       <div class="report-info-turn">turn {{ report.Turn }}</div>
     </div>
@@ -49,7 +43,7 @@ import OpenReport from '@/components/OpenReport.vue';
 import Logo from '@/assets/emissary.svg';
 import GetTurnIcon from '@/assets/icons/getturn.svg';
 import SendTurnIcon from '@/assets/icons/sendturn.svg';
-import Banner from '@/components/Banner.vue';
+import BannerSvg from '@/components/BannerSvg.vue';
 import DialogBox from '@/components/Dialog.vue';
 import { useReportStore } from '@/stores/ReportStore';
 
@@ -119,9 +113,7 @@ header {
     font-size: 16px;
     color: var(--color-dark-bg-text);
 
-    svg {
-      height: 32px;
-      width: 16px;
+    svg {      
       margin: 0 5px 0 0;
     }
 
