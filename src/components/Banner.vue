@@ -48,7 +48,7 @@ export default {
       Colors1: Colors1,
       Colors2: Colors2,
       Colors3: Colors3,
-      SymbolCount: 7,
+      SymbolCount: 9,
     };
   },
   computed: {
@@ -71,25 +71,22 @@ export default {
       return this.Colors1[this.flagfields[2]];
     },
     color2() {
-      if (this.flagfields[1] > this.SymbolCount+1) {  
-        return this.Colors2[this.flagfields[3]];        
-      }
+      // if (this.flagfields[1]+1 > this.SymbolCount) {  
+      //   return this.Colors2[this.flagfields[3]];        
+      // }
       return this.Colors2[this.flagfields[3]];        
     },
     color3() {
-      if (this.flagfields[0] == 1) {
-        return this.Colors2[(this.flagfields[3] + this.flagfields[4]) % 9];
-      }
       return this.Colors3[this.flagfields[4] % 3];                      
     },
     mask1() {
-      if (this.flagfields[1] > this.SymbolCount+1) {
+      if (this.flagfields[0] == 0 && this.flagfields[1] != 3) {
         return `banner_mask_base_${this.flagfields[0]}x`; 
       }
       return `banner_mask_base_${this.flagfields[0]}`;                  
     },
     mask2() {
-        if (this.flagfields[0] == 0 && this.flagfields[1] == 3) {
+      if (this.flagfields[0] == 0 && this.flagfields[1] == 3) {
           return `banner_mask_shape_${this.flagfields[1]}x`;
         } else if (this.flagfields[0] == 4 && this.flagfields[1] == 3) {
           return `banner_mask_shape_${this.flagfields[1]}v`;
@@ -107,7 +104,7 @@ export default {
           return `banner_mask_shape_${this.flagfields[1]}x2`;
         } else if (this.flagfields[0] == 5 && this.flagfields[1] == 6) {
           return `banner_mask_shape_${this.flagfields[1]}x`;
-        } else if (this.flagfields[1] <= this.SymbolCount) {
+        } else if (this.flagfields[1] < this.SymbolCount) {
           return `banner_mask_shape_${this.flagfields[1]}`;
         } else {
           return null;

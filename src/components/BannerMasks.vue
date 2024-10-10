@@ -9,6 +9,11 @@
       fill="#ffffff"
       d="M 4.3,2 H 27.7 V 8.8 C 27.7,26.4 16,31.8 16,31.8 C 16,31.8 4.3,26.4 4.3,8.8 Z" />
   </mask>
+  <mask id="ship_mask" maskUnits="userSpaceOnUse">
+    <path
+    fill="#ffffff"
+    d="M 22 26.15 C 20.85 21.55, 3.6 25.575, 1.3 26.15 C 3.6 23.85, 21.425 4.6, 22 1.15 C 23.15 4.6, 26.6 25, 22 26.15 Z" />        
+  </mask>
   <mask id="agent_mask" maskUnits="userSpaceOnUse">
     <circle cx="16" cy="16" r="12" fill="#ffffff" />    
   </mask>
@@ -162,6 +167,19 @@
     <path fill="#ffffff" d="M 16,14 L 20,22 L 16,26 L 12,22 Z" />    
     <path fill="#ffffff" d="M 16,12.5 L 18,14.5 L 16,16.5 L 14,14.5 Z" />    
   </mask>
+  <mask id="banner_mask_shape_8">
+    <rect fill="#ffffff" width="2" height="12" x="15" y="12" />    
+    <path d="M 16 16 L 12 13 L 12 11 L 16 14 Z" fill="#ffffff" />    
+    <path d="M 16 16 L 20 13 L 20 11 L 16 14 Z" fill="#ffffff" />
+    <path d="M 16 13 L 12 10 L 12 8 L 16 11 Z" fill="#ffffff" />    
+    <path d="M 16 13 L 20 10 L 20 8 L 16 11 Z" fill="#ffffff" />
+    <path d="M 16 19 L 12 16 L 12 14 L 16 17 Z" fill="#ffffff" />    
+    <path d="M 16 19 L 20 16 L 20 14 L 16 17 Z" fill="#ffffff" />    
+    <path d="M 16 22 L 12 19 L 12 17 L 16 20 Z" fill="#ffffff" />    
+    <path d="M 16 22 L 20 19 L 20 17 L 16 20 Z" fill="#ffffff" />  
+    <rect fill="#ffffff" width="2" height="3" x="15" y="7" />      
+  </mask>
+  
 </template>
 
 <script>

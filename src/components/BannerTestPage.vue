@@ -10,7 +10,7 @@
         v-for="(flag, index) in bannerFlags"
         :key="index"
         :transform="`translate(${(index % columnsCount) * bannerWidth}, ${Math.floor(index / columnsCount) * bannerHeight})`">
-        <Banner mask="army" :flag="flag" :scale="1" @click="handleBannerClick(flag)" />
+        <Banner mask="banner" :flag="flag" :scale="1" @click="handleBannerClick(flag)" />
         <text x="20" y="50" text-anchor="middle" font-size="14">
           {{ flag }}
         </text>
@@ -33,7 +33,7 @@ export default {
       bannerFlags: [],
       bannerWidth: 100,
       bannerHeight: 75,
-      columnsCount: 16
+      columnsCount: 10
     };
   },
   computed: {
@@ -85,28 +85,38 @@ export default {
       }
 
       // selectedFlags = [
-      //   '76733',
-      //   '47123',
-      //   '51097',
-      //   '01234',
-      //   '12345',
-      //   '23456',
-      //   '34567',
-      //   '45678',
-      //   '56789',
-      //   '67890',
-      //   '78901',
-      //   '89012',
-      //   '91234',
-      //   '82345',
-      //   '73456',
-      //   '64567',
-      //   '55678',
-      //   '46789',
-      //   '37890',
-      //   '28901',
-      //   '19012',
-      //   '06964',
+      // '00742',
+      // '01742',
+      // '02742',
+      // '03742',
+      // '04742',
+      // '05742',
+      // '06742',
+      // '07742',
+      // '08742',
+      // '09742',
+      
+      // '10850',
+      // '11850',
+      // '12850',
+      // '13850',
+      // '14850',
+      // '15850',
+      // '16850',
+      // '17850',
+      // '18850',
+      // '19850',
+
+      // '30902',
+      // '31902',
+      // '32902',
+      // '33902',
+      // '34902',
+      // '35902',
+      // '36902',
+      // '37902',
+      // '38902',
+      // '39902',
       // ];
       this.bannerFlags = selectedFlags;
             
