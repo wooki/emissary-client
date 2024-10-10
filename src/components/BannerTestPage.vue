@@ -10,7 +10,7 @@
         v-for="(flag, index) in bannerFlags"
         :key="index"
         :transform="`translate(${(index % columnsCount) * bannerWidth}, ${Math.floor(index / columnsCount) * bannerHeight})`">
-        <Banner :flag="flag" :scale="1" @click="handleBannerClick(flag)" />
+        <Banner mask="army" :flag="flag" :scale="1" @click="handleBannerClick(flag)" />
         <text x="20" y="50" text-anchor="middle" font-size="14">
           {{ flag }}
         </text>

@@ -7,7 +7,7 @@
   <mask id="army_mask" maskUnits="userSpaceOnUse">
     <path
       fill="#ffffff"
-      d="M 4.3,0 H 27.7 V 8.8 C 27.7,26.4 16,31.8 16,31.8 C 16,31.8 4.3,26.4 4.3,8.8 Z" />
+      d="M 4.3,2 H 27.7 V 8.8 C 27.7,26.4 16,31.8 16,31.8 C 16,31.8 4.3,26.4 4.3,8.8 Z" />
   </mask>
   <mask id="agent_mask" maskUnits="userSpaceOnUse">
     <circle cx="16" cy="16" r="12" fill="#ffffff" />    

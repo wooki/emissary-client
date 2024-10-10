@@ -46,7 +46,7 @@ export default {
       } else if (this.mask == 'agent') {
         return "4 4 24 24";
       } else if (this.mask == 'army') {
-        return "4 0 24 32";
+        return "4 2 24 30";
       }
       return "0 0 32 32";
     },
@@ -56,7 +56,7 @@ export default {
       } else if (this.mask == 'agent') {
         return 24;
       } else if (this.mask == 'army') {
-        return 32;
+        return 30;
       }
       return 32;
     },
