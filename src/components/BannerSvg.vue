@@ -4,7 +4,9 @@
       :viewBox="viewBox"
       :height="height"
       :width="width">
-      <Banner :mask="mask" :x="x" :y="y" :flag="flag" @click="click" @mouseenter="mouseenter" @mouseleave="mouseleave" />
+      <Banner :decoration="decoration" :mask="mask" :x="x" :y="y" :flag="flag" @click="click" @mouseenter="mouseenter" @mouseleave="mouseleave">
+        <slot />
+      </Banner>
     </svg>
 </template>
 
@@ -33,6 +35,10 @@ export default {
     mask: {
       type: String,
       default: ""
+    },
+    decoration: {
+      type: Boolean,
+      default: true,
     }
   },
   components: {
@@ -47,6 +53,8 @@ export default {
         return "4 4 24 24";
       } else if (this.mask == 'army') {
         return "4 2 24 30";
+      } else if (this.mask == 'ship') {
+        return "2 1 20 30";
       }
       return "0 0 32 32";
     },
@@ -57,6 +65,8 @@ export default {
         return 24;
       } else if (this.mask == 'army') {
         return 30;
+      } else if (this.mask == 'ship') {
+        return 29;
       }
       return 32;
     },
@@ -67,6 +77,8 @@ export default {
         return 24;
       } else if (this.mask == 'army') {
         return 24;
+      } else if (this.mask == 'ship') {
+        return 18;
       }
       return 32;
     }

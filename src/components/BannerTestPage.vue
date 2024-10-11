@@ -10,7 +10,7 @@
         v-for="(flag, index) in bannerFlags"
         :key="index"
         :transform="`translate(${(index % columnsCount) * bannerWidth}, ${Math.floor(index / columnsCount) * bannerHeight})`">
-        <Banner mask="banner" :flag="flag" :scale="1" @click="handleBannerClick(flag)" />
+        <BannerSvg mask="banner" :flag="flag" :scale="1" @click="handleBannerClick(flag)" />
         <text x="20" y="50" text-anchor="middle" font-size="14">
           {{ flag }}
         </text>
@@ -20,12 +20,12 @@
 </template>
 
 <script>
-import Banner from '@/components/Banner.vue';
+import BannerSvg from '@/components/BannerSvg.vue';
 import BannerMasks from '@/components/BannerMasks.vue';
 
 export default {
   components: {
-    Banner,
+    BannerSvg,
     BannerMasks,
   },
   data() {

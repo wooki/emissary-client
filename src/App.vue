@@ -2,7 +2,7 @@
   <header>
     <Logo class="logo" />
     <div v-if="report.isLoaded" class="report-info">
-      <BannerSvg mask="army" :x="0" :y="0" :flag="report.MyBanner" :scale="1" />      
+      <BannerSvg mask="banner" :decoration="false" :x="0" :y="0" :flag="report.MyBanner" :scale="1" />      
       <div class="report-info-empire">{{ report.MyKingdom.name }},</div>
       <div class="report-info-turn">turn {{ report.Turn }}</div>
     </div>

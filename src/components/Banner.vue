@@ -1,18 +1,30 @@
 <template>
-  <g
-    :mask="maskUrl"
-    :transform="transform"
-    :transform-origin="transformOrigin"
-    class="banner"
-    @click="click"
-    @mouseenter="mouseenter"
-    @mouseleave="mouseleave">
-    
-    <rect x="0" y="0" width="32" height="32" :fill="color1" />
-    <rect :mask="`url(#${mask1})`" x="0" y="0" width="32" height="32" :fill="color2" />
-    <rect v-if="mask2" :mask="`url(#${mask2})`" x="0" y="0" width="32" height="32" :fill="color3" />
-        
+  <g>
+    <g v-if="decoration && mask == 'banner'">
+        <rect fill="#000000" width="32" height="2" x="0" y="2" /> 
+        <rect fill="#000000" width="2" height="32" x="15" y="0" />
+    </g>      
+    <g v-if="decoration && mask == 'ship'">
+      <rect fill="#000000" width="2" height="20" x="13" y="8" /> 
+      <path fill="#000000" d="M 14 24 L 20 28 C 20 34, 8 34, 8 28 Z" />     
+    </g>      
+    <slot />
+    <g
+      :mask="maskUrl"
+      :transform="transform"
+      :transform-origin="transformOrigin"
+      class="banner"
+      @click="click"
+      @mouseenter="mouseenter"
+      @mouseleave="mouseleave">
+      
+      <rect x="0" y="0" width="32" height="32" :fill="color1" />
+      <rect :mask="`url(#${mask1})`" x="0" y="0" width="32" height="32" :fill="color2" />
+      <rect v-if="mask2" :mask="`url(#${mask2})`" x="0" y="0" width="32" height="32" :fill="color3" />
+          
+    </g>
   </g>
+  
 </template>
 
 <script>
@@ -40,6 +52,10 @@ export default {
     mask: {
       type: String,
       default: ""
+    },
+    decoration: {
+      type: Boolean,
+      default: true,
     }
   },
   emits: ['click', 'mouseenter', 'mouseleave'],

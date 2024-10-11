@@ -14,14 +14,14 @@
       v-for="kingdom in kingdomsArray"
       :id="'agent-' + kingdom.player"
       :key="'agent-' + kingdom.player"
-      viewBox="0 8 16 16"
+      viewBox="4 4 24 24"
       height="16"
       width="16">
       <Banner mask="agent" :x="0" :y="0" :flag="kingdom.flag" />
     </symbol>
     <symbol
       id="agent-unknown"
-      viewBox="0 8 16 16"
+      viewBox="4 4 24 24"
       height="16"
       width="16">
       <Banner mask="agent" :x="0" :y="0" flag="77777" />
@@ -30,13 +30,25 @@
       v-for="kingdom in kingdomsArray"
       :id="'army-' + kingdom.player"
       :key="'army-' + kingdom.player"
-      viewBox="0 2 16 22"
-      height="22"
+      viewBox="4 2 24 30"
+      height="20"
       width="16">
       <Banner mask="army" :x="0" :y="0" :flag="kingdom.flag" />
     </symbol>
-    <symbol id="army-unknown" viewBox="0 2 16 22" height="20" width="16">
+    <symbol id="army-unknown" viewBox="4 2 24 30" height="20" width="16">
       <Banner mask="army" :x="0" :y="0" flag="77777" />
+    </symbol>
+    <symbol
+      v-for="kingdom in kingdomsArray"
+      :id="'ship-' + kingdom.player"
+      :key="'ship-' + kingdom.player"
+      viewBox="2 1 20 30"
+      height="20"
+      width="16">
+      <Banner translation-origin="16 16" mask="ship" :x="0" :y="0" :flag="kingdom.flag" />
+    </symbol>
+    <symbol id="ship-unknown" viewBox="2 2 24 30" height="20" width="16">
+      <Banner mask="ship" :x="0" :y="0" flag="77777" />
     </symbol>
   </g>
 </template>
