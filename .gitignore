@@ -1,4 +1,7 @@
-# Logs
+#Non-distributable assets
+aledroid/
+
+#Logs
 logs
 *.log
 npm-debug.log*
