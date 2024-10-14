@@ -13,6 +13,8 @@
       @mouseenter="mouseenter"
       @mouseleave="mouseleave" />
     <!-- <text :x="points[0].x" :y="points[0].y">{{ coord }}</text> -->
+    
+    <use v-if="image" :href="`#terrain-${image}`" :x="points[5].x" :y="points[0].y" :width="points[1].x - points[5].x" :height="points[3].y - points[1].y" />
     <image
       v-if="terrain == 'town'"
       :x="points[5].x"
@@ -75,6 +77,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  image: {
+    type: String,
+    default: null,
+  },
 });
 
 const emit = defineEmits(['click', 'mouseenter', 'mouseleave']);
@@ -92,6 +98,7 @@ const getClass = computed(() => {
 
 const transformOrigin = computed(() => {
   if (!props.center) return '50% 50%';
+  if (!props.center.x) return '50% 50%';  
   return `${Math.round(props.center.x)}px ${Math.round(props.center.y)}px`;
 });
 

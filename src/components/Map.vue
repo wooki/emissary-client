@@ -5,13 +5,14 @@
     @mousedown="mousedown"
     @mouseup="mouseup"
     @wheel="wheel">
-    <div class="parchment"></div>
+    <div class="parchment" :class="mapBgImage" :style="mapBgImageStyle"></div>
     <svg v-if="mounted" xmlns="http://www.w3.org/2000/svg" :viewBox="viewBox">
       <defs>
         <BannerMasks></BannerMasks>
         <BannerSymbols
           :v-if="report.isLoaded"
           :kingdoms="report.Kingdoms"></BannerSymbols>
+          <MapImages :tileset="tileset"></MapImages>        
       </defs>
 
       <Hexagon
@@ -24,6 +25,7 @@
         :fill="hex.fill"
         stroke-width="1"
         :stroke="hex.stroke"
+        :image="hex.image"
         :notVisible="hex.notVisible"
         @mouseenter="hexHighlight"
         @mouseleave="hexUnhighlight"
@@ -102,6 +104,7 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import BannerMasks from './BannerMasks.vue';
 import Hexagon from './Hexagon.vue';
 import BannerSymbols from './BannerSymbols.vue';
+import MapImages from './MapImages.vue';
 import AreaItems from './AreaItems.vue';
 import { Corners, Center, AdjacentCoords, SameCoord } from '../libs/HexUtils';
 import { useReportStore } from '@/stores/ReportStore';
@@ -125,7 +128,7 @@ const props = defineProps({
       town: 'Sienna',
       city: 'Sienna',
       unknown: '#4c84d7',
-    }),
+    }),  
   },
 });
 
@@ -145,12 +148,13 @@ const scrollSpeed = 5;
 const hoveredBanner = ref(null);
 const clientHeight = ref(0);
 const clientWidth = ref(0);
+let resizeObserver;
 
 onMounted(() => {
   mounted.value = true;
   clientWidth.value = document.querySelector('.map').clientWidth;
   clientHeight.value = document.querySelector('.map').clientHeight;
-  const resizeObserver = new ResizeObserver(() => {
+  resizeObserver = new ResizeObserver(() => {
     clientWidth.value = document.querySelector('.map').clientWidth;
     clientHeight.value = document.querySelector('.map').clientHeight;
   });
@@ -159,7 +163,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   mounted.value = false;
-  this.resizeObserver.unobserve(this.$el);
+  resizeObserver.unobserve(document.querySelector('.map'));
 });
 
 const wheel = (e) => {
@@ -237,6 +241,18 @@ const OwnedBannerClass = (banner) => {
   }
   return classes.join(' ');
 };
+
+const tileset = computed(() => import.meta.env.VITE_HEXTILES?.length > 0 ? import.meta.env.VITE_HEXTILES : null);
+const mapBgImage = computed(() => {
+  return {
+    'image': tileset.value != null
+  }
+});
+const mapBgImageStyle = computed(() => {
+  return {
+    'background-image': `url(/hextiles/${tileset.value}/background.jpg)`
+  };
+});
 
 const mapBounds = computed(() => getMapBounds());
 
@@ -397,6 +413,7 @@ const hoveredHex = computed(() => {
   return null;
 });
 
+
 const GetMapHexFromArea = (hex) => {
   const center = Center(hex.x, hex.y, props.hexagonSize, 0, 0);
   const points = Corners(center.x, center.y, props.hexagonSize);
@@ -411,6 +428,7 @@ const GetMapHexFromArea = (hex) => {
     min: { x: points[5].x, y: points[0].y },
     max: { x: points[1].x, y: points[3].y },
     fill: props.terrainColours[hex.terrain],
+    image: tileset.value ? hex.terrain : null,
     stroke: '#00000099',
     area: hex,
     notVisible: hex.terrain != 'ocean' && hex.report_level == 0,
@@ -484,8 +502,12 @@ text.label {
   user-select: none;
   pointer-events: none;
 }
-.parchment {
+.parchment.image {
   z-index: unset;
+  background-image: none;
+  box-shadow: none;  
+  background-size: cover;
+  background-position: center center;
 }
 .owned-banner {
   transform-origin: 8px 35px;
