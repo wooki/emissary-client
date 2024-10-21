@@ -4,17 +4,19 @@
       :transform-origin="transformOrigin"
       :class="getClass"
       :stroke="stroke"
-      :stroke-width="strokeWidth"
+      :stroke-width="notVisible ? '1' : strokeWidth"
       :fill="fill"
       :points="drawPoints"
       :stroke-dasharray="strokeDashArray"
-      :filter="notVisible ? `url('#desaturate')` : ''"
       @click="click"
       @mouseenter="mouseenter"
-      @mouseleave="mouseleave" />
+      @mouseleave="mouseleave" 
+      :filter="notVisible ? `url('#desaturate')` : ''"/>
+      
     <!-- <text :x="points[0].x" :y="points[0].y">{{ coord }}</text> -->
     
-    <use v-if="image" :href="`#terrain-${image}`" :x="points[5].x" :y="points[0].y" :width="points[1].x - points[5].x" :height="points[3].y - points[1].y" />
+    <use v-if="image" :transform-origin="transformOrigin" :href="`#terrain-${image}`" :x="points[5].x" :y="points[0].y" :width="points[1].x - points[5].x" :height="points[3].y - points[0].y" />
+
     <image
       v-if="terrain == 'town'"
       :x="points[5].x"
@@ -128,7 +130,7 @@ polygon {
   animation: 800ms ease-in-out 0ms infinite running pulse;
 }
 
-image {
+image, use {
   pointer-events: none;
 }
 

@@ -5,14 +5,14 @@
     @mousedown="mousedown"
     @mouseup="mouseup"
     @wheel="wheel">
-    <div class="parchment" :class="mapBgImage" :style="mapBgImageStyle"></div>
+    <div class="parchment image"></div>
     <svg v-if="mounted" xmlns="http://www.w3.org/2000/svg" :viewBox="viewBox">
       <defs>
         <BannerMasks></BannerMasks>
         <BannerSymbols
           :v-if="report.isLoaded"
           :kingdoms="report.Kingdoms"></BannerSymbols>
-          <MapImages :tileset="tileset"></MapImages>        
+          <MapImages :terrainVariants="terrainVariants"></MapImages>        
       </defs>
 
       <Hexagon
@@ -130,6 +130,20 @@ const props = defineProps({
       unknown: '#4c84d7',
     }),  
   },
+  terrainVariants: {
+    type: Object,
+    default: () => ({
+      peak: 1,
+      ocean: 0,
+      mountain: 3,
+      lowland: 4,
+      forest: 3,
+      desert: 5,
+      town: 0,
+      city: 0,
+      unknown: 0,
+    }),  
+  },
 });
 
 const ownedHexBannerScale = ref(1.6);
@@ -242,22 +256,12 @@ const OwnedBannerClass = (banner) => {
   return classes.join(' ');
 };
 
-const tileset = computed(() => import.meta.env.VITE_HEXTILES?.length > 0 ? import.meta.env.VITE_HEXTILES : null);
-const mapBgImage = computed(() => {
-  return {
-    'image': tileset.value != null
-  }
-});
-const mapBgImageStyle = computed(() => {
-  return {
-    'background-image': `url(/hextiles/${tileset.value}/background.jpg)`
-  };
-});
+
 
 const mapBounds = computed(() => getMapBounds());
 
-const viewBox = computed(() => {
-  if (!mounted.value) return '0 0 0 0';
+const viewBoxCoords = computed(() => {
+  if (!mounted.value) return [0, 0, 0, 0];
 
   let scale = scales[scaleIndex.value];
   let ratio = clientWidth.value / clientHeight.value;
@@ -288,10 +292,14 @@ const viewBox = computed(() => {
     displayY == Infinity ||
     displayY == -Infinity
   ) {
-    return '0 0 0 0';
+    return [0, 0, 0, 0];
   }
 
-  return `${displayX} ${displayY} ${displayWidth * ratio} ${displayHeight}`;
+  return [displayX, displayY, displayWidth * ratio, displayHeight];
+});
+
+const viewBox = computed(() => {
+  return viewBoxCoords.value.join(' ');  
 });
 
 const mapHexagons = computed(() =>
@@ -418,6 +426,16 @@ const GetMapHexFromArea = (hex) => {
   const center = Center(hex.x, hex.y, props.hexagonSize, 0, 0);
   const points = Corners(center.x, center.y, props.hexagonSize);
 
+  // get variant image to use
+  let image = null;
+  if (props.terrainVariants[hex.terrain] > 0) {
+    const variant = 1 + hex.seed % props.terrainVariants[hex.terrain];
+    image = `${hex.terrain}${variant}`;
+    if (hex.terrain == 'forest') {
+      console.log("image", hex.seed, hex.terrain, variant);
+    }    
+  }
+
   return {
     x: hex.x,
     y: hex.y,
@@ -428,10 +446,11 @@ const GetMapHexFromArea = (hex) => {
     min: { x: points[5].x, y: points[0].y },
     max: { x: points[1].x, y: points[3].y },
     fill: props.terrainColours[hex.terrain],
-    image: tileset.value ? hex.terrain : null,
+    image: image,
     stroke: '#00000099',
     area: hex,
-    notVisible: hex.terrain != 'ocean' && hex.report_level == 0,
+    // notVisible: hex.terrain != 'ocean' && hex.report_level == 0,
+    notVisible: hex.report_level == 0,
   };
 };
 
@@ -503,11 +522,7 @@ text.label {
   pointer-events: none;
 }
 .parchment.image {
-  z-index: unset;
-  background-image: none;
-  box-shadow: none;  
-  background-size: cover;
-  background-position: center center;
+  z-index: unset;  
 }
 .owned-banner {
   transform-origin: 8px 35px;
