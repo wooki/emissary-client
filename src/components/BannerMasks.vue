@@ -1,20 +1,20 @@
 <template>
-  <mask id="banner_mask" maskUnits="userSpaceOnUse">
+  <mask id="banner_mask" >
     <path
       fill="#ffffff"
       d="M 8,4 H 24 V 32 L 16,27 8,32 Z" />
   </mask>    
-  <mask id="army_mask" maskUnits="userSpaceOnUse">
+  <mask id="army_mask" >
     <path
       fill="#ffffff"
       d="M 4.3,2 H 27.7 V 8.8 C 27.7,26.4 16,31.8 16,31.8 C 16,31.8 4.3,26.4 4.3,8.8 Z" />
   </mask>
-  <mask id="ship_mask" maskUnits="userSpaceOnUse">
+  <mask id="ship_mask" >
     <path
     fill="#ffffff"
     d="M 22 26.15 C 20.85 21.55, 3.6 25.575, 1.3 26.15 C 3.6 23.85, 21.425 4.6, 22 1.15 C 23.15 4.6, 26.6 25, 22 26.15 Z" />        
   </mask>
-  <mask id="agent_mask" maskUnits="userSpaceOnUse">
+  <mask id="agent_mask" >
     <circle cx="16" cy="16" r="12" fill="#ffffff" />    
   </mask>
   <mask id="banner_mask_base_0">
