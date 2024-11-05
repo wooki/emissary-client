@@ -31,11 +31,11 @@
       <div
         class="area-panel-report-base has-details"
         v-if="ownedByMe"
-        @click="ToggleWillPay">
+        @click="ToggleRetire">
         <div class="area-panel-report-title">
-          <span>WILL RENEW</span><OrderIcon />
+          <span>RETIRE</span><OrderIcon />
         </div>
-        <div class="area-panel-report-value">{{ willPay ? 'YES' : 'NO' }}</div>
+        <div class="area-panel-report-value">{{ retire ? 'YES' : 'NO' }}</div>
       </div>
 
       <div
@@ -73,17 +73,17 @@ const coord = Coord(SelectedHex.value.x, SelectedHex.value.y);
 
 const ownedByMe = computed(() => props.agent?.owner == reportStore.Me);
 
-const willPay = computed(() => {
+const retire = computed(() => {
   return reportStore.ExistingAgentOrder(
     SelectedHex.value,
     props.agent?.id,
-    'set_will_pay',
-  ).will_pay;
+    'set_retire',
+  ).retire;
 });
 
-function ToggleWillPay() {
-  reportStore.AddAgentOrder(coord, props.agent?.id, 'set_will_pay', {
-    will_pay: !willPay.value,
+function ToggleRetire() {
+  reportStore.AddAgentOrder(coord, props.agent?.id, 'set_retire', {
+    retire: !retire.value,
   });
 }
 

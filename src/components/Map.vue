@@ -363,6 +363,12 @@ const mapBorders = computed(() => {
     settlement.borders.forEach((border) => {
       stroke = '#000';
 
+      if (settlement.name == 'Ceuazar') {
+        if (border.x = 65 && border.y == 84) {
+          console.log("Ceuazar", border);
+        }
+      }
+
       // check adjacent in each direction and add points for that
       // edge of it is not
       let adjacent = AdjacentCoords(border);
@@ -430,10 +436,7 @@ const GetMapHexFromArea = (hex) => {
   let image = null;
   if (props.terrainVariants[hex.terrain] > 0) {
     const variant = 1 + hex.seed % props.terrainVariants[hex.terrain];
-    image = `${hex.terrain}${variant}`;
-    if (hex.terrain == 'forest') {
-      console.log("image", hex.seed, hex.terrain, variant);
-    }    
+    image = `${hex.terrain}${variant}`;    
   }
 
   return {
