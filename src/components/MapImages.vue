@@ -1,7 +1,15 @@
 <template>
-  <symbol v-for="type in terrainWithVariants" :key="type" :id="'terrain-' + type" viewBox="0 0 420 480">
-    <image :key="type" :href="`/hextiles/${type}.png`" width="420" height="480" />
-  </symbol>  
+  <symbol
+    v-for="type in terrainWithVariants"
+    :key="type"
+    :id="'terrain-' + type"
+    viewBox="0 0 420 480">
+    <image
+      :key="type"
+      :href="`/hextiles/${type}.png`"
+      width="420"
+      height="480" />
+  </symbol>
 </template>
 
 <script setup>
@@ -19,8 +27,8 @@ const props = defineProps({
       'desert',
       'town',
       'city',
-      'unknown'
-    ]
+      'unknown',
+    ],
   },
   terrainVariants: {
     type: Object,
@@ -34,21 +42,21 @@ const props = defineProps({
       town: 0,
       city: 0,
       unknown: 0,
-    }),  
-  }
+    }),
+  },
 });
 
 const terrainWithVariants = computed(() => {
   return props.terrain.reduce((acc, type) => {
     const variantCount = props.terrainVariants[type];
     if (variantCount > 0) {
-      const variants = Array.from({ length: variantCount }, (_, i) => `${type}${i + 1}`);
+      const variants = Array.from(
+        { length: variantCount },
+        (_, i) => `${type}${i + 1}`,
+      );
       acc.push(...variants);
     }
     return acc;
   }, []);
 });
-
-
 </script>
-

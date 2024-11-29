@@ -10,7 +10,11 @@
         v-for="(flag, index) in bannerFlags"
         :key="index"
         :transform="`translate(${(index % columnsCount) * bannerWidth}, ${Math.floor(index / columnsCount) * bannerHeight})`">
-        <BannerSvg mask="banner" :flag="flag" :scale="1" @click="handleBannerClick(flag)" />
+        <BannerSvg
+          mask="banner"
+          :flag="flag"
+          :scale="1"
+          @click="handleBannerClick(flag)" />
         <text x="20" y="50" text-anchor="middle" font-size="14">
           {{ flag }}
         </text>
@@ -33,7 +37,7 @@ export default {
       bannerFlags: [],
       bannerWidth: 100,
       bannerHeight: 75,
-      columnsCount: 10
+      columnsCount: 10,
     };
   },
   computed: {
@@ -50,9 +54,8 @@ export default {
   },
   methods: {
     generateBannerFlags() {
-      
       const candidates = [];
-      
+
       for (let i = 0; i < 100000; i++) {
         if (i % 10 === 0 || i % 10 === 1 || i % 10 === 2) {
           candidates.push(i.toString().padStart(5, '0'));
@@ -95,7 +98,7 @@ export default {
       // '07742',
       // '08742',
       // '09742',
-      
+
       // '10850',
       // '11850',
       // '12850',
@@ -119,8 +122,6 @@ export default {
       // '39902',
       // ];
       this.bannerFlags = selectedFlags;
-            
-             
     },
     handleBannerClick(flag) {
       console.log(`Banner clicked: ${flag}`);

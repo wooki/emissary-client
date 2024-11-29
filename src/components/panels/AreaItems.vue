@@ -47,9 +47,9 @@ import BackIcon from '@/assets/icons/back.svg';
 import OrderIcon from '@/assets/icons/order.svg';
 import AgentDetails from './AgentDetails.vue';
 
-const reportStore = useReportStore();
+const report = useReportStore();
 
-const SelectedHex = computed(() => reportStore.selectedHex);
+const SelectedHex = computed(() => report.selectedHex);
 
 const selectedItemIndex = ref(null);
 
@@ -78,28 +78,35 @@ const items = computed(() => {
   return items;
 });
 
-function SelectItem(index) {
+watch(
+  () => SelectedHex,
+  (newVal, oldVal) => {
+    selectedItemIndex.value = null;
+  },
+  { deep: true },
+);
+
+const SelectItem = (index) => {
   if (selectedItemIndex.value == index) {
     selectedItemIndex.value = null;
   } else {
     selectedItemIndex.value = index;
   }
-}
+};
 
-function EmpireName(owner) {
+const EmpireName = (owner) => {
   if (!owner) return 'Unowned';
-  if (ownedByMe(owner)) return `${reportStore.MyKingdom.name}`;
-  return reportStore.Kingdom(owner).name;
-}
+  if (ownedByMe(owner)) return `${report.MyKingdom.name}`;
+  return report.Kingdom(owner).name;
+};
 
-function ownedByMe(owner) {
-  return owner == reportStore.Me;
-}
-
-function orderAgent(agent) {
-  reportStore.currentArea.agents[agent.id] = agent;
-  reportStore.updateArea(reportStore.currentArea);
-}
+const ownedByMe = (owner) => {
+  return owner == report.Me;
+};
+const OrderAgent = (agent) => {
+  report.currentArea.agents[agent.id] = agent;
+  report.updateArea(report.currentArea);
+};
 </script>
 
 <style scoped></style>

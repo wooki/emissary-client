@@ -10,6 +10,7 @@
 - link to server without file upload/download manually
 
 ## Credits
+
 parchment.texture - created using Copilot (and licensed under MIT in this repo)
 
 hex tiles created from - https://kmalexander.com/free-stuff/fantasy-map-brushes/ by K.M. Alexander from original maps from Janssonius, Harrewyn & Walser (CC0 - “No Rights Reserved”)

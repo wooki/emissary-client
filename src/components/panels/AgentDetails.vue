@@ -33,9 +33,12 @@
         v-if="ownedByMe"
         @click="ToggleRetire">
         <div class="area-panel-report-title">
-          <span>RETIRE</span><OrderIcon />
+          <span>PAYROLL</span><OrderIcon />
         </div>
-        <div class="area-panel-report-value">{{ retire ? 'YES' : 'NO' }}</div>
+        <div v-if="retire" class="area-panel-long-value">
+          <RetireIcon /><span>Retiring</span>
+        </div>
+        <div v-else class="area-panel-long-value">Active</div>
       </div>
 
       <div
@@ -45,7 +48,7 @@
         <div class="area-panel-report-title">
           Report from {{ message.from }}
         </div>
-        <div class="area-panel-entry-value">{{ message.message }}</div>
+        <div class="area-panel-long-value">{{ message.message }}</div>
       </div>
     </div>
 
@@ -56,6 +59,7 @@
 <script setup>
 import { computed, onMounted } from 'vue';
 import OrderIcon from '@/assets/icons/order.svg';
+import RetireIcon from '@/assets/icons/retire.svg';
 import { useReportStore } from '@/stores/reportStore';
 import { Coord } from '@/libs/HexUtils';
 
@@ -86,10 +90,6 @@ function ToggleRetire() {
     retire: !retire.value,
   });
 }
-
-onMounted(() => {
-  console.log('agent', props.agent);
-});
 </script>
 
 <style scoped></style>

@@ -12,7 +12,7 @@
         <BannerSymbols
           :v-if="report.isLoaded"
           :kingdoms="report.Kingdoms"></BannerSymbols>
-          <MapImages :terrainVariants="terrainVariants"></MapImages>        
+        <MapImages :terrainVariants="terrainVariants"></MapImages>
       </defs>
 
       <Hexagon
@@ -128,7 +128,7 @@ const props = defineProps({
       town: 'Sienna',
       city: 'Sienna',
       unknown: '#4c84d7',
-    }),  
+    }),
   },
   terrainVariants: {
     type: Object,
@@ -142,7 +142,7 @@ const props = defineProps({
       town: 0,
       city: 0,
       unknown: 0,
-    }),  
+    }),
   },
 });
 
@@ -256,8 +256,6 @@ const OwnedBannerClass = (banner) => {
   return classes.join(' ');
 };
 
-
-
 const mapBounds = computed(() => getMapBounds());
 
 const viewBoxCoords = computed(() => {
@@ -299,7 +297,7 @@ const viewBoxCoords = computed(() => {
 });
 
 const viewBox = computed(() => {
-  return viewBoxCoords.value.join(' ');  
+  return viewBoxCoords.value.join(' ');
 });
 
 const mapHexagons = computed(() =>
@@ -364,8 +362,8 @@ const mapBorders = computed(() => {
       stroke = '#000';
 
       if (settlement.name == 'Ceuazar') {
-        if (border.x = 65 && border.y == 84) {
-          console.log("Ceuazar", border);
+        if ((border.x = 65 && border.y == 84)) {
+          console.log('Ceuazar', border);
         }
       }
 
@@ -427,7 +425,6 @@ const hoveredHex = computed(() => {
   return null;
 });
 
-
 const GetMapHexFromArea = (hex) => {
   const center = Center(hex.x, hex.y, props.hexagonSize, 0, 0);
   const points = Corners(center.x, center.y, props.hexagonSize);
@@ -435,8 +432,8 @@ const GetMapHexFromArea = (hex) => {
   // get variant image to use
   let image = null;
   if (props.terrainVariants[hex.terrain] > 0) {
-    const variant = 1 + hex.seed % props.terrainVariants[hex.terrain];
-    image = `${hex.terrain}${variant}`;    
+    const variant = 1 + (hex.seed % props.terrainVariants[hex.terrain]);
+    image = `${hex.terrain}${variant}`;
   }
 
   return {
@@ -525,7 +522,7 @@ text.label {
   pointer-events: none;
 }
 .parchment.image {
-  z-index: unset;  
+  z-index: unset;
 }
 .owned-banner {
   transform-origin: 8px 35px;

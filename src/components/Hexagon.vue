@@ -10,12 +10,19 @@
       :stroke-dasharray="strokeDashArray"
       @click="click"
       @mouseenter="mouseenter"
-      @mouseleave="mouseleave" 
-      :filter="notVisible ? `url('#desaturate')` : ''"/>
-      
+      @mouseleave="mouseleave"
+      :filter="notVisible ? `url('#desaturate')` : ''" />
+
     <!-- <text :x="points[0].x" :y="points[0].y">{{ coord }}</text> -->
-    
-    <use v-if="image" :transform-origin="transformOrigin" :href="`#terrain-${image}`" :x="points[5].x" :y="points[0].y" :width="points[1].x - points[5].x" :height="points[3].y - points[0].y" />
+
+    <use
+      v-if="image"
+      :transform-origin="transformOrigin"
+      :href="`#terrain-${image}`"
+      :x="points[5].x"
+      :y="points[0].y"
+      :width="points[1].x - points[5].x"
+      :height="points[3].y - points[0].y" />
 
     <image
       v-if="terrain == 'town'"
@@ -100,7 +107,7 @@ const getClass = computed(() => {
 
 const transformOrigin = computed(() => {
   if (!props.center) return '50% 50%';
-  if (!props.center.x) return '50% 50%';  
+  if (!props.center.x) return '50% 50%';
   return `${Math.round(props.center.x)}px ${Math.round(props.center.y)}px`;
 });
 
@@ -130,7 +137,8 @@ polygon {
   animation: 800ms ease-in-out 0ms infinite running pulse;
 }
 
-image, use {
+image,
+use {
   pointer-events: none;
 }
 

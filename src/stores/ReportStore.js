@@ -60,34 +60,52 @@ export const useReportStore = defineStore('report', {
 
         if (
           state.orders[coord] &&
-          state.orders[coord][agentid] &&
-          state.orders[coord][agentid][order]
+          state.orders[coord]['agents'] &&
+          state.orders[coord]['agents'][agentid] &&
+          state.orders[coord]['agents'][agentid][order]
         ) {
-          return state.orders[coord][agentid][order];
+          return state.orders[coord]['agents'][agentid][order];
         }
 
         return hex?.agents[agentid];
       };
     },
     Orders: (state) => {
-      console.log('orders', state.orders);
       const orders = [];
-      Object.keys(state.orders).forEach((areaKey) => {
-        Object.keys(state.orders[areaKey]).forEach((orderKey) => {
-          let order = {
-            coord: areaKey,
-            order: orderKey,
-          };
-          Object.keys(state.orders[areaKey][orderKey]).forEach(
-            (orderParamKey) => {
-              order[orderParamKey] =
-                state.orders[areaKey][orderKey][orderParamKey];
-            },
-          );
-          orders.push(order);
+      
+      const processAgentOrders = (areaKey, agents) => {
+        Object.entries(agents).forEach(([agentId, agentOrders]) => {
+          Object.entries(agentOrders).forEach(([orderType, orderData]) => {
+            const agentOrder = {
+              coord: areaKey,
+              agentid: agentId,
+              order: orderType,
+              ...orderData
+            };
+            orders.push(agentOrder);
+          });
+        });
+      };
+
+      const processHexOrders = (areaKey, orderKey, orderData) => {
+        const order = {
+          coord: areaKey,
+          order: orderKey,
+          ...orderData
+        };
+        orders.push(order);
+      };
+
+      Object.entries(state.orders).forEach(([areaKey, areaOrders]) => {
+        Object.entries(areaOrders).forEach(([orderKey, orderData]) => {
+          if (orderKey === 'agents') {
+            processAgentOrders(areaKey, orderData);
+          } else {
+            processHexOrders(areaKey, orderKey, orderData);
+          }
         });
       });
-      console.log('orders=>', orders);
+
       return {
         player: state.Me,
         turn: state.Turn,
@@ -146,9 +164,13 @@ export const useReportStore = defineStore('report', {
     },
     AddAgentOrder(coord, agentid, order, data) {
       if (!this.orders[coord]) this.orders[coord] = new Object();
-      if (!this.orders[coord][agentid])
-        this.orders[coord][agentid] = new Object();
-      this.orders[coord][agentid][order] = data;
+      if (!this.orders[coord]['agents'])
+        this.orders[coord]['agents'] = new Object();
+      if (!this.orders[coord]['agents'][agentid])
+        this.orders[coord]['agents'][agentid] = new Object();
+      this.orders[coord]['agents'][agentid][order] = data;
+      console.log('ORDERS SET', toRaw(this.orders));
+
       localStorage.setItem(
         'orders',
         JSON.stringify(Object.assign({}, toRaw(this.orders))),

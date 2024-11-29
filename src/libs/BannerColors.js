@@ -1,4 +1,3 @@
-
 export let Colors1 = [
   '#262626',
   '#ececec',
@@ -24,8 +23,4 @@ export let Colors2 = [
   '#33C633',
 ];
 
-export let Colors3 = [
-  '#000000',
-  '#FFFFFF',
-  '#ffcd16',  
-];
+export let Colors3 = ['#000000', '#FFFFFF', '#ffcd16'];

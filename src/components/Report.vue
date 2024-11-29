@@ -31,7 +31,7 @@ const report = useReportStore();
 .map-container {
   grid-row: 1;
   grid-column: 1;
-  position: relative;  
+  position: relative;
 }
 .map {
   position: absolute;

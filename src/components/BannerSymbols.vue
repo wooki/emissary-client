@@ -4,7 +4,9 @@
       v-for="kingdom in kingdomsArray"
       :id="'banner-' + kingdom.player"
       :key="kingdom.player"
-      viewBox="8 0 16 32" height="32" width="16">
+      viewBox="8 0 16 32"
+      height="32"
+      width="16">
       <Banner mask="banner" :x="0" :y="0" :flag="kingdom.flag" />
     </symbol>
     <symbol id="banner-unknown" viewBox="8 0 16 32" height="32" width="16">
@@ -19,11 +21,7 @@
       width="16">
       <Banner mask="agent" :x="0" :y="0" :flag="kingdom.flag" />
     </symbol>
-    <symbol
-      id="agent-unknown"
-      viewBox="4 4 24 24"
-      height="16"
-      width="16">
+    <symbol id="agent-unknown" viewBox="4 4 24 24" height="16" width="16">
       <Banner mask="agent" :x="0" :y="0" flag="77777" />
     </symbol>
     <symbol
@@ -45,7 +43,12 @@
       viewBox="2 1 20 30"
       height="20"
       width="16">
-      <Banner translation-origin="16 16" mask="ship" :x="0" :y="0" :flag="kingdom.flag" />
+      <Banner
+        translation-origin="16 16"
+        mask="ship"
+        :x="0"
+        :y="0"
+        :flag="kingdom.flag" />
     </symbol>
     <symbol id="ship-unknown" viewBox="2 2 24 30" height="20" width="16">
       <Banner mask="ship" :x="0" :y="0" flag="77777" />

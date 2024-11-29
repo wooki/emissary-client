@@ -26,6 +26,7 @@
   padding: 7px 7px;
   max-height: 100%;
   overflow: auto;
+  scrollbar-width: none;
 }
 
 .area-panel-report {
@@ -143,6 +144,14 @@
         }
       }
     }
+  }
+
+  .area-panel-long-value {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 3px;
   }
 
   .area-panel-report-entry {

@@ -1,13 +1,13 @@
 <template>
   <g>
     <g v-if="decoration && mask == 'banner'">
-        <rect fill="#000000" width="32" height="2" x="0" y="2" /> 
-        <rect fill="#000000" width="2" height="32" x="15" y="0" />
-    </g>      
+      <rect fill="#000000" width="32" height="2" x="0" y="2" />
+      <rect fill="#000000" width="2" height="32" x="15" y="0" />
+    </g>
     <g v-if="decoration && mask == 'ship'">
-      <rect fill="#000000" width="2" height="20" x="13" y="8" /> 
-      <path fill="#000000" d="M 14 24 L 20 28 C 20 34, 8 34, 8 28 Z" />     
-    </g>      
+      <rect fill="#000000" width="2" height="20" x="13" y="8" />
+      <path fill="#000000" d="M 14 24 L 20 28 C 20 34, 8 34, 8 28 Z" />
+    </g>
     <slot />
     <g
       :mask="maskUrl"
@@ -17,14 +17,24 @@
       @click="click"
       @mouseenter="mouseenter"
       @mouseleave="mouseleave">
-      
       <rect x="0" y="0" width="32" height="32" :fill="color1" />
-      <rect :mask="`url(#${mask1})`" x="0" y="0" width="32" height="32" :fill="color2" />
-      <rect v-if="mask2" :mask="`url(#${mask2})`" x="0" y="0" width="32" height="32" :fill="color3" />
-          
+      <rect
+        :mask="`url(#${mask1})`"
+        x="0"
+        y="0"
+        width="32"
+        height="32"
+        :fill="color2" />
+      <rect
+        v-if="mask2"
+        :mask="`url(#${mask2})`"
+        x="0"
+        y="0"
+        width="32"
+        height="32"
+        :fill="color3" />
     </g>
   </g>
-  
 </template>
 
 <script>
@@ -51,12 +61,12 @@ export default {
     },
     mask: {
       type: String,
-      default: ""
+      default: '',
     },
     decoration: {
       type: Boolean,
       default: true,
-    }
+    },
   },
   emits: ['click', 'mouseenter', 'mouseleave'],
   data() {
@@ -73,7 +83,7 @@ export default {
         return `url(#${this.mask}_mask)`;
       }
       return null;
-    },  
+    },
     transform() {
       return `scale(${this.scale}) translate(${this.x},${this.y})`;
     },
@@ -87,44 +97,44 @@ export default {
       return this.Colors1[this.flagfields[2]];
     },
     color2() {
-      // if (this.flagfields[1]+1 > this.SymbolCount) {  
-      //   return this.Colors2[this.flagfields[3]];        
+      // if (this.flagfields[1]+1 > this.SymbolCount) {
+      //   return this.Colors2[this.flagfields[3]];
       // }
-      return this.Colors2[this.flagfields[3]];        
+      return this.Colors2[this.flagfields[3]];
     },
     color3() {
-      return this.Colors3[this.flagfields[4] % 3];                      
+      return this.Colors3[this.flagfields[4] % 3];
     },
     mask1() {
       if (this.flagfields[0] == 0 && this.flagfields[1] != 3) {
-        return `banner_mask_base_${this.flagfields[0]}x`; 
+        return `banner_mask_base_${this.flagfields[0]}x`;
       }
-      return `banner_mask_base_${this.flagfields[0]}`;                  
+      return `banner_mask_base_${this.flagfields[0]}`;
     },
     mask2() {
       if (this.flagfields[0] == 0 && this.flagfields[1] == 3) {
-          return `banner_mask_shape_${this.flagfields[1]}x`;
-        } else if (this.flagfields[0] == 4 && this.flagfields[1] == 3) {
-          return `banner_mask_shape_${this.flagfields[1]}v`;
-        } else if (this.flagfields[0] == 5 && this.flagfields[1] == 3) {
-          return `banner_mask_shape_${this.flagfields[1]}h`;
-        } else if (this.flagfields[0] == 6 && this.flagfields[1] == 3) {
-          return `banner_mask_shape_${this.flagfields[1]}v`;
-        } else if (this.flagfields[0] == 8 && this.flagfields[1] == 3) {
-          return `banner_mask_shape_${this.flagfields[1]}h`;
-        } else if (this.flagfields[0] == 9 && this.flagfields[1] == 3) {
-          return `banner_mask_shape_${this.flagfields[1]}x`;
-        } else if (this.flagfields[0] == 8 && this.flagfields[1] == 4) {
-          return `banner_mask_shape_${this.flagfields[1]}x1`;
-        } else if (this.flagfields[0] == 9 && this.flagfields[1] == 4) {
-          return `banner_mask_shape_${this.flagfields[1]}x2`;
-        } else if (this.flagfields[0] == 5 && this.flagfields[1] == 6) {
-          return `banner_mask_shape_${this.flagfields[1]}x`;
-        } else if (this.flagfields[1] < this.SymbolCount) {
-          return `banner_mask_shape_${this.flagfields[1]}`;
-        } else {
-          return null;
-        }
+        return `banner_mask_shape_${this.flagfields[1]}x`;
+      } else if (this.flagfields[0] == 4 && this.flagfields[1] == 3) {
+        return `banner_mask_shape_${this.flagfields[1]}v`;
+      } else if (this.flagfields[0] == 5 && this.flagfields[1] == 3) {
+        return `banner_mask_shape_${this.flagfields[1]}h`;
+      } else if (this.flagfields[0] == 6 && this.flagfields[1] == 3) {
+        return `banner_mask_shape_${this.flagfields[1]}v`;
+      } else if (this.flagfields[0] == 8 && this.flagfields[1] == 3) {
+        return `banner_mask_shape_${this.flagfields[1]}h`;
+      } else if (this.flagfields[0] == 9 && this.flagfields[1] == 3) {
+        return `banner_mask_shape_${this.flagfields[1]}x`;
+      } else if (this.flagfields[0] == 8 && this.flagfields[1] == 4) {
+        return `banner_mask_shape_${this.flagfields[1]}x1`;
+      } else if (this.flagfields[0] == 9 && this.flagfields[1] == 4) {
+        return `banner_mask_shape_${this.flagfields[1]}x2`;
+      } else if (this.flagfields[0] == 5 && this.flagfields[1] == 6) {
+        return `banner_mask_shape_${this.flagfields[1]}x`;
+      } else if (this.flagfields[1] < this.SymbolCount) {
+        return `banner_mask_shape_${this.flagfields[1]}`;
+      } else {
+        return null;
+      }
     },
   },
   methods: {
