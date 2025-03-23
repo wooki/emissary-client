@@ -42,7 +42,7 @@ export const useReportStore = defineStore('report', {
     },
     ExistingTradePolicy: (state) => {
       return (hex, resource) => {
-        const orderValue = state.ExistingHexOrder(hex, 'set_trade_policy');
+        const orderValue = state.ExistingHexOrder(hex, 'trade_policy');
         return orderValue !== null
           ? orderValue[resource]
           : hex.trade_policy[resource];
@@ -143,6 +143,7 @@ export const useReportStore = defineStore('report', {
     },
     ClearOrders() {
       this.orders = [];
+      localStorage.removeItem('orders');
     },
     SelectHex(hex) {
       if (hex.area) {

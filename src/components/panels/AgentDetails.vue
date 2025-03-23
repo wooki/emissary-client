@@ -81,12 +81,12 @@ const retire = computed(() => {
   return reportStore.ExistingAgentOrder(
     SelectedHex.value,
     props.agent?.id,
-    'set_retire',
+    'retire',
   ).retire;
 });
 
 function ToggleRetire() {
-  reportStore.AddAgentOrder(coord, props.agent?.id, 'set_retire', {
+  reportStore.AddAgentOrder(coord, props.agent?.id, 'retire', {
     retire: !retire.value,
   });
 }

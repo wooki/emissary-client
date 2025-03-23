@@ -205,7 +205,7 @@ const SetTradePolicy = (params) => {
     order.goods = params.value;
   }
 
-  report.AddHexOrder(coord, 'set_trade_policy', order);
+  report.AddHexOrder(coord, 'trade_policy', order);
 };
 
 const SetHireAgent = (params) => {
