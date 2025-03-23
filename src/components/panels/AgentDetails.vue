@@ -57,7 +57,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue';
+import { computed } from 'vue';
 import OrderIcon from '@/assets/icons/order.svg';
 import RetireIcon from '@/assets/icons/retire.svg';
 import { useReportStore } from '@/stores/reportStore';
