@@ -4,6 +4,7 @@
     @mousemove="mousemove"
     @mousedown="mousedown"
     @mouseup="mouseup"
+    @mouseleave="mouseleave"
     @wheel="wheel">
     <div class="parchment image"></div>
     <svg v-if="mounted" xmlns="http://www.w3.org/2000/svg" :viewBox="viewBox">
@@ -158,6 +159,9 @@ const scales = [
 ];
 const scaleIndex = ref(10);
 const mouseDown = ref(false);
+const lastMouseX = ref(0);
+const lastMouseY = ref(0);
+const isDragging = ref(false);
 const scrollSpeed = 5;
 const hoveredBanner = ref(null);
 const clientHeight = ref(0);
@@ -180,7 +184,24 @@ onBeforeUnmount(() => {
   resizeObserver.unobserve(document.querySelector('.map'));
 });
 
+const currentScale = computed(() => scales[scaleIndex.value]);
+
+const panSensitivity = computed(() => {
+  if (!mounted.value || !clientWidth.value || !clientHeight.value) return 1;
+
+  const [, , viewBoxWidth, viewBoxHeight] = viewBoxCoords.value;
+
+  // Ratio of map coordinates to screen pixels
+  const xRatio = viewBoxWidth / clientWidth.value;
+  const yRatio = viewBoxHeight / clientHeight.value;
+
+  // Use the average ratio, or you could return both separately
+  return (xRatio + yRatio) / 2;
+});
+
 const wheel = (e) => {
+  e.preventDefault();
+
   if (e.deltaY > 0 && scaleIndex.value > 0) {
     scaleIndex.value--;
   } else if (e.deltaY < 0 && scaleIndex.value < scales.length - 1) {
@@ -190,30 +211,61 @@ const wheel = (e) => {
 
 const mousedown = (e) => {
   mouseDown.value = true;
-  clientX.value = e.clientX;
-  clientY.value = e.clientY;
+  lastMouseX.value = e.clientX;
+  lastMouseY.value = e.clientY;
+  isDragging.value = false;
+
+  // Add global mouse event listeners to catch mouse events outside the map
+  document.addEventListener('mousemove', globalMouseMove);
+  document.addEventListener('mouseup', globalMouseUp);
 };
 
 const mouseup = () => {
   mouseDown.value = false;
-  clientX.value = null;
-  clientY.value = null;
+  isDragging.value = false;
+
+  // Remove global listeners
+  document.removeEventListener('mousemove', globalMouseMove);
+  document.removeEventListener('mouseup', globalMouseUp);
+};
+
+const mouseleave = () => {
+  if (mouseDown.value) {
+    mouseDown.value = false;
+    isDragging.value = false;
+
+    // Clean up global listeners
+    document.removeEventListener('mousemove', globalMouseMove);
+    document.removeEventListener('mouseup', globalMouseUp);
+  }
+};
+
+const globalMouseMove = (e) => {
+  mousemove(e);
+};
+
+const globalMouseUp = (e) => {
+  mouseup(e);
 };
 
 const mousemove = (e) => {
-  if (mouseDown.value && clientX.value && clientY.value) {
-    let scale = scales[scaleIndex.value];
+  if (!mouseDown.value) return;
 
-    focusX.value += Math.round(
-      ((clientX.value - e.clientX) * scrollSpeed) / scale,
-    );
-    focusY.value += Math.round(
-      ((clientY.value - e.clientY) * scrollSpeed) / scale,
-    );
+  const deltaX = e.clientX - lastMouseX.value;
+  const deltaY = e.clientY - lastMouseY.value;
 
-    clientX.value = e.clientX;
-    clientY.value = e.clientY;
+  if (!isDragging.value && (Math.abs(deltaX) > 2 || Math.abs(deltaY) > 2)) {
+    isDragging.value = true;
   }
+
+  if (isDragging.value) {
+    // Now this should move the map exactly with your mouse
+    focusX.value -= deltaX * panSensitivity.value;
+    focusY.value -= deltaY * panSensitivity.value;
+  }
+
+  lastMouseX.value = e.clientX;
+  lastMouseY.value = e.clientY;
 };
 
 const hexHighlight = (hex) => {
@@ -489,6 +541,36 @@ const GetMapItemsFromArea = (area) => {
     center: center,
     area: area,
   };
+};
+
+// Make pan speed adaptive to zoom level
+const adaptiveKeyPanSpeed = computed(() => {
+  const baseSpeed = 50;
+  const scale = scales[scaleIndex.value];
+
+  // Adjust speed based on zoom - more zoomed out = faster panning
+  return baseSpeed / scale;
+});
+
+const panWithKeys = () => {
+  if (activeKeys.value.size === 0) return;
+
+  const [, , viewBoxWidth, viewBoxHeight] = viewBoxCoords.value;
+  const xSensitivity = viewBoxWidth / clientWidth.value;
+  const ySensitivity = viewBoxHeight / clientHeight.value;
+
+  let deltaX = 0;
+  let deltaY = 0;
+
+  const speed = adaptiveKeyPanSpeed.value;
+
+  if (activeKeys.value.has('ArrowLeft')) deltaX -= speed;
+  if (activeKeys.value.has('ArrowRight')) deltaX += speed;
+  if (activeKeys.value.has('ArrowUp')) deltaY -= speed;
+  if (activeKeys.value.has('ArrowDown')) deltaY += speed;
+
+  focusX.value += deltaX * xSensitivity;
+  focusY.value += deltaY * ySensitivity;
 };
 </script>
 
