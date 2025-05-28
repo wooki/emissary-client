@@ -5,7 +5,8 @@
     @mousedown="mousedown"
     @mouseup="mouseup"
     @mouseleave="mouseleave"
-    @wheel="wheel">
+    @wheel="wheel"
+    @contextmenu.prevent="centerMapOnClick">
     <div class="parchment image"></div>
     <svg v-if="mounted" xmlns="http://www.w3.org/2000/svg" :viewBox="viewBox">
       <defs>
@@ -109,9 +110,9 @@ import MapImages from './MapImages.vue';
 import AreaItems from './AreaItems.vue';
 import { Corners, Center, AdjacentCoords, SameCoord } from '../libs/HexUtils';
 import { useReportStore } from '@/stores/ReportStore';
+import { useMapCentering } from '@/composables/useMapCentering';
 
 const report = useReportStore();
-
 const props = defineProps({
   hexagonSize: {
     type: Number,
@@ -347,6 +348,9 @@ const viewBoxCoords = computed(() => {
 
   return [displayX, displayY, displayWidth * ratio, displayHeight];
 });
+
+const { centerMapOnClick } = useMapCentering(focusX, focusY, viewBoxCoords, clientWidth, clientHeight);
+
 
 const viewBox = computed(() => {
   return viewBoxCoords.value.join(' ');
